@@ -9,6 +9,9 @@ node_modules/
 .workspace-info.md
 .local/share/opencode/
 
+# CloudBase MCP internal files
+.cloudbase-mcp/
+
 # >>> tcb-remote-workspace internal ignore rules >>>
 .session-env.json
 .mcporter/
