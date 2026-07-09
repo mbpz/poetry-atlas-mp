@@ -1,3 +1,30 @@
+<!-- 收藏页 -->
 <view class="page">
-  <view class="empty">收藏（开发中）</view>
+  <view wx:if="{{!loading && favorites.length}}" class="fav-list">
+    <view
+      wx:for="{{favorites}}"
+      wx:key="favId"
+      class="card fav-card"
+    >
+      <view class="fav-content" data-item="{{item}}" bindtap="onTapPoem">
+        <view class="fav-title">{{item.title}}</view>
+        <view class="fav-sub">
+          <text class="dynasty-tag">{{item.dynasty}}</text>
+          <text>{{item.author}}</text>
+        </view>
+        <view class="fav-lines">
+          <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="fav-line">{{line}}</view>
+        </view>
+      </view>
+      <view class="fav-del" data-item="{{item}}" bindtap="onRemove">×</view>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && !favorites.length}}" class="empty-block">
+    <view class="empty-icon">♡</view>
+    <view class="empty-text">还没有收藏任何诗词</view>
+    <view class="empty-tip">在诗词详情页点击 ♥ 即可收藏</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">载入中…</view>
 </view>

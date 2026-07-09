@@ -1,1 +1,45 @@
-.page { min-height: 100vh; }
+.page { min-height: 100vh; padding-bottom: 40rpx; }
+
+.search-bar {
+  padding: 20rpx 24rpx;
+  background: #fff;
+  position: sticky; top: 0; z-index: 10;
+}
+.search-input-wrap {
+  display: flex; align-items: center;
+  background: #f5f3ee; border-radius: 40rpx;
+  padding: 0 24rpx; height: 76rpx;
+}
+.search-icon { font-size: 28rpx; margin-right: 12rpx; }
+.search-input { flex: 1; font-size: 28rpx; }
+.clear-btn {
+  width: 40rpx; height: 40rpx; border-radius: 50%;
+  background: #ccc; color: #fff; text-align: center; line-height: 36rpx;
+  font-size: 28rpx;
+}
+
+.hot-section { padding: 24rpx; }
+.section-title { font-size: 28rpx; color: var(--color-text-secondary); margin-bottom: 16rpx; }
+.hot-tags { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.hot-tag {
+  padding: 12rpx 28rpx; background: var(--color-tag-bg);
+  border-radius: 30rpx; font-size: 26rpx; color: var(--color-primary);
+}
+
+.result-tabs {
+  display: flex; padding: 0 24rpx; gap: 16rpx; margin-bottom: 16rpx;
+}
+.result-tab {
+  padding: 12rpx 28rpx; font-size: 26rpx; color: var(--color-text-secondary);
+  border-radius: 30rpx;
+}
+.result-tab.active { background: var(--color-primary); color: #fff; }
+
+.result-list { padding: 0 24rpx; }
+.group-title {
+  font-size: 26rpx; color: var(--color-text-secondary);
+  margin: 24rpx 0 12rpx; padding-left: 8rpx;
+}
+.result-card { margin: 12rpx 0; padding: 28rpx 32rpx; }
+.result-title { font-size: 30rpx; font-weight: 600; margin-bottom: 8rpx; }
+.result-sub { display: flex; align-items: center; gap: 12rpx; font-size: 24rpx; color: var(--color-text-secondary); }

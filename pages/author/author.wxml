@@ -1,3 +1,40 @@
-<view class="page">
-  <view class="empty">作者（开发中）</view>
+<!-- 作者详情页 -->
+<view class="page" wx:if="{{!loading}}">
+  <view class="card author-hero">
+    <view class="author-name">{{author.name}}</view>
+    <view class="author-meta">
+      <text class="dynasty-tag">{{author.dynasty}}</text>
+      <text class="meta-text">{{author.birth_year}} ~ {{author.death_year}}</text>
+    </view>
+    <view wx:if="{{author.biography}}" class="author-bio">{{author.biography}}</view>
+  </view>
+
+  <view class="card" wx:if="{{author.route && author.route.length}}">
+    <view class="section-title">旅行轨迹</view>
+    <view class="route-timeline">
+      <view wx:for="{{author.route}}" wx:key="place" class="route-item">
+        <view class="route-year">{{item.year}}</view>
+        <view class="route-name">{{item.name}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="poem-section">
+    <view class="section-title">代表作 ({{author.poem_count}} 首收录)</view>
+    <view
+      wx:for="{{poems}}"
+      wx:key="title"
+      class="card poem-card"
+      data-poem="{{item}}"
+      bindtap="onTapPoem"
+    >
+      <view class="poem-title">{{item.title}}</view>
+      <view class="poem-dynasty">{{item.dynasty}}</view>
+      <view class="poem-lines">
+        <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="poem-line">{{line}}</view>
+      </view>
+    </view>
+  </view>
 </view>
+
+<view wx:if="{{loading}}" class="empty">载入中…</view>

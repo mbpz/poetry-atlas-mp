@@ -1,1 +1,24 @@
-.page { min-height: 100vh; }
+.page { min-height: 100vh; padding: 24rpx 24rpx 60rpx; }
+
+.author-hero { padding: 40rpx 36rpx; }
+.author-name { font-size: 48rpx; font-weight: 700; margin-bottom: 16rpx; }
+.author-meta { display: flex; align-items: center; gap: 20rpx; margin-bottom: 20rpx; }
+.meta-text { font-size: 24rpx; color: var(--color-text-secondary); }
+.author-bio {
+  font-size: 26rpx; line-height: 1.8; color: #5a5a5a;
+  text-align: justify;
+}
+
+.section-title { font-size: 30rpx; font-weight: 600; margin-bottom: 20rpx; }
+
+.route-timeline { padding: 8rpx 0; }
+.route-item { display: flex; align-items: baseline; gap: 20rpx; padding: 12rpx 0; border-bottom: 1rpx dashed var(--color-border); }
+.route-item:last-child { border-bottom: none; }
+.route-year { font-size: 24rpx; color: var(--color-primary); min-width: 100rpx; }
+.route-name { font-size: 26rpx; }
+
+.poem-section { margin-top: 24rpx; }
+.poem-card { margin: 16rpx 0; padding: 28rpx 32rpx; }
+.poem-title { font-size: 32rpx; font-weight: 600; margin-bottom: 8rpx; }
+.poem-dynasty { font-size: 24rpx; color: var(--color-text-secondary); margin-bottom: 12rpx; }
+.poem-line { font-size: 28rpx; line-height: 2; color: #4a4a4a; }
