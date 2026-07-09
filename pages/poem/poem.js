@@ -114,11 +114,39 @@ Page({
   },
 
   onAskAI() {
-    wx.showModal({
-      title: 'AI 诗词解析',
-      content: 'AI 深度解读将在 M5 接入 CloudBase 内置大模型，敬请期待。',
-      showCancel: false,
-    })
+    if (this.data.AI.loading) return
+    this.setData({ AI: { loading: true, content: "", show: true } })
+    wx.showLoading({ title: "AI 解读中…" })
+    wx.cloud
+      .callFunction({
+        name: "analyzePoem",
+        data: {
+          title: this.data.poem.title,
+          author: this.data.poem.author,
+          dynasty: this.data.poem.dynasty,
+          content: this.data.poem.content,
+        },
+      })
+      .then((res) => {
+        wx.hideLoading()
+        const result = res.result || {}
+        if (result.ok) {
+          this.setData({ AI: { loading: false, content: result.text || "", structured: result.structured || null, show: true } })
+        } else {
+          this.setData({ AI: { loading: false, content: "", show: false } })
+          wx.showToast({ title: result.error || "AI 解析失败", icon: "none" })
+        }
+      })
+      .catch((err) => {
+        wx.hideLoading()
+        this.setData({ AI: { loading: false, content: "", show: false } })
+        wx.showToast({ title: "AI 调用异常", icon: "none" })
+        console.error("[poem] AI error:", err)
+      })
+  },
+
+  onHideAI() {
+    this.setData({ "AI.show": false })
   },
 
   onTapPlace(e) {
