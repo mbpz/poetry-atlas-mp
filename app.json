@@ -1,0 +1,42 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/dynasty/dynasty",
+    "pages/search/search",
+    "pages/favorites/favorites",
+    "pages/profile/profile",
+    "pages/place/place",
+    "pages/poem/poem",
+    "pages/author/author",
+    "pages/travel/travel"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#f8f6f0",
+    "navigationBarTitleText": "诗词地图",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f8f6f0"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#8a8a8a",
+    "selectedColor": "#8b1a1a",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "地图" },
+      { "pagePath": "pages/dynasty/dynasty", "text": "朝代" },
+      { "pagePath": "pages/search/search", "text": "发现" },
+      { "pagePath": "pages/favorites/favorites", "text": "收藏" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于展示您附近的诗词地点"
+    }
+  },
+  "requiredPrivateInfos": ["getLocation"]
+}

@@ -1,0 +1,89 @@
+/* 全局样式 — 诗词地图小程序 */
+/* 设计语言：米白宣纸底 + 墨黑文字 + 朱砂红强调（水墨主题） */
+
+page {
+  --color-bg: #f8f6f0;          /* 宣纸米白 */
+  --color-bg-card: #ffffff;
+  --color-text: #2c2c2c;        /* 墨黑 */
+  --color-text-secondary: #8a8a8a;
+  --color-primary: #8b1a1a;     /* 朱砂红 */
+  --color-primary-light: #b85c5c;
+  --color-accent: #2d5d7b;      /* 青灰 */
+  --color-border: #e8e4dc;
+  --color-tag-bg: #f0ebe3;
+
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+view, text { box-sizing: border-box; }
+
+/* 通用卡片 */
+.card {
+  background: var(--color-bg-card);
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+/* 朝代标签 */
+.dynasty-tag {
+  display: inline-block;
+  padding: 2rpx 14rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  background: var(--color-tag-bg);
+  color: var(--color-primary);
+  margin-right: 8rpx;
+}
+
+/* 朱砂红强调按钮 */
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  padding: 16rpx 40rpx;
+  border: none;
+}
+.btn-primary::after { border: none; }
+
+/* 次要按钮 */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1rpx solid var(--color-primary);
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  padding: 12rpx 32rpx;
+}
+.btn-ghost::after { border: none; }
+
+/* 诗词正文竖排风格（可选） */
+.poem-text {
+  font-size: 30rpx;
+  line-height: 2;
+  letter-spacing: 0.05em;
+}
+
+/* 分割线 */
+.divider {
+  height: 1rpx;
+  background: var(--color-border);
+  margin: 24rpx 0;
+}
+
+/* 空状态 */
+.empty {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 80rpx 40rpx;
+  font-size: 26rpx;
+}
+
+/* 隐藏滚动条 */
+::-webkit-scrollbar { width: 0; height: 0; color: transparent; }

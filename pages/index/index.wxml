@@ -1,0 +1,53 @@
+<!-- 地图首页：全屏地图 + 朝代筛选 + 定位 -->
+<view class="page-root">
+  <map
+    id="poetry-map"
+    class="map"
+    longitude="{{longitude}}"
+    latitude="{{latitude}}"
+    scale="{{scale}}"
+    min-scale="{{minScale}}"
+    max-scale="{{maxScale}}"
+    markers="{{markers}}"
+    bindmarkertap="onMarkerTap"
+    bindregionchange="onRegionChange"
+    show-location="{{hasLocation}}"
+    enable-zoom
+    enable-scroll
+    enable-rotate="{{false}}"
+    style="width:100%;height:100%;"
+  ></map>
+
+  <!-- 朝代筛选横条 -->
+  <view wx:if="{{showDynastyBar}}" class="dynasty-bar">
+    <scroll-view scroll-x class="dynasty-scroll" enhanced show-scrollbar="{{false}}">
+      <view
+        class="dynasty-item {{selectedDynasty === '' ? 'active' : ''}}"
+        bindtap="onSelectDynasty"
+        data-dynasty=""
+      >全部</view>
+      <view
+        wx:for="{{dynasties}}"
+        wx:key="*this"
+        class="dynasty-item {{selectedDynasty === item ? 'active' : ''}}"
+        data-dynasty="{{item}}"
+        bindtap="onSelectDynasty"
+      >{{item}}</view>
+    </scroll-view>
+  </view>
+
+  <!-- 朝代栏收起/展开按钮 -->
+  <view class="toggle-dynasty" bindtap="onToggleDynastyBar">
+    <text>{{showDynastyBar ? '收起' : '朝代'}}</text>
+  </view>
+
+  <!-- 定位按钮 -->
+  <view class="locate-btn" bindtap="onLocate">
+    <text class="locate-text">◎</text>
+  </view>
+
+  <!-- 加载提示 -->
+  <view wx:if="{{loading}}" class="loading-mask">
+    <text>载入诗意…</text>
+  </view>
+</view>
