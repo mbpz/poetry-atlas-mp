@@ -1,88 +1,96 @@
-.page-root {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-
-.map {
-  width: 100%;
-  height: 100%;
-}
+.page-root { width: 100%; height: 100vh; position: relative; overflow: hidden; }
+.map { width: 100%; height: 100%; }
 
 /* ===== 朝代筛选栏 ===== */
 .dynasty-bar {
-  position: absolute;
-  top: 20rpx;
-  left: 20rpx;
-  right: 20rpx;
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 40rpx;
-  padding: 10rpx 20rpx;
-  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.08);
+  position: absolute; top: 20rpx; left: 20rpx; right: 180rpx;
+  background: rgba(255, 255, 255, 0.92); border-radius: 40rpx;
+  padding: 10rpx 20rpx; box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.08);
 }
-
-.dynasty-scroll {
-  white-space: nowrap;
-  width: 100%;
-}
-
+.dynasty-scroll { white-space: nowrap; width: 100%; }
 .dynasty-item {
-  display: inline-block;
-  padding: 8rpx 24rpx;
-  margin: 0 6rpx;
-  font-size: 26rpx;
-  color: #5a5a5a;
-  border-radius: 30rpx;
+  display: inline-block; padding: 8rpx 24rpx; margin: 0 6rpx;
+  font-size: 26rpx; color: #5a5a5a; border-radius: 30rpx;
 }
+.dynasty-item.active { background: var(--color-primary); color: #fff; }
 
-.dynasty-item.active {
-  background: var(--color-primary);
-  color: #fff;
+/* ===== 顶部功能按钮组 ===== */
+.top-controls {
+  position: absolute; top: 20rpx; right: 20rpx; display: flex; gap: 12rpx;
 }
-
-/* 朝代展开/收起按钮 */
-.toggle-dynasty {
-  position: absolute;
-  top: 20rpx;
-  right: 20rpx;
-  background: rgba(255, 255, 255, 0.92);
-  padding: 8rpx 20rpx;
-  border-radius: 24rpx;
-  font-size: 24rpx;
-  color: var(--color-primary);
+.ctrl-btn {
+  background: rgba(255, 255, 255, 0.92); padding: 10rpx 20rpx;
+  border-radius: 24rpx; font-size: 24rpx; color: var(--color-text);
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
 }
+.ctrl-btn.active { background: var(--color-primary); color: #fff; }
 
 /* ===== 定位按钮 ===== */
 .locate-btn {
-  position: absolute;
-  bottom: 180rpx;
-  right: 30rpx;
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 50%;
-  background: #fff;
+  position: absolute; bottom: 180rpx; right: 30rpx;
+  width: 88rpx; height: 88rpx; border-radius: 50%; background: #fff;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
 }
-
-.locate-text {
-  font-size: 40rpx;
-  color: var(--color-accent);
-}
+.locate-text { font-size: 40rpx; color: var(--color-accent); }
 
 /* ===== 加载提示 ===== */
 .loading-mask {
-  position: absolute;
-  bottom: 200rpx;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 16rpx 40rpx;
-  border-radius: 30rpx;
-  font-size: 26rpx;
+  position: absolute; bottom: 200rpx; left: 50%; transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6); color: #fff;
+  padding: 16rpx 40rpx; border-radius: 30rpx; font-size: 26rpx;
 }
+
+/* ===== M4: 时间轴面板 ===== */
+.timeline-panel {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(255, 255, 255, 0.97); border-radius: 24rpx 24rpx 0 0;
+  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.1); padding-bottom: env(safe-area-inset-bottom);
+  max-height: 40vh;
+}
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24rpx 32rpx; font-size: 30rpx; font-weight: 600;
+  border-bottom: 1rpx solid var(--color-border);
+}
+.panel-close { width: 48rpx; height: 48rpx; text-align: center; line-height: 44rpx; font-size: 36rpx; color: #999; }
+
+.timeline-scroll { padding: 32rpx 0; }
+.timeline-track {
+  display: flex; position: relative; padding: 0 32rpx;
+  min-width: max-content;
+}
+.timeline-line {
+  position: absolute; top: 20rpx; left: 32rpx; right: 32rpx; height: 4rpx;
+  background: linear-gradient(90deg, #e8c090, #8b1a1a);
+}
+.timeline-node {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 130rpx; position: relative; cursor: pointer;
+}
+.timeline-dot {
+  width: 28rpx; height: 28rpx; border-radius: 50%; background: #fff;
+  border: 4rpx solid #ccc; margin-bottom: 12rpx; z-index: 1;
+}
+.timeline-node.active .timeline-dot { border-color: var(--color-primary); background: var(--color-primary); }
+.timeline-name { font-size: 26rpx; font-weight: 600; color: var(--color-text); }
+.timeline-years { font-size: 20rpx; color: var(--color-text-secondary); }
+.timeline-count { font-size: 20rpx; color: var(--color-primary); }
+
+/* ===== M4: 旅行路线面板 ===== */
+.route-panel {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(255, 255, 255, 0.97); border-radius: 24rpx 24rpx 0 0;
+  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.1); padding-bottom: env(safe-area-inset-bottom);
+  max-height: 50vh;
+}
+.route-scroll { max-height: 42vh; padding: 16rpx 24rpx; }
+.route-card {
+  padding: 24rpx; margin: 12rpx 0; border-radius: 16rpx;
+  background: #faf9f5; border-left: 8rpx solid transparent;
+}
+.route-card.active { background: #fff; box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08); }
+.route-name { font-size: 30rpx; font-weight: 600; padding-left: 16rpx; }
+.route-meta { font-size: 22rpx; color: var(--color-text-secondary); padding-left: 16rpx; margin-top: 4rpx; }
+.route-points { display: flex; flex-wrap: wrap; gap: 8rpx; margin-top: 12rpx; padding-left: 16rpx; }
+.route-pt { font-size: 22rpx; color: var(--color-accent); }

@@ -1,3 +1,31 @@
-<view class="page">
-  <view class="empty">旅行路线（开发中）</view>
+<!-- 旅行路线详情页 -->
+<view class="page" wx:if="{{!loading}}">
+  <view class="travel-hero card">
+    <view class="travel-name">{{route.name}}</view>
+    <view class="travel-theme">「{{route.theme}}」</view>
+    <view class="travel-desc">{{route.description}}</view>
+  </view>
+
+  <view class="travel-days">
+    <view
+      wx:for="{{route.days}}"
+      wx:key="day"
+      class="day-card card"
+      data-day="{{item}}"
+      bindtap="onTapPoem"
+    >
+      <view class="day-header">
+        <view class="day-badge">D{{item.day}}</view>
+        <view class="day-city">{{item.city}}</view>
+      </view>
+      <view class="day-poem-title">{{item.poemTitle}}</view>
+      <view class="day-poem-author">{{item.poemAuthor}}</view>
+      <view class="day-poem-lines">
+        <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="day-line">{{line}}</view>
+      </view>
+      <view class="day-note">{{item.note}}</view>
+    </view>
+  </view>
 </view>
+
+<view wx:if="{{loading}}" class="empty">载入中…</view>

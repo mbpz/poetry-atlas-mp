@@ -1,4 +1,5 @@
 {
   "navigationBarTitleText": "旅行路线",
+  "enablePullDownRefresh": false,
   "usingComponents": {}
 }
