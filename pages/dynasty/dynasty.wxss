@@ -1,1 +1,35 @@
-.page { min-height: 100vh; }
+.page { min-height: 100vh; padding: 24rpx 24rpx 60rpx; }
+.page-desc {
+  font-size: 26rpx; color: var(--color-text-secondary);
+  text-align: center; padding: 24rpx 0 32rpx;
+}
+
+.timeline { position: relative; }
+.timeline-item { display: flex; margin-bottom: 8rpx; }
+.timeline-node {
+  width: 60rpx; display: flex; flex-direction: column; align-items: center;
+  margin-right: 16rpx;
+}
+.node-dot {
+  width: 24rpx; height: 24rpx; border-radius: 50%;
+  background: var(--color-primary); margin-top: 32rpx;
+  box-shadow: 0 0 0 6rpx rgba(139, 26, 26, 0.15);
+}
+.node-line { flex: 1; width: 4rpx; background: var(--color-border); margin-top: 8rpx; }
+
+.timeline-content { flex: 1; padding: 28rpx 32rpx; }
+.dynasty-header { display: flex; align-items: baseline; gap: 20rpx; flex-wrap: wrap; }
+.dynasty-name { font-size: 36rpx; font-weight: 700; color: var(--color-text); }
+.dynasty-period { font-size: 24rpx; color: var(--color-text-secondary); }
+.dynasty-count {
+  margin-left: auto; font-size: 24rpx; color: var(--color-primary);
+  background: var(--color-tag-bg); padding: 4rpx 16rpx; border-radius: 20rpx;
+}
+
+.dynasty-poems { margin-top: 20rpx; border-top: 1rpx dashed var(--color-border); padding-top: 16rpx; }
+.dynasty-poem {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 16rpx 0;
+}
+.dynasty-poem-title { font-size: 28rpx; color: var(--color-text); }
+.dynasty-poem-author { font-size: 24rpx; color: var(--color-text-secondary); }

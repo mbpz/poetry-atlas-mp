@@ -1,1 +1,65 @@
-.page { min-height: 100vh; }
+.page { min-height: 100vh; padding-bottom: 40rpx; }
+
+.place-map { width: 100%; }
+
+.place-info { margin: 24rpx; padding: 32rpx; }
+.place-name {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 16rpx;
+}
+.place-meta { display: flex; align-items: center; gap: 20rpx; }
+.meta-text { font-size: 26rpx; color: var(--color-text-secondary); }
+.place-desc {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+/* 朝代筛选（复用首页样式） */
+.dynasty-bar {
+  margin: 0 24rpx 16rpx;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 40rpx;
+  padding: 10rpx 20rpx;
+}
+.dynasty-scroll { white-space: nowrap; width: 100%; }
+.dynasty-item {
+  display: inline-block;
+  padding: 8rpx 24rpx;
+  margin: 0 6rpx;
+  font-size: 26rpx;
+  color: #5a5a5a;
+  border-radius: 30rpx;
+}
+.dynasty-item.active { background: var(--color-primary); color: #fff; }
+
+/* 诗词列表 */
+.poem-section { padding: 0 24rpx; }
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin: 24rpx 0 16rpx;
+  color: var(--color-text);
+}
+.poem-card { margin: 16rpx 0; padding: 28rpx 32rpx; }
+.poem-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+  color: var(--color-text);
+}
+.poem-author {
+  display: flex; align-items: center; gap: 12rpx;
+  font-size: 24rpx; color: var(--color-text-secondary);
+  margin-bottom: 16rpx;
+}
+.poem-lines { margin-top: 8rpx; }
+.poem-line {
+  font-size: 28rpx;
+  line-height: 2;
+  color: #4a4a4a;
+  letter-spacing: 0.05em;
+}

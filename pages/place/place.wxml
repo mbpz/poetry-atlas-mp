@@ -1,3 +1,67 @@
-<view class="page">
-  <view class="empty">地点详情（开发中）</view>
+<!-- 地点详情页 -->
+<view class="page" wx:if="{{!loading}}">
+  <!-- 顶部小地图 -->
+  <map
+    id="place-map"
+    class="place-map"
+    longitude="{{mapLongitude}}"
+    latitude="{{mapLatitude}}"
+    scale="8"
+    markers="{{markers}}"
+    enable-zoom="{{false}}"
+    enable-scroll="{{false}}"
+    style="width:100%;height:240rpx;"
+  ></map>
+
+  <!-- 地点信息卡 -->
+  <view class="card place-info">
+    <view class="place-name">{{place.name}}</view>
+    <view class="place-meta">
+      <text class="dynasty-tag">{{place.type}}</text>
+      <text class="meta-text">诗词 {{place.poem_count}} 首</text>
+    </view>
+    <view wx:if="{{place.description}}" class="place-desc">{{place.description}}</view>
+  </view>
+
+  <!-- 朝代筛选 -->
+  <view wx:if="{{dynasties.length}}" class="dynasty-bar">
+    <scroll-view scroll-x class="dynasty-scroll" enhanced show-scrollbar="{{false}}">
+      <view
+        class="dynasty-item {{selectedDynasty === '' ? 'active' : ''}}"
+        bindtap="onSelectDynasty"
+        data-dynasty=""
+      >全部</view>
+      <view
+        wx:for="{{dynasties}}"
+        wx:key="*this"
+        class="dynasty-item {{selectedDynasty === item ? 'active' : ''}}"
+        data-dynasty="{{item}}"
+        bindtap="onSelectDynasty"
+      >{{item}} ({{place.dynasty_stats[item]}})</view>
+    </scroll-view>
+  </view>
+
+  <!-- 诗词列表 -->
+  <view class="poem-section">
+    <view class="section-title">相关诗词</view>
+    <view
+      wx:for="{{poems}}"
+      wx:key="title"
+      class="card poem-card"
+      data-poem="{{item}}"
+      bindtap="onTapPoem"
+    >
+      <view class="poem-title">{{item.title}}</view>
+      <view class="poem-author">
+        <text class="dynasty-tag">{{item.dynasty}}</text>
+        <text>{{item.author}}</text>
+      </view>
+      <view class="poem-lines">
+        <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="poem-line">{{line}}</view>
+      </view>
+    </view>
+    <view wx:if="{{!hasMore && poems.length}}" class="empty">— 到底了 —</view>
+  </view>
 </view>
+
+<view wx:if="{{loading}}" class="empty">载入中…</view>

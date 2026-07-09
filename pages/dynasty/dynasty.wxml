@@ -1,3 +1,42 @@
-<view class="page">
-  <view class="empty">朝代（开发中）</view>
+<!-- 朝代浏览页 -->
+<view class="page" wx:if="{{!loading}}">
+  <view class="page-desc">按朝代浏览诗词分布，点击展开查看热门作品</view>
+
+  <view class="timeline">
+    <view
+      wx:for="{{dynasties}}"
+      wx:key="name"
+      class="timeline-item"
+      data-dynasty="{{item.name}}"
+      bindtap="onToggle"
+    >
+      <view class="timeline-node">
+        <view class="node-dot"></view>
+        <view class="node-line"></view>
+      </view>
+      <view class="timeline-content card">
+        <view class="dynasty-header">
+          <view class="dynasty-name">{{item.name}}</view>
+          <view class="dynasty-period">{{item.start_year}} ~ {{item.end_year}}</view>
+          <view class="dynasty-count">{{item.poem_count}} 首</view>
+        </view>
+        <view wx:if="{{expanded === item.name}}" class="dynasty-poems">
+          <view
+            wx:for="{{poemsByDynasty[item.name]}}"
+            wx:for-item="poem"
+            wx:key="title"
+            class="dynasty-poem"
+            data-poem="{{poem}}"
+            bindtap="onTapPoem"
+          >
+            <view class="dynasty-poem-title">{{poem.title}}</view>
+            <view class="dynasty-poem-author">{{poem.author}}</view>
+          </view>
+          <view wx:if="{{!poemsByDynasty[item.name]}}" class="empty small">加载中…</view>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>
+
+<view wx:if="{{loading}}" class="empty">载入中…</view>

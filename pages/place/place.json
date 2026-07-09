@@ -1,4 +1,5 @@
 {
   "navigationBarTitleText": "地点详情",
+  "enablePullDownRefresh": false,
   "usingComponents": {}
 }

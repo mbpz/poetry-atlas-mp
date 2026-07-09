@@ -1,3 +1,56 @@
-<view class="page">
-  <view class="empty">诗词详情（开发中）</view>
+<!-- 诗词详情页 -->
+<view class="page" wx:if="{{!loading}}">
+  <view class="poem-hero card">
+    <view class="poem-title-row">
+      <text class="poem-title">{{poem.title}}</text>
+      <view class="fav-btn {{isFavorited ? 'active' : ''}}" bindtap="onToggleFavorite">♥</view>
+    </view>
+    <view class="poem-subtitle">
+      <text class="dynasty-tag">{{poem.dynasty}}</text>
+      <text class="poem-author-txt">{{poem.author}}</text>
+    </view>
+    <view class="poem-content">
+      <view wx:for="{{poem.lines}}" wx:key="*this" class="poem-line">{{line}}</view>
+    </view>
+  </view>
+
+  <!-- 解读 Tab -->
+  <view class="card interpret-card">
+    <view class="tab-bar">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="key"
+        class="tab-item {{activeTab === item.key ? 'active' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onSelectTab"
+      >{{item.label}}</view>
+    </view>
+    <view class="tab-body">
+      <text wx:if="{{activeTab === 'annotation' && poem.annotation}}" class="interpret-text">{{poem.annotation}}</text>
+      <text wx:if="{{activeTab === 'annotation' && !poem.annotation}}" class="empty small">暂无注释</text>
+
+      <text wx:if="{{activeTab === 'translation' && poem.translation}}" class="interpret-text">{{poem.translation}}</text>
+      <text wx:if="{{activeTab === 'translation' && !poem.translation}}" class="empty small">暂无译文</text>
+
+      <text wx:if="{{activeTab === 'appreciation' && poem.appreciation}}" class="interpret-text">{{poem.appreciation}}</text>
+      <text wx:if="{{activeTab === 'appreciation' && !poem.appreciation}}" class="empty small">暂无赏析</text>
+    </view>
+    <view class="ai-btn" bindtap="onAskAI">AI 深度解读</view>
+  </view>
+
+  <!-- 相关地点 -->
+  <view wx:if="{{places.length}}" class="card place-card">
+    <view class="section-title">相关地点</view>
+    <view class="place-tags">
+      <view
+        wx:for="{{places}}"
+        wx:key="name"
+        class="place-tag"
+        data-place="{{item}}"
+        bindtap="onTapPlace"
+      >{{item.name}}</view>
+    </view>
+  </view>
 </view>
+
+<view wx:if="{{loading}}" class="empty">载入中…</view>

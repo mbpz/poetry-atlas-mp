@@ -1,4 +1,5 @@
 {
   "navigationBarTitleText": "诗词详情",
+  "enablePullDownRefresh": false,
   "usingComponents": {}
 }

@@ -110,12 +110,25 @@ Page({
     }
   },
 
-  /** 将 places 文档转为地图 marker */
+  /**
+   * 将 places 文档转为地图 marker
+   * 兼容两种 GeoPoint 格式：
+   *   客户端 SDK (wx.cloud.database) → { location: { longitude, latitude } }
+   *   MCP readNoSql               → { location: { type:'Point', coordinates:[lng,lat] } }
+   */
   placeToMarker(p) {
+    let lng = 0, lat = 0
+    const loc = p.location
+    if (loc) {
+      if (typeof loc.longitude === 'number') { lng = loc.longitude; lat = loc.latitude }
+      else if (Array.isArray(loc.coordinates) && loc.coordinates.length >= 2) {
+        lng = loc.coordinates[0]; lat = loc.coordinates[1]
+      }
+    }
     return {
       id: p._id,
-      longitude: p.location.coordinates[0],
-      latitude: p.location.coordinates[1],
+      longitude: lng,
+      latitude: lat,
       width: 56,
       height: 52,
       cluster: false,
