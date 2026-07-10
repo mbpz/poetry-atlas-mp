@@ -36,7 +36,7 @@ const TRAVEL_ROUTES = [
 Page({
   data: {
     longitude: config.MAP.INITIAL_LONGITUDE,
-    latitude: config.MAP.INITIAL_LATIAL || config.MAP.INITIAL_LATITUDE,
+    latitude: config.MAP.INITIAL_LATITUDE,
     scale: config.MAP.INITIAL_SCALE,
     minScale: config.MAP.MIN_SCALE,
     maxScale: config.MAP.MAX_SCALE,

@@ -1,1 +1,31 @@
-.page { min-height: 100vh; }
+.page { min-height: 100vh; padding: 24rpx 24rpx 60rpx; }
+
+.profile-hero { text-align: center; padding: 48rpx 32rpx; }
+.profile-avatar {
+  width: 120rpx; height: 120rpx; border-radius: 50%;
+  background: linear-gradient(135deg, #8b1a1a, #2d5d7b); color: #fff;
+  font-size: 48rpx; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20rpx;
+}
+.profile-name { font-size: 32rpx; font-weight: 600; margin-bottom: 8rpx; }
+.profile-sub { font-size: 24rpx; color: var(--color-text-secondary); }
+
+.stats-card { display: flex; align-items: center; padding: 32rpx; margin-top: 16rpx; }
+.stat-item { flex: 1; text-align: center; }
+.stat-num { font-size: 40rpx; font-weight: 700; color: var(--color-primary); }
+.stat-label { font-size: 24rpx; color: var(--color-text-secondary); margin-top: 4rpx; }
+.stat-divider { width: 1rpx; height: 60rpx; background: var(--color-border); }
+
+.menu-card { margin-top: 16rpx; padding: 0; overflow: hidden; }
+.menu-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 32rpx;
+}
+.menu-text { font-size: 28rpx; }
+.menu-arrow { font-size: 36rpx; color: #ccc; }
+.menu-divider { height: 1rpx; background: var(--color-border); margin: 0 32rpx; }
+
+.profile-footer {
+  text-align: center; font-size: 22rpx; color: #bbb; margin-top: 48rpx;
+}

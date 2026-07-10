@@ -12,6 +12,7 @@ Component({
       { pagePath: '/pages/dynasty/dynasty', text: '朝代' },
       { pagePath: '/pages/search/search', text: '发现' },
       { pagePath: '/pages/favorites/favorites', text: '收藏' },
+      { pagePath: '/pages/profile/profile', text: '我的' },
     ],
     version: config.VERSION,
   },
