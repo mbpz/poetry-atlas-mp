@@ -1,16 +1,26 @@
+<!-- TabBar: Editorial 文脉风 — Songti SC + 朱砂细线 -->
 <view class="tab-bar">
-  <view class="tab-indicator" style="left: {{selected * 20}}%;"></view>
-  <view
-    wx:for="{{list}}"
-    wx:key="pagePath"
-    class="tab-item {{selected === index ? 'active' : ''}}"
-    data-url="{{item.pagePath}}"
-    data-index="{{index}}"
-    bindtap="switchTab"
-  >
-    <view class="tab-icon">
-      <image src="{{selected === index ? item.activeIconUrl : item.iconUrl}}" mode="aspectFit"></image>
+  <!-- 宣纸底 -->
+  <view class="tab-bar-bg"></view>
+
+  <view class="tab-list">
+    <view
+      wx:for="{{list}}"
+      wx:key="pagePath"
+      class="tab-item {{selected === index ? 'active' : ''}}"
+      data-url="{{item.pagePath}}"
+      data-index="{{index}}"
+      bindtap="switchTab"
+      catchtouchstart="noop"
+    >
+      <!-- 顶部朱砂横线 -->
+      <view class="tab-indicator"></view>
+
+      <!-- 内容：文字 + 图标 -->
+      <text class="tab-label">{{item.label}}</text>
+      <view class="tab-icon">
+        <image src="{{selected === index ? item.iconActive : item.iconNormal}}" mode="aspectFit"></image>
+      </view>
     </view>
-    <text class="tab-text">{{item.text}}</text>
   </view>
 </view>
