@@ -1,40 +1,38 @@
-/* 国际化 TabBar：大图标居中 + 极小文字 + 选中态顶部凸弧 + 填色 */
+/* TabBar: iOS Capsule/Floating（参考 poetry-atlas 顶部筛选栏）*/
 .tab-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 120rpx;
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  height: 130rpx;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24rpx);
+  -webkit-backdrop-filter: blur(24rpx);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   z-index: 999;
   padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -1rpx 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -1rpx 0 rgba(0, 0, 0, 0.05);
+  padding-top: 12rpx;
 }
 
-/* 顶部凸弧 — 仅选中项显示 */
-.tab-arc {
+/* 选中项顶部凸弧 */
+.tab-indicator {
   position: absolute;
-  top: -16rpx;
-  width: 25%;
-  height: 16rpx;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
+  top: 0;
+  width: 20%;
+  height: 4rpx;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.tab-arc.show { opacity: 1; }
-.tab-arc::before {
+.tab-indicator::after {
   content: '';
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 60rpx;
-  height: 16rpx;
-  background: #8b1a1a;
-  border-radius: 0 0 16rpx 16rpx;
+  width: 48rpx;
+  height: 4rpx;
+  background: linear-gradient(90deg, #8b1a1a, #2d5d7b);
+  border-radius: 2rpx;
 }
 
 .tab-item {
@@ -43,29 +41,39 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 90rpx;
   gap: 4rpx;
-  transition: transform 0.2s;
 }
-.tab-item:active { transform: scale(0.92); }
+.tab-item:active { transform: scale(0.9); }
 
 .tab-icon {
-  width: 52rpx;
-  height: 52rpx;
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tab-icon image {
+  width: 48rpx;
+  height: 48rpx;
 }
 .tab-item.active .tab-icon {
-  transform: scale(1.15) translateY(-2rpx);
+  transform: scale(1.18);
+  background: linear-gradient(135deg, #fff5f5, #f0f5ff);
+  border-radius: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(139, 26, 26, 0.12);
 }
 
 .tab-text {
   font-size: 20rpx;
-  color: #999;
+  color: #b0b0b0;
   line-height: 1;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   transition: color 0.2s;
+  font-weight: 400;
 }
 .tab-item.active .tab-text {
   color: #8b1a1a;
-  font-weight: 600;
+  font-weight: 500;
 }

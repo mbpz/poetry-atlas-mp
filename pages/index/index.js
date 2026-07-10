@@ -173,7 +173,7 @@ Page({
         latitude: p.latitude,
         width: 56,
         height: 56,
-        iconPath: "/images/marker-red.png",
+        iconPath: "/images/marker-city.png",
         title: p.name + " (" + (p.poem_count || 0) + "首)",
       }))
     } catch (err) {
@@ -192,18 +192,27 @@ Page({
         lng = loc.coordinates[0]; lat = loc.coordinates[1]
       }
     }
+    const markerImg = this._getMarkerIconByType(p.type)
     return {
       id: this._nextMarkerId({ name: p.name, cluster: false, placeId: p._id || '' }),
       longitude: lng,
       latitude: lat,
-      width: 36,
-      height: 36,
-      iconPath: "/images/marker-red.png",
+      width: 44,
+      height: 44,
+      iconPath: markerImg,
       title: p.name,
       cluster: false,
       placeId: p._id || '',
       poem_count: p.poem_count || 0,
     }
+  },
+
+  _getMarkerIconByType(type) {
+    const map = { city:'city', tower:'tower', mountain:'mountain', lake:'mountain',
+      river:'river', bridge:'bridge', temple:'temple', pass:'pass',
+      garden:'garden', palace:'palace', ancient_city:'tower', historic_site:'temple', county:'city', province:'city' }
+    const key = map[type] || 'city'
+    return `/images/marker-${key}.png`
   },
 
   // ===== 旅行路线折线 =====

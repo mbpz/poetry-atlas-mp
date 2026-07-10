@@ -1,12 +1,5 @@
 <view class="tab-bar">
-  <!-- 顶部凸起弧线（选中项）-->
-  <view
-    wx:for="{{list}}"
-    wx:key="pagePath"
-    class="tab-arc {{selected === index ? 'show' : ''}}"
-    style="left: {{index * 25}}%"
-  ></view>
-
+  <view class="tab-indicator" style="left: {{selected * 20}}%;"></view>
   <view
     wx:for="{{list}}"
     wx:key="pagePath"
@@ -15,7 +8,9 @@
     data-index="{{index}}"
     bindtap="switchTab"
   >
-    <image class="tab-icon" src="{{selected === index ? item.activeIconUrl : item.iconUrl}}" mode="aspectFit"></image>
+    <view class="tab-icon">
+      <image src="{{selected === index ? item.activeIconUrl : item.iconUrl}}" mode="aspectFit"></image>
+    </view>
     <text class="tab-text">{{item.text}}</text>
   </view>
 </view>
