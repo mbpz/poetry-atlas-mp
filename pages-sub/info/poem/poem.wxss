@@ -1,73 +1,96 @@
-.page { min-height: 100vh; padding: 24rpx 24rpx 60rpx; }
+.page { min-height: 100vh; padding: 24rpx 24rpx 120rpx; }
 
-.poem-hero { padding: 40rpx 36rpx; }
+.poem-hero { padding: 40rpx 36rpx; transition: transform 0.15s; }
 .poem-title-row { display: flex; align-items: flex-start; justify-content: space-between; }
-.poem-title {
-  font-size: 40rpx; font-weight: 700; color: var(--color-text);
-  flex: 1; line-height: 1.4;
-}
+.poem-title { font-size: 40rpx; font-weight: 700; color: var(--color-text); flex: 1; line-height: 1.4; }
+
+/* #2 收藏按钮 - 心形弹簧 */
 .fav-btn {
   width: 72rpx; height: 72rpx; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 36rpx; color: #ccc; background: #f5f5f5; margin-left: 16rpx;
+  transition: all 0.15s;
 }
 .fav-btn.active { color: #e63946; background: #fff0f0; }
+.fav-btn:active { transform: scale(0.8); }
 
 .poem-subtitle { display: flex; align-items: center; gap: 16rpx; margin: 16rpx 0 24rpx; }
 .poem-author-txt { font-size: 26rpx; color: var(--color-text-secondary); }
-
 .poem-content { margin-top: 16rpx; }
-.poem-line {
-  font-size: 32rpx; line-height: 2.2; color: #3a3a3a;
-  letter-spacing: 0.08em; text-align: center;
-}
+.poem-line { font-size: 32rpx; line-height: 2.2; color: #3a3a3a; letter-spacing: 0.08em; text-align: center; }
 
 /* 解读 */
 .interpret-card { margin-top: 24rpx; padding: 0; overflow: hidden; }
 .tab-bar { display: flex; border-bottom: 1rpx solid var(--color-border); }
 .tab-item {
   flex: 1; text-align: center; padding: 24rpx 0; font-size: 28rpx; color: var(--color-text-secondary);
+  transition: all 0.15s;
 }
+.tab-item:active { transform: scale(0.95); }
 .tab-item.active { color: var(--color-primary); font-weight: 600; border-bottom: 4rpx solid var(--color-primary); }
 .tab-body { padding: 32rpx; min-height: 200rpx; }
 .interpret-text { font-size: 28rpx; line-height: 1.9; color: #4a4a4a; white-space: pre-wrap; }
 .empty.small { font-size: 26rpx; }
 
+/* AI 按钮 - 渐变 + 按下缩放 */
 .ai-btn {
   margin: 0 32rpx 32rpx; padding: 20rpx; text-align: center;
   background: linear-gradient(135deg, #2d5d7b, #8b1a1a); color: #fff;
-  border-radius: 40rpx; font-size: 26rpx;
+  border-radius: 40rpx; font-size: 26rpx; transition: all 0.15s;
 }
+.ai-btn:active { transform: scale(0.96); opacity: 0.9; }
 
-/* 相关地点 */
 .place-card { margin-top: 24rpx; padding: 32rpx; }
 .section-title { font-size: 30rpx; font-weight: 600; margin-bottom: 20rpx; }
 .place-tags { display: flex; flex-wrap: wrap; gap: 16rpx; }
 .place-tag {
   padding: 10rpx 24rpx; background: var(--color-tag-bg); color: var(--color-primary);
-  border-radius: 30rpx; font-size: 24rpx;
+  border-radius: 30rpx; font-size: 24rpx; transition: all 0.15s;
 }
+.place-tag:active { transform: scale(0.92); }
 
-/* AI 解析浮层 */
+/* ===== Spotify 底部抽屉 ===== */
 .ai-mask {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5); z-index: 100;
-  display: flex; align-items: flex-end;
+  background: rgba(0, 0, 0, 0.4); z-index: 100; backdrop-filter: blur(8rpx);
 }
-.ai-panel {
-  width: 100%; max-height: 80vh; background: #fff;
-  border-radius: 24rpx 24rpx 0 0; display: flex; flex-direction: column;
+.ai-sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: #fff; border-radius: 28rpx 28rpx 0 0;
+  display: flex; flex-direction: column;
   padding-bottom: env(safe-area-inset-bottom);
 }
-.ai-panel-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 28rpx 32rpx; font-size: 30rpx; font-weight: 600;
-  border-bottom: 1rpx solid var(--color-border);
-}
-.ai-panel-close { width: 48rpx; height: 48rpx; text-align: center; line-height: 44rpx; font-size: 36rpx; color: #999; }
-.ai-panel-body { flex: 1; padding: 24rpx 32rpx; max-height: 70vh; }
-.ai-loading { text-align: center; color: var(--color-text-secondary); padding: 60rpx 0; }
+.ai-sheet-transition { transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
 
+/* 抽屉把手 */
+.ai-sheet-handle {
+  display: flex; justify-content: center; padding: 20rpx 0 8rpx;
+  cursor: pointer;
+}
+.ai-sheet-bar {
+  width: 72rpx; height: 6rpx; background: #ddd; border-radius: 3rpx;
+}
+
+/* AI 内容骨架 */
+.ai-sheet-body { flex: 1; padding: 0 32rpx 32rpx; overflow-y: auto; }
+
+.ai-skeleton-title {
+  width: 30%; height: 28rpx; border-radius: 8rpx; margin-bottom: 24rpx;
+  background: linear-gradient(90deg, #f0ede8 25%, #f8f6f2 50%, #f0ede8 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+}
+.ai-skeleton-line {
+  width: 100%; height: 24rpx; border-radius: 6rpx; margin-bottom: 16rpx;
+  background: linear-gradient(90deg, #f0ede8 25%, #f8f6f2 50%, #f0ede8 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+}
+.ai-skeleton-line.short { width: 60%; }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* AI 内容 */
 .ai-section { margin-bottom: 32rpx; }
 .ai-section-title {
   font-size: 26rpx; font-weight: 600; color: var(--color-primary);
@@ -82,5 +105,13 @@
 
 .ai-tags { display: flex; flex-wrap: wrap; gap: 12rpx; }
 .ai-tag { padding: 6rpx 20rpx; background: var(--color-tag-bg); color: var(--color-primary); border-radius: 20rpx; font-size: 24rpx; }
+.ai-tag:active { transform: scale(0.92); }
 
 .ai-raw { font-size: 28rpx; line-height: 1.9; color: #4a4a4a; white-space: pre-wrap; }
+
+/* ===== #3 Linear 弹簧全局 =====
+   spring-card: 卡片按下缩放
+   spring-btn: 按钮按下回弹 */
+.spring-card { transition: transform 0.12s ease; }
+.spring-card:active { transform: scale(0.985); }
+.spring-btn { transition: transform 0.12s, opacity 0.12s; }

@@ -17,6 +17,7 @@ Page({
     hasMore: true,
     mapLongitude: 0,
     mapLatitude: 0,
+    cardPressed: false,
   },
 
   onLoad(options) {
@@ -105,6 +106,15 @@ Page({
       this._loadingPoems = false
     }
   },
+
+  onCardTouch() { this.setData({ cardPressed: true }) },
+  onCardTouchEnd() { this.setData({ cardPressed: false }) },
+
+  onPoemCardTouch(e) {
+    const idx = e.currentTarget.dataset.index
+    this.setData({ ['touchedIndex']: idx })
+  },
+  onPoemCardEnd() { this.setData({ touchedIndex: -1 }) },
 
   onSelectDynasty(e) {
     const d = e.currentTarget.dataset.dynasty || ''

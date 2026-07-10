@@ -5,7 +5,9 @@
   <skeleton rows="2" />
 </view>
 <view class="page" wx:elif="{{poem}}">
-  <view class="poem-hero card">
+
+  <!-- 诗词英雄卡 -->
+  <view class="poem-hero card spring-card" bindtouchstart="onCardTouch" bindtouchend="onCardTouchEnd">
     <view class="poem-title-row">
       <text class="poem-title">{{poem.title}}</text>
       <view class="fav-btn {{isFavorited ? 'active' : ''}}" bindtap="onToggleFavorite">♥</view>
@@ -25,7 +27,7 @@
       <view
         wx:for="{{tabs}}"
         wx:key="key"
-        class="tab-item {{activeTab === item.key ? 'active' : ''}}"
+        class="tab-item spring-btn {{activeTab === item.key ? 'active' : ''}}"
         data-key="{{item.key}}"
         bindtap="onSelectTab"
       >{{item.label}}</view>
@@ -33,14 +35,12 @@
     <view class="tab-body">
       <text wx:if="{{activeTab === 'annotation' && poem.annotation}}" class="interpret-text">{{poem.annotation}}</text>
       <text wx:if="{{activeTab === 'annotation' && !poem.annotation}}" class="empty small">暂无注释</text>
-
       <text wx:if="{{activeTab === 'translation' && poem.translation}}" class="interpret-text">{{poem.translation}}</text>
       <text wx:if="{{activeTab === 'translation' && !poem.translation}}" class="empty small">暂无译文</text>
-
       <text wx:if="{{activeTab === 'appreciation' && poem.appreciation}}" class="interpret-text">{{poem.appreciation}}</text>
       <text wx:if="{{activeTab === 'appreciation' && !poem.appreciation}}" class="empty small">暂无赏析</text>
     </view>
-    <view class="ai-btn" bindtap="onAskAI">AI 深度解读</view>
+    <view class="ai-btn spring-btn" bindtap="onAskAI">AI 深度解读</view>
   </view>
 
   <!-- 相关地点 -->
@@ -50,7 +50,7 @@
       <view
         wx:for="{{places}}"
         wx:key="name"
-        class="place-tag"
+        class="place-tag spring-btn"
         data-place="{{item}}"
         bindtap="onTapPlace"
       >{{item.name}}</view>
@@ -58,49 +58,66 @@
   </view>
 </view>
 
-<!-- AI 解析浮层 -->
-<view wx:if="{{AI.show}}" class="ai-mask" bindtap="onHideAI">
-  <view class="ai-panel" catchtap>
-    <view class="ai-panel-header">
-      <text>AI 深度解读</text>
-      <view class="ai-panel-close" bindtap="onHideAI">×</view>
+<!-- ===== Spotify 底部抽屉: AI 解读面板 ===== -->
+<view wx:if="{{AI.show}}" class="ai-mask" bindtap="onHideAI" catchtouchmove="onMaskTouchMove">
+  <view
+    class="ai-sheet {{AI.dragging ? '' : 'ai-sheet-transition'}}"
+    style="height: {{AI.sheetHeight}}%;"
+    catchtap
+    bindtouchstart="onSheetTouchStart"
+    bindtouchmove="onSheetTouchMove"
+    bindtouchend="onSheetTouchEnd"
+  >
+    <!-- 抽屉把手 -->
+    <view class="ai-sheet-handle" catchtap="onHandleTap">
+      <view class="ai-sheet-bar"></view>
     </view>
-    <scroll-view scroll-y class="ai-panel-body" enhanced show-scrollbar="{{false}}">
-      <view wx:if="{{AI.loading}}" class="ai-loading">解读中…</view>
-      <block wx:elif="{{AI.structured}}">
-        <view class="ai-section">
-          <view class="ai-section-title">白话译文</view>
-          <view class="ai-section-text">{{AI.structured.translation}}</view>
+
+    <!-- loading 骨架 -->
+    <view wx:if="{{AI.loading}}" class="ai-sheet-body">
+      <view class="ai-skeleton-title"></view>
+      <view class="ai-skeleton-line"></view>
+      <view class="ai-skeleton-line"></view>
+      <view class="ai-skeleton-line short"></view>
+      <view class="ai-skeleton-title"></view>
+      <view class="ai-skeleton-line"></view>
+      <view class="ai-skeleton-line"></view>
+    </view>
+
+    <!-- 解读内容 -->
+    <scroll-view wx:elif="{{AI.structured}}" scroll-y class="ai-sheet-body" enhanced show-scrollbar="{{false}}">
+      <view class="ai-section">
+        <view class="ai-section-title">白话译文</view>
+        <view class="ai-section-text">{{AI.structured.translation}}</view>
+      </view>
+      <view class="ai-section" wx:if="{{AI.structured.allusions && AI.structured.allusions.length}}">
+        <view class="ai-section-title">典故</view>
+        <view wx:for="{{AI.structured.allusions}}" wx:key="phrase" class="ai-allusion">
+          <view class="ai-allusion-phrase">{{item.phrase}}</view>
+          <view class="ai-allusion-source">出处：{{item.source}}</view>
+          <view class="ai-allusion-meaning">{{item.meaning}}</view>
         </view>
-        <view class="ai-section" wx:if="{{AI.structured.allusions && AI.structured.allusions.length}}">
-          <view class="ai-section-title">典故</view>
-          <view wx:for="{{AI.structured.allusions}}" wx:key="phrase" class="ai-allusion">
-            <view class="ai-allusion-phrase">{{item.phrase}}</view>
-            <view class="ai-allusion-source">出处：{{item.source}}</view>
-            <view class="ai-allusion-meaning">{{item.meaning}}</view>
-          </view>
+      </view>
+      <view class="ai-section">
+        <view class="ai-section-title">情感</view>
+        <view class="ai-section-text">{{AI.structured.emotion}}</view>
+      </view>
+      <view class="ai-section">
+        <view class="ai-section-title">创作背景</view>
+        <view class="ai-section-text">{{AI.structured.background}}</view>
+      </view>
+      <view class="ai-section" wx:if="{{AI.structured.techniques && AI.structured.techniques.length}}">
+        <view class="ai-section-title">艺术手法</view>
+        <view class="ai-tags">
+          <text wx:for="{{AI.structured.techniques}}" wx:key="*this" class="ai-tag spring-btn">{{item}}</text>
         </view>
-        <view class="ai-section">
-          <view class="ai-section-title">情感</view>
-          <view class="ai-section-text">{{AI.structured.emotion}}</view>
-        </view>
-        <view class="ai-section">
-          <view class="ai-section-title">创作背景</view>
-          <view class="ai-section-text">{{AI.structured.background}}</view>
-        </view>
-        <view class="ai-section" wx:if="{{AI.structured.techniques && AI.structured.techniques.length}}">
-          <view class="ai-section-title">艺术手法</view>
-          <view class="ai-tags">
-            <text wx:for="{{AI.structured.techniques}}" wx:key="*this" class="ai-tag">{{item}}</text>
-          </view>
-        </view>
-        <view class="ai-section">
-          <view class="ai-section-title">文学史地位</view>
-          <view class="ai-section-text">{{AI.structured.significance}}</view>
-        </view>
-      </block>
-      <text wx:elif="{{AI.content}}" class="ai-raw">{{AI.content}}</text>
+      </view>
+      <view class="ai-section">
+        <view class="ai-section-title">文学史地位</view>
+        <view class="ai-section-text">{{AI.structured.significance}}</view>
+      </view>
     </scroll-view>
+
+    <text wx:elif="{{AI.content}}" class="ai-sheet-body ai-raw">{{AI.content}}</text>
   </view>
 </view>
-

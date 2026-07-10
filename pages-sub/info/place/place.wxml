@@ -5,21 +5,14 @@
   <skeleton rows="2" />
 </view>
 <view class="page" wx:elif="{{place}}">
+
   <!-- 顶部小地图 -->
-  <map
-    id="place-map"
-    class="place-map"
-    longitude="{{mapLongitude}}"
-    latitude="{{mapLatitude}}"
-    scale="8"
-    markers="{{markers}}"
-    enable-zoom="{{false}}"
-    enable-scroll="{{false}}"
-    style="width:100%;height:240rpx;"
-  ></map>
+  <map id="place-map" class="place-map" longitude="{{mapLongitude}}" latitude="{{mapLatitude}}"
+    scale="8" markers="{{markers}}" enable-zoom="{{false}}" enable-scroll="{{false}}"
+    style="width:100%;height:240rpx;"></map>
 
   <!-- 地点信息卡 -->
-  <view class="card place-info">
+  <view class="card place-info spring-card" bindtouchstart="onCardTouch" bindtouchend="onCardTouchEnd">
     <view class="place-name">{{place.name}}</view>
     <view class="place-meta">
       <text class="dynasty-tag">{{place.type}}</text>
@@ -31,18 +24,11 @@
   <!-- 朝代筛选 -->
   <view wx:if="{{dynasties.length}}" class="dynasty-bar">
     <scroll-view scroll-x class="dynasty-scroll" enhanced show-scrollbar="{{false}}">
-      <view
-        class="dynasty-item {{selectedDynasty === '' ? 'active' : ''}}"
-        bindtap="onSelectDynasty"
-        data-dynasty=""
-      >全部</view>
-      <view
-        wx:for="{{dynasties}}"
-        wx:key="*this"
-        class="dynasty-item {{selectedDynasty === item ? 'active' : ''}}"
-        data-dynasty="{{item}}"
-        bindtap="onSelectDynasty"
-      >{{item}} ({{place.dynasty_stats[item]}})</view>
+      <view class="dynasty-item {{selectedDynasty === '' ? 'active' : ''}}"
+        bindtap="onSelectDynasty" data-dynasty="">全部</view>
+      <view wx:for="{{dynasties}}" wx:key="*this"
+        class="dynasty-item {{selectedDynasty === item ? 'active' : ''}} spring-btn"
+        data-dynasty="{{item}}" bindtap="onSelectDynasty">{{item}} ({{place.dynasty_stats[item]}})</view>
     </scroll-view>
   </view>
 
@@ -52,8 +38,11 @@
     <view
       wx:for="{{poems}}"
       wx:key="title"
-      class="card poem-card"
+      class="card poem-card spring-card {{touchedIndex === index ? 'card-pressed' : 'card-enter'}}"
       data-poem="{{item}}"
+      data-index="{{index}}"
+      bindtouchstart="onPoemCardTouch"
+      bindtouchend="onPoemCardEnd"
       bindtap="onTapPoem"
     >
       <view class="poem-title">{{item.title}}</view>
@@ -68,4 +57,3 @@
     <view wx:if="{{!hasMore && poems.length}}" class="empty">— 到底了 —</view>
   </view>
 </view>
-

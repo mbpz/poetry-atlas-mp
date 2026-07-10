@@ -1,8 +1,7 @@
 .page { min-height: 100vh; padding-bottom: 40rpx; }
-
 .place-map { width: 100%; }
 
-.place-info { margin: 24rpx; padding: 32rpx; }
+.place-info { margin: 24rpx; padding: 32rpx; transition: transform 0.12s; }
 .place-name {
   font-size: 44rpx;
   font-weight: 700;
@@ -18,7 +17,6 @@
   line-height: 1.7;
 }
 
-/* 朝代筛选（复用首页样式） */
 .dynasty-bar {
   margin: 0 24rpx 16rpx;
   background: rgba(255, 255, 255, 0.92);
@@ -33,10 +31,11 @@
   font-size: 26rpx;
   color: #5a5a5a;
   border-radius: 30rpx;
+  transition: all 0.15s;
 }
+.dynasty-item:active { transform: scale(0.92); }
 .dynasty-item.active { background: var(--color-primary); color: #fff; }
 
-/* 诗词列表 */
 .poem-section { padding: 0 24rpx; }
 .section-title {
   font-size: 30rpx;
@@ -44,7 +43,11 @@
   margin: 24rpx 0 16rpx;
   color: var(--color-text);
 }
-.poem-card { margin: 16rpx 0; padding: 28rpx 32rpx; }
+
+/* #2 共享元素过渡：卡片依次淡入*/
+.poem-card { margin: 16rpx 0; padding: 28rpx 32rpx; opacity: 0; transform: translateY(20rpx); animation: cardEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+@keyframes cardEnter { to { opacity: 1; transform: translateY(0); } }
+
 .poem-title {
   font-size: 32rpx;
   font-weight: 600;
@@ -63,3 +66,8 @@
   color: #4a4a4a;
   letter-spacing: 0.05em;
 }
+
+/* #3 弹簧交互 */
+.spring-card { transition: transform 0.12s ease, box-shadow 0.12s; box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04); }
+.spring-card:active { transform: scale(0.98); }
+.card-pressed { transform: scale(0.97); box-shadow: 0 1rpx 6rpx rgba(0, 0, 0, 0.06); }
