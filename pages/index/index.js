@@ -171,6 +171,9 @@ Page({
         id: this._nextMarkerId({ name: p.name, cluster: true, placeId: p.provinceId || p.name }),
         longitude: p.longitude,
         latitude: p.latitude,
+        width: 56,
+        height: 56,
+        iconPath: "/images/marker-red.png",
         title: p.name + " (" + (p.poem_count || 0) + "首)",
       }))
     } catch (err) {
@@ -193,7 +196,10 @@ Page({
       id: this._nextMarkerId({ name: p.name, cluster: false, placeId: p._id || '' }),
       longitude: lng,
       latitude: lat,
-      title: p.name + " (" + (p.poem_count || 0) + "首)",
+      width: 36,
+      height: 36,
+      iconPath: "/images/marker-red.png",
+      title: p.name,
       cluster: false,
       placeId: p._id || '',
       poem_count: p.poem_count || 0,
