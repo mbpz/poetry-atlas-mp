@@ -1,44 +1,41 @@
-<!-- TabBar: 墨染扩散 -->
+<!-- TabBar: 悬浮透 明 风 — 4 等分 + 搜索珠 -->
 <view class="tab-bar">
-  <view class="glass-bg"></view>
-
-  <!-- 状态 A: 5 tab 胶囊 + 右侧搜索珠 -->
+  <!-- 状态 A: 主导航 -->
   <view wx:if="{{!searchMode}}" class="tab-nav">
-    <view class="pill-group">
-      <view
-        wx:for="{{tabs}}" wx:key="key"
-        class="pill-btn {{active === item.key ? 'active' : ''}}"
-        data-key="{{item.key}}" bindtap="switchTab" catchtouchstart="noop"
-      >
-        <image src="{{item.ico}}" class="pill-ico" mode="aspectFit"></image>
-        <text class="pill-label">{{item.label}}</text>
-      </view>
+    <view class="tab-item {{active === 'map' ? 'active' : ''}}" data-key="map"     bindtap="switchTab" catchtouchstart="noop">
+      <image src="{{ico.map}}"     class="tab-ico" mode="aspectFit"></image>
     </view>
-
-    <view class="spacer"></view>
-
-    <view class="search-trigger" bindtap="enterSearch" catchtouchstart="noop">
-      <image src="{{searchIco}}" class="search-ico" mode="aspectFit"></image>
+    <view class="tab-item {{active === 'find' ? 'active' : ''}}" data-key="find"    bindtap="switchTab" catchtouchstart="noop">
+      <image src="{{ico.find}}"    class="tab-ico" mode="aspectFit"></image>
+    </view>
+    <view class="tab-item {{active === 'dyn' ? 'active' : ''}}"  data-key="dynasty" bindtap="switchTab" catchtouchstart="noop">
+      <image src="{{ico.dynasty}}" class="tab-ico" mode="aspectFit"></image>
+    </view>
+    <view class="tab-item {{active === 'fav' ? 'active' : ''}}"  data-key="fav"     bindtap="switchTab" catchtouchstart="noop">
+      <image src="{{ico.fav}}"     class="tab-ico" mode="aspectFit"></image>
     </view>
   </view>
 
   <!-- 状态 B: 搜索模式 -->
   <view wx:else class="tab-search">
-    <view class="pill-btn search-back" bindtap="exitSearch" catchtouchstart="noop">
-      <image src="{{homeIco}}" class="pill-ico" mode="aspectFit"></image>
+    <view class="tab-back" bindtap="exitSearch" catchtouchstart="noop">
+      <image src="{{ico.home}}" class="tab-ico" mode="aspectFit"></image>
     </view>
     <view class="search-input-wrap">
-      <input
-        class="search-input"
-        placeholder="搜索 诗词 / 作者 / 地点 ..."
+      <input class="search-input"
+        placeholder="搜索诗词、作者、地点..."
         placeholder-class="search-ph"
         value="{{query}}"
         bindinput="onInput"
         bindconfirm="onConfirm"
         confirm-type="search"
         focus="{{searchMode}}"
-        maxlength="30"
       />
     </view>
   </view>
+</view>
+
+<!-- 右下角浮动搜索珠 -->
+<view wx:if="{{!searchMode}}" class="search-fab" bindtap="enterSearch" catchtouchstart="noop">
+  <image src="{{ico.search}}" class="fab-ico" mode="aspectFit"></image>
 </view>

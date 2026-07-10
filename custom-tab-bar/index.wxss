@@ -1,6 +1,6 @@
 /* ============================================================
-   TabBar — 墨染扩散（Ink Diffusion）
-   宣纸米白 + 朱砂红 + 墨黑 + 青灰
+   TabBar — 悬浮透明 4 等分
+   底部 4 个等宽透明按钮 + 右下浮动搜索珠
    ============================================================ */
 
 .tab-bar {
@@ -8,103 +8,80 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 130rpx;
+  height: 140rpx;
   z-index: 999;
   padding-bottom: env(safe-area-inset-bottom);
-  overflow: hidden;
+  pointer-events: none;     /* 让地图触摸穿透空白区域 */
 }
 
-/* 宣纸底 — 半透 明 + 微 光 晕 */
-.glass-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.7) 0%, transparent 70%),
-    linear-gradient(180deg, #f7f4ed 0%, #f0ebe0 100%);
-  border-top: 1rpx solid rgba(139, 26, 26, 0.07);
-  box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.04);
-}
+.tab-bar > view { pointer-events: auto; }  /* 子元素恢复点击 */
 
-/* ===== 状态 A: 主导航 ===== */
+/* ===== 状态 A: 主导航（4 等分）===== */
 .tab-nav {
   position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  width: 100%;
   height: 100%;
   padding: 0 24rpx;
+  gap: 0;
 }
 
-/* 左侧 5 球组（可滚动）*/
-.pill-group {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  gap: 6rpx;
+.tab-item {
   flex: 1;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.pill-group::-webkit-scrollbar { display: none; }
-
-/* 单个玻璃珠 */
-.pill-btn {
-  flex-shrink: 0;
-  width: 84rpx;
-  height: 80rpx;
-  border-radius: 40rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2rpx;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1rpx solid rgba(255, 255, 255, 0.7);
-  box-shadow:
-    0 2rpx 8rpx rgba(0, 0, 0, 0.04),
-    inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.pill-btn:active { transform: scale(0.88); }
-.pill-btn.active {
-  background: rgba(139, 26, 26, 0.08);
-  border-color: rgba(139, 26, 26, 0.18);
-  box-shadow:
-    0 2rpx 12rpx rgba(139, 26, 26, 0.12),
-    inset 0 1rpx 0 rgba(255, 255, 255, 0.6);
-}
-
-.pill-ico { width: 40rpx; height: 40rpx; }
-.pill-label {
-  font-size: 18rpx;
-  color: #888;
-  line-height: 1;
-  letter-spacing: 0.04em;
-  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  transition: color 0.2s;
-}
-.pill-btn.active .pill-label { color: #8b1a1a; font-weight: 500; }
-
-/* 中间分隔 */
-.spacer { flex: 1; }
-
-/* 右下独立 搜索 朱砂 触发 */
-.search-trigger {
-  width: 100rpx;
-  height: 80rpx;
-  border-radius: 40rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(139, 26, 26, 0.08);
-  border: 1rpx solid rgba(139, 26, 26, 0.15);
-  box-shadow: 0 2rpx 12rpx rgba(139, 26, 26, 0.10);
+  height: 100%;
+  background: transparent;           /* 默认完全透明 */
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+.tab-item:active { transform: scale(0.88); }
+
+/* 选中态：圆形浮动胶囊 + 半透明背景 */
+.tab-item.active {
+  background: rgba(139, 26, 26, 0.10);
+  border-radius: 40rpx;
+  margin: 20rpx 8rpx;
+  height: 80rpx;
+}
+
+.tab-ico {
+  width: 48rpx;
+  height: 48rpx;
+  opacity: 0.5;                   /* 未选中半透明 */
   transition: all 0.2s;
 }
-.search-trigger:active { transform: scale(0.88); }
-.search-ico { width: 44rpx; height: 44rpx; }
+.tab-item.active .tab-ico {
+  opacity: 1;                     /* 选中不透明 */
+  transform: scale(1.1);
+}
+
+/* ===== 右下角浮动搜索珠 ===== */
+.search-fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: calc(160rpx + env(safe-area-inset-bottom));
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: rgba(139, 26, 26, 0.12);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  border: 1rpx solid rgba(139, 26, 26, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 4rpx 20rpx rgba(139, 26, 26, 0.15);
+  transition: all 0.2s;
+}
+.search-fab:active { transform: scale(0.88); }
+.fab-ico {
+  width: 48rpx;
+  height: 48rpx;
+}
 
 /* ===== 状态 B: 搜索模式 ===== */
 .tab-search {
@@ -114,37 +91,39 @@
   height: 100%;
   padding: 0 24rpx;
   gap: 16rpx;
-  animation: inkSpread 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideUpIn 0.3s ease;
 }
-@keyframes inkSpread {
-  from { opacity: 0; transform: translateX(40rpx); }
-  to   { opacity: 1; transform: translateX(0); }
+@keyframes slideUpIn {
+  from { opacity: 0; transform: translateY(20rpx); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.search-back { flex-shrink: 0; }
+.tab-back {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(44, 44, 44, 0.08);
+  transition: all 0.2s;
+}
+.tab-back:active { transform: scale(0.88); }
 
 .search-input-wrap {
   flex: 1;
-  height: 76rpx;
-  border-radius: 38rpx;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1rpx solid rgba(45, 93, 123, 0.15);
+  height: 80rpx;
+  border-radius: 40rpx;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1rpx solid rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   padding: 0 28rpx;
-  box-shadow: inset 0 1rpx 4rpx rgba(0, 0, 0, 0.04);
-  transition: all 0.3s;
-}
-.search-input-wrap:focus-within {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(45, 93, 123, 0.3);
-  box-shadow: 0 0 0 4rpx rgba(45, 93, 123, 0.08);
 }
 .search-input {
   width: 100%;
-  height: 76rpx;
+  height: 80rpx;
   font-size: 28rpx;
   color: #2c2c2c;
-  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
 }
-.search-ph { color: #b0b0b0; }
+.search-ph { color: #aaa; }
