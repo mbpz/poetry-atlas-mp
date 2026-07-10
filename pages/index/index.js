@@ -57,6 +57,12 @@ Page({
     featuredPoem: null,
     featuredPlace: "",
     featuredHidden: false,
+    ico: {
+      heat: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTIgM2MtMyAwLTYgMy02IDcgMCA0IDYgMTAgMTAgMTAgMTBzNi02IDEwLTEwYzAtNC0zLTctNi03em0wIDljLTEuNyAwLTMtMS4zLTMtM3MxLjMtMyAzLTMgMyAxLjMgMyAzLTEuMyAzLTMgM3oiLz48L3N2Zz4=',
+      route: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTIgM2MtNC40IDAtOCAzLjYtOCAwczggMTQgOCAxNCA4LTE0IDgtMTRjMC00LjQtMy42LTgtOC04em0wIDExYTIuNSAyLjUgMCAxIDEgMC01IDIuNSAyLjUgMCAwIDEgMCA1eiIvPjwvc3ZnPg==',
+      profile: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGIxYTFhIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjgiIHI9IjQuNSIvPjxwYXRoIGQ9Ik00IDIyYzAtNSA0LTggOC04czggMyA4IDgiLz48L3N2Zz4=',
+      locate: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTIgM2MtNC40IDAtOCAzLjYtOCAwczggMTQgOCAxNCA4LTE0IDgtMTRjMC00LjQtMy42LTgtOC04em0wIDlhMiAyIDAgMSAxIDAtNCAyIDIgMCAwIDEgMCA0eiIvPjwvc3ZnPg==',
+    },
   },
 
   onLoad() {
@@ -295,6 +301,10 @@ Page({
       },
       fail: () => { wx.showToast({ title: "定位失败，请检查权限", icon: "none" }) },
     })
+  },
+
+  onTapProfile() {
+    wx.navigateTo({ url: '/pages/profile/profile' })
   },
 
   onToggleDynastyBar() {

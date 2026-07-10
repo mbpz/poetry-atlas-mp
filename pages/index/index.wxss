@@ -35,16 +35,25 @@
 .chip:active { transform: scale(0.9); }
 .chip.active { background: var(--color-primary); color: #fff; }
 
-/* ===== 顶部右侧圆形按钮组 ===== */
-.top-right { position: absolute; top: 32rpx; right: 24rpx; display: flex; gap: 16rpx; z-index: 10; }
+/* ===== 顶部右侧 4 个圆形按钮 ===== */
+.top-right {
+  position: absolute; top: 24rpx; right: 24rpx; display: flex; gap: 12rpx; z-index: 10;
+  flex-wrap: wrap; justify-content: flex-end; max-width: 200rpx;
+}
 .circle-btn {
   width: 80rpx; height: 80rpx; border-radius: 50%;
-  background: rgba(255, 255, 255, 0.95); box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.08);
+  background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
   display: flex; align-items: center; justify-content: center;
-  font-size: 36rpx; transition: all 0.15s;
+  transition: all 0.15s;
 }
-.circle-btn:active { transform: scale(0.9); }
-.circle-btn.active { background: #fff0f0; box-shadow: 0 0 0 3rpx rgba(139,26,26,0.2); }
+.circle-btn:active { transform: scale(0.88); }
+.circle-btn.active { background: rgba(139,26,26,0.1); box-shadow: 0 0 0 3rpx rgba(139,26,26,0.2); }
+.btn-ico { width: 40rpx; height: 40rpx; opacity: 0.7; }
+.circle-btn.active .btn-ico { opacity: 1; }
+.avatar-btn { background: rgba(139,26,26,0.08); }
 
 /* ===== #2 今日推荐弹窗（Google Maps 卡片 + Apple Music 浮窗） ===== */
 .featured-card {

@@ -42,16 +42,19 @@
     </scroll-view>
   </view>
 
-  <!-- 顶部右侧功能按钮 -->
+  <!-- 顶部右侧功能按钮（4 个: 热力/路线/头像/定位）-->
   <view class="top-right">
     <view class="circle-btn spring-btn {{heatMode ? 'active' : ''}}" bindtap="onToggleHeat">
-      <text>🔥</text>
+      <image src="{{ico.heat}}" class="btn-ico" mode="aspectFit"></image>
     </view>
     <view class="circle-btn spring-btn" bindtap="onToggleRoutePanel">
-      <text>📍</text>
+      <image src="{{ico.route}}" class="btn-ico" mode="aspectFit"></image>
+    </view>
+    <view class="circle-btn spring-btn avatar-btn" bindtap="onTapProfile">
+      <image src="{{ico.profile}}" class="btn-ico" mode="aspectFit"></image>
     </view>
     <view class="circle-btn spring-btn" bindtap="onLocate">
-      <text>◎</text>
+      <image src="{{ico.locate}}" class="btn-ico" mode="aspectFit"></image>
     </view>
   </view>
 
