@@ -45,19 +45,18 @@ Page({
     markers: [],
     polyline: [],
     loading: true,
-    showDynastyBar: true,
+    showDynastyBar: false,
     hasLocation: false,
-    // M4: 时间轴
     timelineDynasties: [],
     showTimeline: false,
-    // M4: 热力模式
     heatMode: false,
-    // M4: 旅行路线
     routes: TRAVEL_ROUTES,
     activeRouteId: "",
     showRoutePanel: false,
-    // M6: 冷启动引导
     showGuide: false,
+    featuredPoem: null,
+    featuredPlace: "",
+    featuredHidden: false,
   },
 
   onLoad() {
@@ -136,10 +135,26 @@ Page({
 
       this.setData({ markers, loading: false })
       this.updatePolyline()
+      this.loadFeatured(res.data)
     } catch (err) {
       console.error("[index] loadMarkers error:", err)
       this.setData({ loading: false })
     }
+  },
+
+  /** 加载今日推荐（取诗词最多的地点 + 其热门诗词首行）*/
+  async loadFeatured(places) {
+    if (!places || !places.length) return
+    const top = places[0]
+    const hotPoems = top.hot_poems || []
+    if (!hotPoems.length) return
+    const poem = hotPoems[Math.floor(Math.random() * hotPoems.length)]
+    const lines = (poem.content || '').split(/[。？！；\n]/).filter(Boolean)
+    this.setData({
+      featuredPoem: { title: poem.title, author: poem.author, dynasty: poem.dynasty, firstLine: lines[0] || '' },
+      featuredPlace: top.name,
+      featuredHidden: false,
+    })
   },
 
   /** 省份聚合 */
@@ -268,8 +283,18 @@ Page({
     if (place.cluster) {
       this.moveToLocation(lng, lat, this.data.scale + 3)
     } else if (place.placeId) {
-      wx.navigateTo({ url: "/pages/place/place?id=" + place.placeId })
+      wx.navigateTo({ url: "/pages-sub/info/place/place?id=" + place.placeId })
     }
+  },
+
+  // 今日推荐弹窗
+  onFeaturedTap() {
+    if (!this.data.featuredPoem) return
+    getApp().globalData.currentPoem = this.data.featuredPoem
+    wx.navigateTo({ url: '/pages-sub/info/poem/poem' })
+  },
+  onFeaturedHide(e) {
+    this.setData({ featuredHidden: true })
   },
 
   moveToLocation(lng, lat, scale) {

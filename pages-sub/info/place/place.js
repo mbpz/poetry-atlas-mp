@@ -136,7 +136,7 @@ Page({
     if (!poem) return
     getApp().globalData.currentPoem = poem
     getApp().globalData.currentPoemPlace = this.data.place
-    wx.navigateTo({ url: '/pages/poem/poem' })
+    wx.navigateTo({ url: '/pages-sub/info/poem/poem' })
   },
 
   onShareAppMessage() {
