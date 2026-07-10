@@ -1,5 +1,10 @@
 <!-- 诗词详情页 -->
-<view class="page" wx:if="{{!loading}}">
+<view wx:if="{{loading}}" class="page">
+  <skeleton rows="2" />
+  <skeleton rows="4" />
+  <skeleton rows="2" />
+</view>
+<view class="page" wx:elif="{{poem}}">
   <view class="poem-hero card">
     <view class="poem-title-row">
       <text class="poem-title">{{poem.title}}</text>
@@ -99,4 +104,3 @@
   </view>
 </view>
 
-<view wx:if="{{loading}}" class="empty">载入中…</view>

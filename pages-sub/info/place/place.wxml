@@ -1,5 +1,10 @@
 <!-- 地点详情页 -->
-<view class="page" wx:if="{{!loading}}">
+<view wx:if="{{loading}}" class="page">
+  <skeleton rows="2" avatar />
+  <skeleton rows="3" />
+  <skeleton rows="2" />
+</view>
+<view class="page" wx:elif="{{place}}">
   <!-- 顶部小地图 -->
   <map
     id="place-map"
@@ -64,4 +69,3 @@
   </view>
 </view>
 
-<view wx:if="{{loading}}" class="empty">载入中…</view>

@@ -1,15 +1,40 @@
+/* 国际化 TabBar：大图标居中 + 极小文字 + 选中态顶部凸弧 + 填色 */
 .tab-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 110rpx;
-  background: #ffffff;
-  border-top: 1rpx solid #e8e4dc;
+  height: 120rpx;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
   z-index: 999;
   padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -1rpx 0 rgba(0, 0, 0, 0.06);
+}
+
+/* 顶部凸弧 — 仅选中项显示 */
+.tab-arc {
+  position: absolute;
+  top: -16rpx;
+  width: 25%;
+  height: 16rpx;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.tab-arc.show { opacity: 1; }
+.tab-arc::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 16rpx;
+  background: #8b1a1a;
+  border-radius: 0 0 16rpx 16rpx;
 }
 
 .tab-item {
@@ -20,26 +45,26 @@
   justify-content: center;
   height: 100%;
   gap: 4rpx;
+  transition: transform 0.2s;
 }
+.tab-item:active { transform: scale(0.92); }
 
 .tab-icon {
-  font-size: 36rpx;
-  line-height: 1;
-  filter: grayscale(100%);
-  opacity: 0.6;
+  width: 52rpx;
+  height: 52rpx;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tab-item.active .tab-icon {
+  transform: scale(1.15) translateY(-2rpx);
 }
 
 .tab-text {
-  font-size: 22rpx;
-  color: #8a8a8a;
-  line-height: 1.2;
+  font-size: 20rpx;
+  color: #999;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
 }
-
-.tab-item.active .tab-icon {
-  filter: grayscale(0%);
-  opacity: 1;
-}
-
 .tab-item.active .tab-text {
   color: #8b1a1a;
   font-weight: 600;
