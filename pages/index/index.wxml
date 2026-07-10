@@ -28,7 +28,7 @@
   </view>
 
   <!-- 朝代 chips 下拉（弹簧展开） -->
-  <view wx:if="{{showDynastyBar}}" class="dynasty-chips {{showDynastyBar ? 'open' : ''}}">
+  <view wx:if="{{showDynastyBar}}" class="dynasty-chips">
     <scroll-view scroll-x class="chips-scroll" enhanced show-scrollbar="{{false}}">
       <view
         class="chip spring-btn {{selectedDynasty === '' ? 'active' : ''}}"
