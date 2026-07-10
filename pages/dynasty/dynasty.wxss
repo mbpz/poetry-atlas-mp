@@ -1,4 +1,10 @@
-.page { min-height: 100vh; padding: 24rpx 24rpx 60rpx; }
+.page {
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
+}
+.page-inner { padding: 24rpx 24rpx 60rpx; }
+
 .page-desc {
   font-size: 26rpx; color: var(--color-text-secondary);
   text-align: center; padding: 24rpx 0 32rpx;
@@ -7,17 +13,19 @@
 .timeline { position: relative; }
 .timeline-item { display: flex; margin-bottom: 8rpx; }
 .timeline-node {
-  width: 60rpx; display: flex; flex-direction: column; align-items: center;
+  width: 60rpx; display: flex; flex-direction: column; align-items: center; flex-shrink: 0;
   margin-right: 16rpx;
 }
 .node-dot {
   width: 24rpx; height: 24rpx; border-radius: 50%;
   background: var(--color-primary); margin-top: 32rpx;
   box-shadow: 0 0 0 6rpx rgba(139, 26, 26, 0.15);
+  transition: transform 0.2s;
 }
+.timeline-item.active .node-dot { transform: scale(1.3); }
 .node-line { flex: 1; width: 4rpx; background: var(--color-border); margin-top: 8rpx; }
 
-.timeline-content { flex: 1; padding: 28rpx 32rpx; }
+.timeline-content { flex: 1; padding: 28rpx 32rpx; transition: transform 0.12s; }
 .dynasty-header { display: flex; align-items: baseline; gap: 20rpx; flex-wrap: wrap; }
 .dynasty-name { font-size: 36rpx; font-weight: 700; color: var(--color-text); }
 .dynasty-period { font-size: 24rpx; color: var(--color-text-secondary); }
@@ -26,10 +34,26 @@
   background: var(--color-tag-bg); padding: 4rpx 16rpx; border-radius: 20rpx;
 }
 
-.dynasty-poems { margin-top: 20rpx; border-top: 1rpx dashed var(--color-border); padding-top: 16rpx; }
-.dynasty-poem {
-  display: flex; align-items: baseline; justify-content: space-between;
-  padding: 16rpx 0;
+/* 展开的诗词列表 */
+.dynasty-poems {
+  margin-top: 20rpx; border-top: 1rpx dashed var(--color-border); padding-top: 16rpx;
+  animation: fadeIn 0.3s ease;
 }
-.dynasty-poem-title { font-size: 28rpx; color: var(--color-text); }
+@keyframes fadeIn { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000rpx; } }
+
+.dynasty-poem {
+  padding: 20rpx 0; border-bottom: 1rpx solid rgba(0,0,0,0.04);
+}
+.dynasty-poem:active { transform: scale(0.98); }
+.dynasty-poem:last-child { border-bottom: none; }
+.dynasty-poem-title { font-size: 28rpx; color: var(--color-text); margin-bottom: 4rpx; }
 .dynasty-poem-author { font-size: 24rpx; color: var(--color-text-secondary); }
+
+/* 加载提示 */
+.load-more {
+  text-align: center; padding: 24rpx 0; font-size: 24rpx; color: var(--color-primary);
+}
+.list-loading, .list-end { text-align: center; padding: 32rpx 0; color: #aaa; font-size: 24rpx; }
+
+/* 弹簧 */
+.spring-card { transition: transform 0.12s; }

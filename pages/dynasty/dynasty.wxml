@@ -1,42 +1,64 @@
-<!-- 朝代浏览页 -->
-<view class="page" wx:if="{{!loading}}">
-  <view class="page-desc">按朝代浏览诗词分布，点击展开查看热门作品</view>
+<!-- 朝代浏览页 — 下拉刷新 + 滚动加载更多 -->
+<scroll-view
+  class="page"
+  scroll-y
+  enhanced
+  show-scrollbar="{{false}}"
+  refresher-enabled
+  refresher-triggered="{{refreshing}}"
+  bindrefresherrefresh="onRefresh"
+  bindscrolltolower="onLoadMore"
+>
 
-  <view class="timeline">
-    <view
-      wx:for="{{dynasties}}"
-      wx:key="name"
-      class="timeline-item"
-      data-dynasty="{{item.name}}"
-      bindtap="onToggle"
-    >
-      <view class="timeline-node">
-        <view class="node-dot"></view>
-        <view class="node-line"></view>
-      </view>
-      <view class="timeline-content card">
-        <view class="dynasty-header">
-          <view class="dynasty-name">{{item.name}}</view>
-          <view class="dynasty-period">{{item.start_year}} ~ {{item.end_year}}</view>
-          <view class="dynasty-count">{{item.poem_count}} 首</view>
+  <view class="page-inner">
+    <view class="page-desc">按朝代浏览诗词分布，下拉刷新，滚动加载更多</view>
+
+    <view class="timeline">
+      <view
+        wx:for="{{dynasties}}"
+        wx:key="name"
+        class="timeline-item"
+        data-dynasty="{{item.name}}"
+        bindtap="onToggle"
+      >
+        <view class="timeline-node">
+          <view class="node-dot"></view>
+          <view class="node-line"></view>
         </view>
-        <view wx:if="{{expanded === item.name}}" class="dynasty-poems">
-          <view
-            wx:for="{{poemsByDynasty[item.name]}}"
-            wx:for-item="poem"
-            wx:key="title"
-            class="dynasty-poem"
-            data-poem="{{poem}}"
-            bindtap="onTapPoem"
-          >
-            <view class="dynasty-poem-title">{{poem.title}}</view>
-            <view class="dynasty-poem-author">{{poem.author}}</view>
+        <view class="timeline-content card spring-card">
+          <view class="dynasty-header">
+            <view class="dynasty-name">{{item.name}}</view>
+            <view class="dynasty-period">{{item.start_year}} ~ {{item.end_year}}</view>
+            <view class="dynasty-count">{{item.poem_count}} 首</view>
           </view>
-          <view wx:if="{{!poemsByDynasty[item.name]}}" class="empty small">加载中…</view>
+
+          <!-- 展开后显示诗词列表（分页）-->
+          <view wx:if="{{expanded === item.name}}" class="dynasty-poems">
+            <view
+              wx:for="{{poemsByDynasty[item.name]}}"
+              wx:for-item="poem"
+              wx:key="title"
+              class="dynasty-poem spring-card"
+              data-poem="{{item}}"
+              bindtap="onTapPoem"
+            >
+              <view class="dynasty-poem-title">{{poem.title}}</view>
+              <view class="dynasty-poem-author">{{poem.dynasty}} · {{poem.author}}</view>
+            </view>
+
+            <!-- 加载更多 -->
+            <view wx:if="{{loadingMoreDynasty === item.name}}" class="load-more">加载中…</view>
+            <view wx:elif="{{!hasMoreDynasty[item.name] && poemsByDynasty[item.name].length >= pageSize}}" class="load-more" bindtap="onLoadMoreForDynasty" data-dynasty="{{item.name}}">点击加载更多</view>
+          </view>
         </view>
       </view>
     </view>
-  </view>
-</view>
 
-<view wx:if="{{loading}}" class="empty">载入中…</view>
+    <!-- 全局底部加载 -->
+    <view wx:if="{{loadingMore}}" class="list-loading">加载更多朝代…</view>
+    <view wx:if="{{!hasMoreDynasties && dynasties.length > 0}}" class="list-end">— 已显示全部朝代 —</view>
+  </view>
+</scroll-view>
+
+<!-- 全局加载骨架 -->
+<view wx:if="{{loading && !dynasties.length}}" class="empty">载入中…</view>

@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "朝代",
-  "enablePullDownRefresh": false,
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
   "usingComponents": {}
 }
