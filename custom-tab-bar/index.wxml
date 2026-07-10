@@ -1,26 +1,42 @@
-<!-- TabBar: Editorial 文脉风 — Songti SC + 朱砂细线 -->
+<!-- TabBar: Substack 液态玻璃风 -->
 <view class="tab-bar">
-  <!-- 宣纸底 -->
-  <view class="tab-bar-bg"></view>
+  <view class="glass-bg"></view>
 
-  <view class="tab-list">
-    <view
-      wx:for="{{list}}"
-      wx:key="pagePath"
-      class="tab-item {{selected === index ? 'active' : ''}}"
-      data-url="{{item.pagePath}}"
-      data-index="{{index}}"
-      bindtap="switchTab"
-      catchtouchstart="noop"
-    >
-      <!-- 顶部朱砂横线 -->
-      <view class="tab-indicator"></view>
-
-      <!-- 内容：文字 + 图标 -->
-      <text class="tab-label">{{item.label}}</text>
-      <view class="tab-icon">
-        <image src="{{selected === index ? item.iconActive : item.iconNormal}}" mode="aspectFit"></image>
+  <!-- 状态 A: 主导航 — 4 玻璃球左对齐 + 右独立搜索珠 -->
+  <view wx:if="{{!searchMode}}" class="tab-nav">
+    <view class="pill-group">
+      <view class="pill-btn {{active === 'map' ? 'active' : ''}}" data-url="/pages/index/index" data-key="map" bindtap="switchTab">
+        <image src="{{ico.map}}" class="pill-ico" mode="aspectFit"></image>
       </view>
+      <view class="pill-btn {{active === 'dyn' ? 'active' : ''}}" data-url="/pages/dynasty/dynasty" data-key="dyn" bindtap="switchTab">
+        <image src="{{ico.dynasty}}" class="pill-ico" mode="aspectFit"></image>
+      </view>
+      <view class="pill-btn {{active === 'fav' ? 'active' : ''}}" data-url="/pages/favorites/favorites" data-key="fav" bindtap="switchTab">
+        <image src="{{ico.fav}}" class="pill-ico" mode="aspectFit"></image>
+      </view>
+    </view>
+    <view class="spacer"></view>
+    <view class="pill-btn search-trigger pill-right {{active === 'search' ? 'active' : ''}}" bindtap="enterSearch">
+      <image src="{{ico.search}}" class="pill-ico" mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <!-- 状态 B: 搜索模式 — ⌂ + 输入框 -->
+  <view wx:else class="tab-search">
+    <view class="pill-btn search-back" bindtap="goHome">
+      <image src="{{ico.home}}" class="pill-ico" mode="aspectFit"></image>
+    </view>
+    <view class="search-input-wrap">
+      <input
+        class="search-input"
+        placeholder="搜索诗词、作者、地点..."
+        placeholder-class="search-ph"
+        value="{{query}}"
+        bindinput="onInput"
+        bindconfirm="onConfirm"
+        confirm-type="search"
+        focus="{{searchMode}}"
+      />
     </view>
   </view>
 </view>

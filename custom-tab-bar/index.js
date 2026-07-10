@@ -1,45 +1,42 @@
 /**
- * TabBar — Editorial 文脉风（宋版书美学）
- * Songti SC + 朱砂 #8b1a1a + 宣纸 #f5f0e8 + 选中横线
+ * TabBar — Substack 液态玻璃风（iOS 风格）
+ * 状态 A: [🗺][🔍][📜][♡]        [🔎]   (4 玻璃球 + 搜索)
+ * 状态 B: [⌂]  [🔍 input.......]          (返回 + 搜索框)
  */
 const config = require('../config.js')
 
-const TAB_ICONS = {
-  map: {
-    normal: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIyNCIgY3k9IjIwIiByPSIxMiIgb3BhY2l0eT0iMC4xNSIvPjxwYXRoIGQ9Ik0yNCA4QzE4IDggMTMgMTMgMTMgMTljMCA5IDExIDE5IDExIDE5czExLTEwIDExLTE5YzAtNi01LTExLTExLTExeiIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMTkiIHI9IjQiLz48L3N2Zz4=',
-    active: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGIxYTFhIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIyNCIgY3k9IjIwIiByPSIxMiIgb3BhY2l0eT0iMC4xNSIvPjxwYXRoIGQ9Ik0yNCA4QzE4IDggMTMgMTMgMTMgMTljMCA5IDExIDE5IDExIDE5czExLTEwIDExLTE5YzAtNi01LTExLTExLTExeiIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMTkiIHI9IjQiLz48L3N2Zz4=',
-  },
-  search: {
-    normal: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIyMiIgY3k9IjIyIiByPSIxMSIvPjxwYXRoIGQ9Ik0zMCAzMGw3IDciLz48L3N2Zz4=',
-    active: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGIxYTFhIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIyMiIgY3k9IjIyIiByPSIxMSIvPjxwYXRoIGQ9Ik0zMCAzMGw3IDciLz48L3N2Zz4=',
-  },
-  dynasty: {
-    normal: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIxMCIgeT0iOCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjM0IiByeD0iMyIvPjxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMzMiIHkyPSIxNiIvPjxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMzMiIHkyPSIyMiIvPjxsaW5lIHkxPSIxNSIgeTE9IjI4IiB4Mj0iMjgiIHkyPSIyOCIvPjwvc3ZnPg==',
-    active: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGIxYTFhIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIxMCIgeT0iOCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjM0IiByeD0iMyIvPjxsaW5lIHkxPSIxNSIgeTE9IjE2IiB4Mj0iMzMiIHkyPSIxNiIvPjxsaW5lIHkxPSIxNSIgeTE9IjIyIiB4Mj0iMzMiIHkyPSIyMiIvPjxsaW5lIHkxPSIxNSIgeTE9IjI4IiB4Mj0iMjgiIHkyPSIyOCIvPjwvc3ZnPg==',
-  },
-  fav: {
-    normal: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjQgMzhzLTE0LTkuNS0xNC0xOWE4IDggMCAwIDEgMTQtNS4zQTggOCAwIDAgMSAzOCAxOWMwIDkuNS0xNCAxOS0xNCAxOXoiIG9wYWNpdHk9IjAuMTUiLz48cGF0aCBkPSJNMjQgMzhzLTE0LTkuNS0xNC0xOWE4IDggMCAwIDEgMTQtNS4zQTggOCAwIDAgMSAzOCAxOWMwIDkuNS0xNCAxOS0xNCAxOXoiLz48L3N2Zz4=',
-    active: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGIxYTFhIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjQgMzhzLTE0LTkuNS0xNC0xOWE4IDggMCAwIDEgMTQtNS4zQTggOCAwIDAgMSAzOCAxOWMwIDkuNS0xNCAxOS0xNCAxOXoiIG9wYWNpdHk9IjAuMTUiLz48cGF0aCBkPSJNMjQgMzhzLTE0LTkuNS0xNC0xOWE4IDggMCAwIDEgMTQtNS4zQTggOCAwIDAgMSAzOCAxOWMwIDkuNS0xNCAxOS0xNCAxOXoiLz48L3N2Zz4=',
-  },
-  me: {
-    normal: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIyNCIgY3k9IjE3IiByPSI4Ii8+PHBhdGggZD0iTTEwIDQwYzAtOCA2LTE0IDE0LTE0czE0IDYgMTQgMTQiLz48L3N2Zz4=',
-    active: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGIxYTFhIiBzdHJva2Utd2lkdGg9IjEuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIyNCIgY3k9IjE3IiByPSI4Ii8+PHBhdGggZD0iTTEwIDQwYzAtOCA2LTE0IDE0LTE0czE0IDYgMTQgMTQiLz48L3N2Zz4=',
-  },
+// SVG base64 图标
+const ICO = {
+  map: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEwIiByPSI3IiBvcGFjaXR5PSIwLjE1Ii8+PHBhdGggZD0iTTEyIDQgOCA3IDggMTBjMCA1IDQgOSA0IDlzNC00IDQtOWMwLTItMi00LTQtOXoiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEwIiIgcj0iMiIvPjwvc3ZnPg==',
+  dynasty: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cmVjdCB4PSI1IiB5PSI0IiB3aWR0aD0iMTQiIGhlaWdodD0iMTYiIHJ4PSIyIi8+PGxpbmUgeDE9IjguNSIgeTE9IjgiIHgyPSIxNS41IiB5Mj0iOCIvPjxsaW5lIHgxPSI4LjUiIHkxPSIxMiIgeDI9IjE1LjUiIHkyPSIxMiIvPjxsaW5lIHgxPSI4LjUiIHkxPSIxNiIgeTI9IjE2IiB4Mj0iMTMiLz48L3N2Zz4=',
+  fav: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTIgMjAuNXMtNy01LTcuNS05YTMuNSAzLjUgMCAwIDEgNi41LTIuMiAzLjUgMy41IDAgMCAxIDYuNSAyLjJjLS41IDQtNy41IDktNy41IDl6IiBvcGFjaXR5PSIwLjE1Ii8+PHBhdGggZD0iTTEyIDIwLjVzLTctNS03LjUtOWEzLjUgMy41IDAgMCAxIDYuNS0yLjIgMy41IDMuNSAwIDAgMSA2LjUgMi4yYy0uNSA0LTcuNSA5LTcuNSA5eiIvPjwvc3ZnPg==',
+  search: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48Y2lyY2xlIGN4PSIxMSIgY3k9IjExIiByPSI3Ii8+PHBhdGggZD0iTTIwIDIwbC00LjUtNC41Ii8+PC9zdmc+',
+  home: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMmMyYzJjIiBzdHJva2Utd2lkdGg9IjEuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMyAxMmw5LTkgOSA5Ii8+PHBhdGggZD0iTTYgMTBoMTJ2MTBINnoi8+PC9zdmc+',
 }
+
+const SUBTAB = { map:'地图', dynasty:'朝代', fav:'收藏' }
 
 Component({
   data: {
-    selected: 0,
-    list: Object.keys(TAB_ICONS).map((key, i) => ({
-      key,
-      pagePath: ['/pages/index/index', '/pages/search/search', '/pages/dynasty/dynasty', '/pages/favorites/favorites', '/pages/profile/profile'][i],
-      label: ['地图', '发现', '朝代', '收藏', '我的'][i],
-      iconNormal: TAB_ICONS[key].normal,
-      iconActive: TAB_ICONS[key].active,
-    })),
+    searchMode: false,
+    query: '',
+    active: 'map',
+    version: config.VERSION,
+    ico: ICO,
   },
   methods: {
-    switchTab(e) { wx.switchTab({ url: e.currentTarget.dataset.url }) },
-    noop() {},
+    switchTab(e) {
+      const url = e.currentTarget.dataset.url
+      this.setData({ searchMode: false, query: '', active: e.currentTarget.dataset.key })
+      wx.switchTab({ url })
+    },
+    enterSearch() { this.setData({ searchMode: true }); wx.emit && wx.emit('focusSearch') },
+    exitSearch()  { this.setData({ searchMode: false, query: '' }) },
+    onInput(e) { this.setData({ query: e.detail.value }) },
+    onConfirm(e) {
+      this.triggerEvent('search', { query: e.detail.value })
+      wx.navigateTo({ url: '/pages/search/search?kw=' + encodeURIComponent(e.detail.value) })
+    },
+    goHome() { this.setData({ searchMode: false, query: '', active: 'map' }); wx.switchTab({ url: '/pages/index/index' }) },
   },
 })
