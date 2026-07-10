@@ -61,10 +61,32 @@ Page({
         this.setData({ expanded: newDynasties[0].name })
         this.loadPoemsForDynasty(newDynasties[0].name, true)
       }
+
+      // 内容不够填满屏幕 → 自动继续加载下一批
+      if (newDynasties.length === 4) {
+        setTimeout(() => this.fillScreenIfShort(), 300)
+      }
     } catch (err) {
       console.error('[dynasty] loadDynasties error:', err)
       this.setData({ loading: false, refreshing: false })
     }
+  },
+
+  /** 内容不够填满屏幕时自动加载更多 */
+  async fillScreenIfShort() {
+    if (!this.data.hasMoreDynasties || this.data.loadingMore) return
+    const query = wx.createSelectorQuery().in(this)
+    query.select('.page').boundingClientRect()
+    query.select('.page-inner').boundingClientRect()
+    query.exec((res) => {
+      if (!res || !res[0] || !res[1]) return
+      const pageH = res[0].height      // scroll-view 高度
+      const innerH = res[1].height      // 内容高度
+      if (innerH < pageH + 50 && this.data.hasMoreDynasties) {
+        this.setData({ loadingMore: true })
+        this.loadDynasties(false).then(() => this.setData({ loadingMore: false }))
+      }
+    })
   },
 
   /** 切换展开/收起 */

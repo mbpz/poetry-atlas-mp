@@ -5,6 +5,7 @@
   enhanced
   show-scrollbar="{{false}}"
   refresher-enabled
+  lower-threshold="100"
   refresher-triggered="{{refreshing}}"
   bindrefresherrefresh="onRefresh"
   bindscrolltolower="onLoadMore"
@@ -39,7 +40,7 @@
               wx:for-item="poem"
               wx:key="title"
               class="dynasty-poem spring-card"
-              data-poem="{{item}}"
+              data-poem="{{poem}}"
               bindtap="onTapPoem"
             >
               <view class="dynasty-poem-title">{{poem.title}}</view>
