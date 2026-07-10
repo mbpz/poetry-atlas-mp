@@ -1,41 +1,48 @@
-<!-- TabBar: Substack 液态玻璃风 -->
+<!-- TabBar: 墨染扩散 -->
 <view class="tab-bar">
   <view class="glass-bg"></view>
 
-  <!-- 状态 A: 主导航 — 4 玻璃球左对齐 + 右独立搜索珠 -->
+  <!-- 状态 A: 主导航 -->
   <view wx:if="{{!searchMode}}" class="tab-nav">
-    <view class="pill-group">
-      <view class="pill-btn {{active === 'map' ? 'active' : ''}}" data-url="/pages/index/index" data-key="map" bindtap="switchTab">
+    <view class="pill-group {{collapse ? 'collapse' : ''}}">
+      <view class="pill-btn {{active === 'map' ? 'active' : ''}}" data-key="map" bindtap="switchTab" catchtouchstart="noop">
         <image src="{{ico.map}}" class="pill-ico" mode="aspectFit"></image>
+        <text class="pill-label">地图</text>
       </view>
-      <view class="pill-btn {{active === 'dyn' ? 'active' : ''}}" data-url="/pages/dynasty/dynasty" data-key="dyn" bindtap="switchTab">
+      <view class="pill-btn {{active === 'dyn' ? 'active' : ''}}" data-key="dyn" bindtap="switchTab" catchtouchstart="noop">
         <image src="{{ico.dynasty}}" class="pill-ico" mode="aspectFit"></image>
+        <text class="pill-label">朝代</text>
       </view>
-      <view class="pill-btn {{active === 'fav' ? 'active' : ''}}" data-url="/pages/favorites/favorites" data-key="fav" bindtap="switchTab">
+      <view class="pill-btn {{active === 'fav' ? 'active' : ''}}" data-key="fav" bindtap="switchTab" catchtouchstart="noop">
         <image src="{{ico.fav}}" class="pill-ico" mode="aspectFit"></image>
+        <text class="pill-label">收藏</text>
       </view>
     </view>
+
     <view class="spacer"></view>
-    <view class="pill-btn search-trigger pill-right {{active === 'search' ? 'active' : ''}}" bindtap="enterSearch">
-      <image src="{{ico.search}}" class="pill-ico" mode="aspectFit"></image>
+
+    <!-- 右下独立 搜索 朱砂 触发 -->
+    <view class="search-trigger {{active === 'search' ? 'active' : ''}}" bindtap="enterSearch" catchtouchstart="noop">
+      <image src="{{ico.search}}" class="search-ico" mode="aspectFit"></image>
     </view>
   </view>
 
-  <!-- 状态 B: 搜索模式 — ⌂ + 输入框 -->
+  <!-- 状态 B: 搜索模式 — 左侧返回 + 右侧输入框(扩散) -->
   <view wx:else class="tab-search">
-    <view class="pill-btn search-back" bindtap="goHome">
+    <view class="pill-btn search-back" bindtap="exitSearch">
       <image src="{{ico.home}}" class="pill-ico" mode="aspectFit"></image>
     </view>
     <view class="search-input-wrap">
       <input
         class="search-input"
-        placeholder="搜索诗词、作者、地点..."
+        placeholder="搜索 诗词 / 作者 / 地点 ..."
         placeholder-class="search-ph"
         value="{{query}}"
         bindinput="onInput"
         bindconfirm="onConfirm"
         confirm-type="search"
         focus="{{searchMode}}"
+        maxlength="30"
       />
     </view>
   </view>

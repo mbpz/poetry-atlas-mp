@@ -1,7 +1,6 @@
 /* ============================================================
-   TabBar — Substack 液态玻璃风（iOS glassmorphism）
-   状态 A: [🗺][📜][♡][🔎]  ||  🔎(右侧大按钮)
-   状态 B: [⌂] [🔍 search input..........]
+   TabBar — 墨染扩散（Ink Diffusion）
+   宣纸米白 + 朱砂红 + 墨黑 + 青灰
    ============================================================ */
 
 .tab-bar {
@@ -15,15 +14,15 @@
   overflow: hidden;
 }
 
-/* 玻璃底（半透明+模糊）*/
+/* 宣纸底 — 半透 明 + 微 光 晕 */
 .glass-bg {
   position: absolute;
   inset: 0;
-  background: rgba(247, 244, 237, 0.82);
-  backdrop-filter: blur(40rpx) saturate(1.2);
-  -webkit-backdrop-filter: blur(40rpx) saturate(1.2);
-  border-top: 1rpx solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.06);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.7) 0%, transparent 70%),
+    linear-gradient(180deg, #f7f4ed 0%, #f0ebe0 100%);
+  border-top: 1rpx solid rgba(139, 26, 26, 0.07);
+  box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.04);
 }
 
 /* ===== 状态 A: 主导航 ===== */
@@ -35,24 +34,30 @@
   padding: 0 24rpx;
 }
 
-/* 左侧多球组 */
+/* 左侧 3 球组 */
 .pill-group {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 12rpx;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.pill-group.collapse {
+  transform: scale(0.7);
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
-/* 中间分隔（把右侧搜索珠推到右边）*/
-.spacer { flex: 1; }
-
-/* 单个玻璃球 */
+/* 单个玻璃珠 */
 .pill-btn {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 44rpx;
+  width: 92rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2rpx;
   background: rgba(255, 255, 255, 0.55);
   border: 1rpx solid rgba(255, 255, 255, 0.7);
   box-shadow:
@@ -62,19 +67,42 @@
 }
 .pill-btn:active { transform: scale(0.88); }
 .pill-btn.active {
-  background: rgba(139, 26, 26, 0.12);
-  border-color: rgba(139, 26, 26, 0.2);
+  background: rgba(139, 26, 26, 0.08);
+  border-color: rgba(139, 26, 26, 0.18);
   box-shadow:
-    0 2rpx 12rpx rgba(139, 26, 26, 0.15),
+    0 2rpx 12rpx rgba(139, 26, 26, 0.12),
     inset 0 1rpx 0 rgba(255, 255, 255, 0.6);
 }
-.pill-ico { width: 44rpx; height: 44rpx; }
 
-/* 右侧独立搜索珠 */
-.pill-right {
-  background: rgba(139, 26, 26, 0.08);
-  border-color: rgba(139, 26, 26, 0.15);
+.pill-ico { width: 40rpx; height: 40rpx; }
+.pill-label {
+  font-size: 18rpx;
+  color: #888;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  transition: color 0.2s;
 }
+.pill-btn.active .pill-label { color: #8b1a1a; font-weight: 500; }
+
+/* 中间分隔 */
+.spacer { flex: 1; }
+
+/* 右下独立 搜索 朱砂 触发 */
+.search-trigger {
+  width: 100rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 26, 26, 0.08);
+  border: 1rpx solid rgba(139, 26, 26, 0.15);
+  box-shadow: 0 2rpx 12rpx rgba(139, 26, 26, 0.10);
+  transition: all 0.2s;
+}
+.search-trigger:active { transform: scale(0.88); }
+.search-ico { width: 44rpx; height: 44rpx; }
 
 /* ===== 状态 B: 搜索模式 ===== */
 .tab-search {
@@ -84,32 +112,37 @@
   height: 100%;
   padding: 0 24rpx;
   gap: 16rpx;
-  animation: slideIn 0.3s ease;
+  animation: inkSpread 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(20rpx); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes inkSpread {
+  from { opacity: 0; transform: translateX(40rpx); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-.search-back {
-  flex-shrink: 0;
-}
+.search-back { flex-shrink: 0; }
 
 .search-input-wrap {
   flex: 1;
-  height: 80rpx;
-  border-radius: 40rpx;
+  height: 76rpx;
+  border-radius: 38rpx;
   background: rgba(255, 255, 255, 0.7);
-  border: 1rpx solid rgba(0, 0, 0, 0.08);
+  border: 1rpx solid rgba(45, 93, 123, 0.15);
   display: flex;
   align-items: center;
   padding: 0 28rpx;
   box-shadow: inset 0 1rpx 4rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.3s;
+}
+.search-input-wrap:focus-within {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(45, 93, 123, 0.3);
+  box-shadow: 0 0 0 4rpx rgba(45, 93, 123, 0.08);
 }
 .search-input {
   width: 100%;
-  height: 80rpx;
+  height: 76rpx;
   font-size: 28rpx;
   color: #2c2c2c;
+  font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
 }
 .search-ph { color: #b0b0b0; }
