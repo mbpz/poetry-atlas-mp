@@ -1,5 +1,5 @@
 <!-- 地图首页：国际交互（Google Maps + Apple Music + Instagram） -->
-<view class="page-root" bindtouchstart="onPageTouch">
+<view class="page-root">
 
   <!-- 全屏地图 -->
   <map

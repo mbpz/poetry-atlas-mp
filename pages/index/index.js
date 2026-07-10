@@ -114,6 +114,7 @@ Page({
     this.setData({ loading: true })
     this._markerIdCounter = 0
     this._markerMap = {}
+    let placesData = []
     try {
       const { db } = getDB()
       const scale = this.data.scale
@@ -130,12 +131,13 @@ Page({
           db.collection("places").where(cond).orderBy("poem_count", "desc").limit(200).get(),
           { loadingText: "加载地点…" }
         )
-        markers = (res.data || []).map((p) => this.placeToMarker(p, scale))
+        placesData = res.data || []
+        markers = placesData.map((p) => this.placeToMarker(p, scale))
       }
 
       this.setData({ markers, loading: false })
       this.updatePolyline()
-      this.loadFeatured(res.data)
+      this.loadFeatured(placesData)
     } catch (err) {
       console.error("[index] loadMarkers error:", err)
       this.setData({ loading: false })
@@ -169,19 +171,7 @@ Page({
         id: this._nextMarkerId({ name: p.name, cluster: true, placeId: p.provinceId || p.name }),
         longitude: p.longitude,
         latitude: p.latitude,
-        width: this._heatWidth(p.poem_count),
-        height: this._heatWidth(p.poem_count),
-        cluster: true,
-        poem_count: p.poem_count,
-        callout: {
-          content: p.name + " " + (p.poem_count || 0),
-          color: "#fff",
-          fontSize: 22,
-          borderRadius: 20,
-          bgColor: this._heatColor(p.poem_count),
-          padding: 10,
-          display: "ALWAYS",
-        },
+        title: p.name + " (" + (p.poem_count || 0) + "首)",
       }))
     } catch (err) {
       console.error("[index] loadProvinceClusters error:", err)
@@ -189,21 +179,7 @@ Page({
     }
   },
 
-  /** 热力颜色：诗词越多越红 */
-  _heatColor(count) {
-    if (count > 200) return "#8b1a1a"
-    if (count > 100) return "#b85c5c"
-    if (count > 50) return "#d48a6a"
-    return "#e8c090"
-  },
-
-  /** 热力尺寸 */
-  _heatWidth(count) {
-    if (!this.data.heatMode) return 56
-    return Math.min(120, Math.max(40, Math.sqrt(count) * 5))
-  },
-
-  /** 地点文档 → marker（兼容两种 GeoPoint 格式 + 热力大小） */
+  /** 地点文档 → marker */
   placeToMarker(p, scale) {
     let lng = 0, lat = 0
     const loc = p.location
@@ -213,27 +189,14 @@ Page({
         lng = loc.coordinates[0]; lat = loc.coordinates[1]
       }
     }
-    const w = this.data.heatMode ? this._heatWidth(p.poem_count) : 56
     return {
       id: this._nextMarkerId({ name: p.name, cluster: false, placeId: p._id || '' }),
       longitude: lng,
       latitude: lat,
-      width: w,
-      height: w,
+      title: p.name + " (" + (p.poem_count || 0) + "首)",
       cluster: false,
       placeId: p._id || '',
       poem_count: p.poem_count || 0,
-      callout: {
-        content: p.name + " " + (p.poem_count || 0),
-        color: "#2c2c2c",
-        fontSize: 20,
-        borderRadius: 16,
-        bgColor: this.data.heatMode ? this._heatColor(p.poem_count) : "#ffffff",
-        padding: 8,
-        display: "BYCLICK",
-        borderColor: "#8b1a1a",
-        borderWidth: 1,
-      },
     }
   },
 
