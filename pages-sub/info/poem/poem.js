@@ -1,8 +1,8 @@
 /**
  * 诗词详情页 — 交互增强（Spotify抽屉 + 共享元素 + Linear弹簧）
  */
-const { getDB } = require('../../utils/cloudbase.js')
-const { splitPoemLines } = require('../../utils/util.js')
+const { getDB } = require('../../../utils/cloudbase.js')
+const { splitPoemLines } = require('../../../utils/util.js')
 
 Page({
   data: {

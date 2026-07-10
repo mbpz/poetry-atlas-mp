@@ -2,8 +2,8 @@
  * 旅行路线详情页 — 展示主题路线各站 + 配诗
  * 入参: route (路线 id)
  */
-const { getDB } = require("../../utils/cloudbase.js")
-const { splitPoemLines } = require("../../utils/util.js")
+const { getDB } = require("../../../utils/cloudbase.js")
+const { splitPoemLines } = require("../../../utils/util.js")
 
 // 路线详情（静态数据，M5 可改由 AI 生成）
 const ROUTE_DETAILS = {

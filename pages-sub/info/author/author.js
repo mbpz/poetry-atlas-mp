@@ -2,8 +2,8 @@
  * 作者详情页 — 生平 + 轨迹地图 + 代表作
  * 入参: name (作者姓名)
  */
-const { getDB } = require("../../utils/cloudbase.js")
-const { splitPoemLines } = require("../../utils/util.js")
+const { getDB } = require("../../../utils/cloudbase.js")
+const { splitPoemLines } = require("../../../utils/util.js")
 
 Page({
   data: {

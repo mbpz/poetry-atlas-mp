@@ -2,8 +2,8 @@
  * 地点详情页 — 地点信息 + 朝代筛选 + 诗词列表 + 小地图
  * 入参: id (地点 _id)
  */
-const { getDB, wrapPromise } = require('../../utils/cloudbase.js')
-const { splitPoemLines } = require('../../utils/util.js')
+const { getDB, wrapPromise } = require('../../../utils/cloudbase.js')
+const { splitPoemLines } = require('../../../utils/util.js')
 
 Page({
   data: {
