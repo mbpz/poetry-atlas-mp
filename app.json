@@ -29,7 +29,7 @@
     "color": "#8a8a8a",
     "selectedColor": "#8b1a1a",
     "backgroundColor": "#ffffff",
-    "borderStyle": "rgba(0,0,0,0.06)",
+    "borderStyle": "white",
     "list": [
       { "pagePath": "pages/index/index", "text": "地图" },
       { "pagePath": "pages/search/search", "text": "发现" },
