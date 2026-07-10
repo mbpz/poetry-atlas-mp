@@ -30,70 +30,84 @@
     </view>
   </view>
 
-  <!-- 结果 Tab -->
-  <view wx:if="{{searched && (poems.length || authors.length || places.length)}}" class="result-tabs">
-    <view
-      wx:for="{{tabs}}"
-      wx:key="key"
-      class="result-tab {{activeTab === item.key ? 'active' : ''}}"
-      data-key="{{item.key}}"
-      bindtap="onSelectTab"
-    >{{item.label}}</view>
+  <!-- 加载态骨架 -->
+  <view wx:if="{{searched && loading}}" class="result-list">
+    <skeleton rows="4" />
+    <skeleton rows="3" avatar />
   </view>
 
-  <!-- 结果列表 -->
-  <view wx:if="{{searched}}" class="result-list">
-    <!-- 诗词结果 -->
-    <view wx:if="{{(activeTab === 'all' || activeTab === 'poem') && poems.length}}">
-      <view class="group-title">诗词 ({{poems.length}})</view>
-      <view
-        wx:for="{{poems}}"
-        wx:key="_id"
-        class="card result-card"
-        data-poem="{{item}}"
-        bindtap="onTapPoem"
-      >
-        <view class="result-title">{{item.title}}</view>
-        <view class="result-sub">
-          <text class="dynasty-tag">{{item.dynasty}}</text>
-          <text>{{item.author}}</text>
+  <!-- 结果 -->
+  <view wx:if="{{searched && !loading}}">
+    <view wx:if="{{poems.length || authors.length || places.length}}">
+      <!-- 结果 Tab -->
+      <view class="result-tabs">
+        <view
+          wx:for="{{tabs}}"
+          wx:key="key"
+          class="result-tab {{activeTab === item.key ? 'active' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="onSelectTab"
+        >{{item.label}}</view>
+      </view>
+
+      <!-- 诗词结果 -->
+      <view class="result-list">
+        <view wx:if="{{(activeTab === 'all' || activeTab === 'poem') && poems.length}}">
+          <view class="group-title">诗词 ({{poems.length}})</view>
+          <view
+            wx:for="{{poems}}"
+            wx:key="_id"
+            class="card result-card"
+            data-poem="{{item}}"
+            bindtap="onTapPoem"
+          >
+            <view class="result-title">{{item.title}}</view>
+            <view class="result-sub">
+              <text class="dynasty-tag">{{item.dynasty}}</text>
+              <text>{{item.author}}</text>
+            </view>
+            <view wx:if="{{item.content}}" class="result-preview">{{item.content}}</view>
+          </view>
+        </view>
+
+        <!-- 作者结果 -->
+        <view wx:if="{{(activeTab === 'all' || activeTab === 'author') && authors.length}}">
+          <view class="group-title">作者 ({{authors.length}})</view>
+          <view
+            wx:for="{{authors}}"
+            wx:key="name"
+            class="card result-card"
+            data-author="{{item}}"
+            bindtap="onTapAuthor"
+          >
+            <view class="result-title">{{item.name}}</view>
+            <view class="result-sub">{{item.dynasty}} · {{item.poem_count}} 首</view>
+          </view>
+        </view>
+
+        <!-- 地点结果 -->
+        <view wx:if="{{(activeTab === 'all' || activeTab === 'place') && places.length}}">
+          <view class="group-title">地点 ({{places.length}})</view>
+          <view
+            wx:for="{{places}}"
+            wx:key="_id"
+            class="card result-card"
+            data-place="{{item}}"
+            bindtap="onTapPlace"
+          >
+            <view class="result-title">{{item.name}}</view>
+            <view class="result-sub">{{item.type}} · {{item.poem_count}} 首诗词</view>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 作者结果 -->
-    <view wx:if="{{(activeTab === 'all' || activeTab === 'author') && authors.length}}">
-      <view class="group-title">作者 ({{authors.length}})</view>
-      <view
-        wx:for="{{authors}}"
-        wx:key="name"
-        class="card result-card"
-        data-author="{{item}}"
-        bindtap="onTapAuthor"
-      >
-        <view class="result-title">{{item.name}}</view>
-        <view class="result-sub">{{item.dynasty}} · {{item.poem_count}} 首</view>
-      </view>
-    </view>
-
-    <!-- 地点结果 -->
-    <view wx:if="{{(activeTab === 'all' || activeTab === 'place') && places.length}}">
-      <view class="group-title">地点 ({{places.length}})</view>
-      <view
-        wx:for="{{places}}"
-        wx:key="_id"
-        class="card result-card"
-        data-place="{{item}}"
-        bindtap="onTapPlace"
-      >
-        <view class="result-title">{{item.name}}</view>
-        <view class="result-sub">{{item.type}} · {{item.poem_count}} 首诗词</view>
-      </view>
-    </view>
-
-    <view wx:if="{{loading}}" class="empty">搜索中…</view>
-    <view wx:if="{{!loading && !poems.length && !authors.length && !places.length}}" class="empty">
-      未找到「{{keyword}}」相关结果
-    </view>
+    <!-- 空状态 -->
+    <empty-state
+      wx:else
+      icon="🔍"
+      title="未找到「{{keyword}}」"
+      tip="换个词试试，或浏览地图发现更多"
+    />
   </view>
 </view>

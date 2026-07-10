@@ -1,5 +1,12 @@
 <!-- 收藏页 -->
 <view class="page">
+  <!-- 加载态 -->
+  <view wx:if="{{loading}}" class="fav-list">
+    <skeleton rows="3" avatar />
+    <skeleton rows="2" avatar />
+    <skeleton rows="3" avatar />
+  </view>
+
   <view wx:if="{{!loading && favorites.length}}" class="fav-list">
     <view
       wx:for="{{favorites}}"
@@ -20,11 +27,13 @@
     </view>
   </view>
 
-  <view wx:if="{{!loading && !favorites.length}}" class="empty-block">
-    <view class="empty-icon">♡</view>
-    <view class="empty-text">还没有收藏任何诗词</view>
-    <view class="empty-tip">在诗词详情页点击 ♥ 即可收藏</view>
-  </view>
-
-  <view wx:if="{{loading}}" class="empty">载入中…</view>
+  <empty-state
+    wx:if="{{!loading && !favorites.length}}"
+    icon="♡"
+    title="还没有收藏"
+    tip="在诗词详情页点击 ♥ 即可收藏"
+    showBtn
+    btnText="去发现"
+    bind:tap="onExplore"
+  />
 </view>

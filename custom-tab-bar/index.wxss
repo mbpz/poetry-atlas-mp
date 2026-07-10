@@ -3,7 +3,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 100rpx;
+  height: 110rpx;
   background: #ffffff;
   border-top: 1rpx solid #e8e4dc;
   display: flex;
@@ -15,15 +15,29 @@
 .tab-item {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
+  gap: 4rpx;
+}
+
+.tab-icon {
+  font-size: 36rpx;
+  line-height: 1;
+  filter: grayscale(100%);
+  opacity: 0.6;
 }
 
 .tab-text {
-  font-size: 28rpx;
+  font-size: 22rpx;
   color: #8a8a8a;
-  line-height: 1;
+  line-height: 1.2;
+}
+
+.tab-item.active .tab-icon {
+  filter: grayscale(0%);
+  opacity: 1;
 }
 
 .tab-item.active .tab-text {

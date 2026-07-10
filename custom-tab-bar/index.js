@@ -8,11 +8,11 @@ Component({
   data: {
     selected: 0,
     list: [
-      { pagePath: '/pages/index/index', text: '地图' },
-      { pagePath: '/pages/dynasty/dynasty', text: '朝代' },
-      { pagePath: '/pages/search/search', text: '发现' },
-      { pagePath: '/pages/favorites/favorites', text: '收藏' },
-      { pagePath: '/pages/profile/profile', text: '我的' },
+      { pagePath: '/pages/index/index', text: '地图', icon: '🗺' },
+      { pagePath: '/pages/dynasty/dynasty', text: '朝代', icon: '📜' },
+      { pagePath: '/pages/search/search', text: '发现', icon: '🔍' },
+      { pagePath: '/pages/favorites/favorites', text: '收藏', icon: '♡' },
+      { pagePath: '/pages/profile/profile', text: '我的', icon: '诗' },
     ],
     version: config.VERSION,
   },

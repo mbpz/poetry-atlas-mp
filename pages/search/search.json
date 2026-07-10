@@ -1,5 +1,8 @@
 {
   "navigationBarTitleText": "发现",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "skeleton": "components/skeleton/skeleton",
+    "empty-state": "components/empty-state/empty-state"
+  }
 }

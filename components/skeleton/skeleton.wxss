@@ -1,0 +1,32 @@
+.skeleton {
+  display: flex;
+  gap: 20rpx;
+  padding: 16rpx 0;
+}
+.skeleton-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #ece8e0 25%, #f5f2ec 50%, #ece8e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  flex-shrink: 0;
+}
+.skeleton-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  justify-content: center;
+}
+.skeleton-line {
+  height: 28rpx;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #ece8e0 25%, #f5f2ec 50%, #ece8e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

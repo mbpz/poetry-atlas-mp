@@ -75,6 +75,10 @@ Page({
     wx.navigateTo({ url: "/pages/poem/poem?id=" + item.poemId })
   },
 
+  onExplore() {
+    wx.switchTab({ url: "/pages/index/index" })
+  },
+
   async onRemove(e) {
     const item = e.currentTarget.dataset.item
     if (!item) return

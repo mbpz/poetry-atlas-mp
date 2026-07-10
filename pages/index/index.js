@@ -56,10 +56,22 @@ Page({
     routes: TRAVEL_ROUTES,
     activeRouteId: "",
     showRoutePanel: false,
+    // M6: 冷启动引导
+    showGuide: false,
   },
 
   onLoad() {
     this._pendingMapUpdate = null
+    // 首次进入显示冷启动引导
+    const guided = wx.getStorageSync("poetry_guided")
+    if (!guided) {
+      this.setData({ showGuide: true })
+    }
+  },
+
+  onGuideClose() {
+    wx.setStorageSync("poetry_guided", true)
+    this.setData({ showGuide: false })
   },
 
   onReady() {

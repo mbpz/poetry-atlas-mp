@@ -43,3 +43,15 @@
 .result-card { margin: 12rpx 0; padding: 28rpx 32rpx; }
 .result-title { font-size: 30rpx; font-weight: 600; margin-bottom: 8rpx; }
 .result-sub { display: flex; align-items: center; gap: 12rpx; font-size: 24rpx; color: var(--color-text-secondary); }
+
+.result-preview {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #888;
+  line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

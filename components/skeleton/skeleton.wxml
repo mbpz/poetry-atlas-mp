@@ -1,0 +1,11 @@
+<view class="skeleton">
+  <view wx:if="{{avatar}}" class="skeleton-avatar"></view>
+  <view class="skeleton-body">
+    <view
+      wx:for="{{rowArr}}"
+      wx:key="*this"
+      class="skeleton-line"
+      style="width: {{index === rowArr.length - 1 ? '60%' : '100%'}}; animation-delay: {{index * 0.15}}s"
+    ></view>
+  </view>
+</view>
