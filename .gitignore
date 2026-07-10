@@ -20,3 +20,4 @@ node_modules/
 .workspace-info.md
 .local/share/opencode/
 # <<< tcb-remote-workspace internal ignore rules <<<
+.cloudbase/container/
