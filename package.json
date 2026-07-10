@@ -1,0 +1,30 @@
+{
+  "name": "poetry-atlas-mp",
+  "version": "0.1.0",
+  "description": "诗词地图小程序 — 在地图上阅读中国，在诗词中穿越历史。参考 mbpz/poetry-atlas 实现的微信小程序版。",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mbpz/poetry-atlas-mp.git"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "migrate": "node scripts/migrate-data.cjs",
+    "seed": "node scripts/seed-native.cjs",
+    "fix-permission": "node scripts/set-favorites-permission.cjs",
+    "mcporter:check": "npx mcporter list | grep cloudbase",
+    "mcporter:auth": "npx mcporter call cloudbase.auth action=status --output json",
+    "cloudbase:info": "npx mcporter call cloudbase.envQuery action=info envId=online-d2gyjoohe58cc4936 --output json",
+    "lint:js": "find pages cloudfunctions utils custom-tab-bar -name '*.js' -exec node --check {} +"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "devDependencies": {
+    "@cloudbase/node-sdk": ">=3.16.0",
+    "miniprogram-ci": "^2.0.0"
+  }
+}
