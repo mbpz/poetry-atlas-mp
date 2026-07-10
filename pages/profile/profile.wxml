@@ -7,14 +7,9 @@
   </view>
 
   <view class="card stats-card">
-    <view class="stat-item" bindtap="onTapFavorites">
+    <view class="stat-item Center" bindtap="onTapFavorites">
       <view class="stat-num">{{favCount}}</view>
-      <view class="stat-label">收藏</view>
-    </view>
-    <view class="stat-divider"></view>
-    <view class="stat-item">
-      <view class="stat-num">—</view>
-      <view class="stat-label">足迹（开发中）</view>
+      <view class="stat-label">诗词收藏</view>
     </view>
   </view>
 
@@ -30,5 +25,5 @@
     </view>
   </view>
 
-  <view class="profile-footer">v{{version}} · 数据驱动 CloudBase</view>
+  <view class="profile-footer">v{{version}} · Powered by CloudBase</view>
 </view>
