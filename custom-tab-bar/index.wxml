@@ -2,35 +2,30 @@
 <view class="tab-bar">
   <view class="glass-bg"></view>
 
-  <!-- 状态 A: 主导航 -->
+  <!-- 状态 A: 5 tab 胶囊 + 右侧搜索珠 -->
   <view wx:if="{{!searchMode}}" class="tab-nav">
-    <view class="pill-group {{collapse ? 'collapse' : ''}}">
-      <view class="pill-btn {{active === 'map' ? 'active' : ''}}" data-key="map" bindtap="switchTab" catchtouchstart="noop">
-        <image src="{{ico.map}}" class="pill-ico" mode="aspectFit"></image>
-        <text class="pill-label">地图</text>
-      </view>
-      <view class="pill-btn {{active === 'dyn' ? 'active' : ''}}" data-key="dyn" bindtap="switchTab" catchtouchstart="noop">
-        <image src="{{ico.dynasty}}" class="pill-ico" mode="aspectFit"></image>
-        <text class="pill-label">朝代</text>
-      </view>
-      <view class="pill-btn {{active === 'fav' ? 'active' : ''}}" data-key="fav" bindtap="switchTab" catchtouchstart="noop">
-        <image src="{{ico.fav}}" class="pill-ico" mode="aspectFit"></image>
-        <text class="pill-label">收藏</text>
+    <view class="pill-group">
+      <view
+        wx:for="{{tabs}}" wx:key="key"
+        class="pill-btn {{active === item.key ? 'active' : ''}}"
+        data-key="{{item.key}}" bindtap="switchTab" catchtouchstart="noop"
+      >
+        <image src="{{item.ico}}" class="pill-ico" mode="aspectFit"></image>
+        <text class="pill-label">{{item.label}}</text>
       </view>
     </view>
 
     <view class="spacer"></view>
 
-    <!-- 右下独立 搜索 朱砂 触发 -->
-    <view class="search-trigger {{active === 'search' ? 'active' : ''}}" bindtap="enterSearch" catchtouchstart="noop">
-      <image src="{{ico.search}}" class="search-ico" mode="aspectFit"></image>
+    <view class="search-trigger" bindtap="enterSearch" catchtouchstart="noop">
+      <image src="{{searchIco}}" class="search-ico" mode="aspectFit"></image>
     </view>
   </view>
 
-  <!-- 状态 B: 搜索模式 — 左侧返回 + 右侧输入框(扩散) -->
+  <!-- 状态 B: 搜索模式 -->
   <view wx:else class="tab-search">
-    <view class="pill-btn search-back" bindtap="exitSearch">
-      <image src="{{ico.home}}" class="pill-ico" mode="aspectFit"></image>
+    <view class="pill-btn search-back" bindtap="exitSearch" catchtouchstart="noop">
+      <image src="{{homeIco}}" class="pill-ico" mode="aspectFit"></image>
     </view>
     <view class="search-input-wrap">
       <input

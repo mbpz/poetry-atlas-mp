@@ -34,23 +34,25 @@
   padding: 0 24rpx;
 }
 
-/* 左侧 3 球组 */
+/* 左侧 5 球组（可滚动）*/
 .pill-group {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-direction: row;
+  gap: 6rpx;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-.pill-group.collapse {
-  transform: scale(0.7);
-  opacity: 0;
-  width: 0;
-  overflow: hidden;
-}
+.pill-group::-webkit-scrollbar { display: none; }
 
 /* 单个玻璃珠 */
 .pill-btn {
-  width: 92rpx;
+  flex-shrink: 0;
+  width: 84rpx;
   height: 80rpx;
   border-radius: 40rpx;
   display: flex;
