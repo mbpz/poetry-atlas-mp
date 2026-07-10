@@ -62,11 +62,19 @@ Page({
 
   onLoad() {
     this._pendingMapUpdate = null
+    this._markerIdCounter = 0
+    this._markerMap = {}
     // 首次进入显示冷启动引导
     const guided = wx.getStorageSync("poetry_guided")
     if (!guided) {
       this.setData({ showGuide: true })
     }
+  },
+
+  _nextMarkerId(placeData) {
+    const id = ++this._markerIdCounter
+    this._markerMap[id] = placeData
+    return id
   },
 
   onGuideClose() {
@@ -105,6 +113,8 @@ Page({
   // ===== 数据加载 =====
   async loadMarkers() {
     this.setData({ loading: true })
+    this._markerIdCounter = 0
+    this._markerMap = {}
     try {
       const { db } = getDB()
       const scale = this.data.scale
@@ -141,7 +151,7 @@ Page({
       })
       const provinces = (res.result && res.result.data) || []
       return provinces.map((p) => ({
-        id: "cluster-" + (p.provinceId || p._id || p.name),
+        id: this._nextMarkerId({ name: p.name, cluster: true, placeId: p.provinceId || p.name }),
         longitude: p.longitude,
         latitude: p.latitude,
         width: this._heatWidth(p.poem_count),
@@ -190,13 +200,13 @@ Page({
     }
     const w = this.data.heatMode ? this._heatWidth(p.poem_count) : 56
     return {
-      id: p._id,
+      id: this._nextMarkerId({ name: p.name, cluster: false, placeId: p._id || '' }),
       longitude: lng,
       latitude: lat,
       width: w,
       height: w,
       cluster: false,
-      placeId: p._id,
+      placeId: p._id || '',
       poem_count: p.poem_count || 0,
       callout: {
         content: p.name + " " + (p.poem_count || 0),
@@ -249,12 +259,16 @@ Page({
   },
 
   onMarkerTap(e) {
+    const place = this._markerMap[e.markerId]
+    if (!place) return
+    // 从 markers 数组拿精确坐标（_markerMap 只存了元信息）
     const marker = this.data.markers.find((m) => m.id === e.markerId)
-    if (!marker) return
-    if (marker.cluster) {
-      this.moveToLocation(marker.longitude, marker.latitude, this.data.scale + 3)
-    } else {
-      wx.navigateTo({ url: "/pages/place/place?id=" + marker.placeId })
+    const lng = marker ? marker.longitude : (e.detail && e.detail.longitude) || 0
+    const lat = marker ? marker.latitude : (e.detail && e.detail.latitude) || 0
+    if (place.cluster) {
+      this.moveToLocation(lng, lat, this.data.scale + 3)
+    } else if (place.placeId) {
+      wx.navigateTo({ url: "/pages/place/place?id=" + place.placeId })
     }
   },
 
