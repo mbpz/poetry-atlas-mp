@@ -135,5 +135,7 @@
     </scroll-view>
 
     <text wx:elif="{{AI.content}}" class="ai-sheet-body ai-raw">{{AI.content}}</text>
+
+    <view wx:else class="ai-sheet-body ai-empty">解读失败，请重试</view>
   </view>
 </view>

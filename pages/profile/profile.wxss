@@ -1,5 +1,5 @@
 /* ===== 我的 — 沉浸水墨 ===== */
-.page { min-height: 100vh; padding: 24rpx 24rpx calc(40rpx + env(safe-area-inset-bottom)); }
+.page { min-height: 100vh; padding: 24rpx 24rpx calc(140rpx + env(safe-area-inset-bottom)); }
 
 .profile-hero { text-align: center; padding: 48rpx 32rpx; }
 .profile-avatar {

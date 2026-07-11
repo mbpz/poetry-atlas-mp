@@ -31,4 +31,8 @@
   </view>
 </view>
 
-<view wx:if="{{loading}}" class="empty">载入中…</view>
+<view wx:if="{{loading}}" class="page">
+  <skeleton rows="2" />
+  <skeleton rows="4" />
+  <skeleton rows="2" />
+</view>

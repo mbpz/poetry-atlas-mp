@@ -86,13 +86,7 @@ Page({
   onTapPoem(e) {
     const item = e.currentTarget.dataset.item
     if (!item) return
-    getApp().globalData.currentPoem = {
-      title: item.title,
-      author: item.author,
-      dynasty: item.dynasty,
-      content: item.content,
-      _id: item.poemId,
-    }
+    // 统一用 ?id= 导航（不再依赖 globalData，避免跨页形状不一致）
     wx.navigateTo({ url: "/pages-sub/info/poem/poem?id=" + item.poemId })
   },
 

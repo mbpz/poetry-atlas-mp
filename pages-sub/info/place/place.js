@@ -4,6 +4,7 @@
  */
 const { getDB, wrapPromise } = require('../../../utils/cloudbase.js')
 const { splitPoemLines } = require('../../../utils/util.js')
+const { locToLngLat } = require('../../../utils/loc.js')
 
 Page({
   data: {
@@ -50,13 +51,7 @@ Page({
         ? Object.keys(place.dynasty_stats).sort()
         : []
 
-      // 兼容两种 GeoPoint 格式
-      let lng = 0, lat = 0
-      const loc = place.location
-      if (loc) {
-        if (typeof loc.longitude === 'number') { lng = loc.longitude; lat = loc.latitude }
-        else if (loc.coordinates) { lng = loc.coordinates[0]; lat = loc.coordinates[1] }
-      }
+      const { longitude: lng, latitude: lat } = locToLngLat(place.location)
 
       this.setData({ place, dynasties, loading: false, mapLongitude: lng, mapLatitude: lat })
 

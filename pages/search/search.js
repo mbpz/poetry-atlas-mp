@@ -77,14 +77,12 @@ Page({
   onTapPoem(e) {
     const poem = e.currentTarget.dataset.poem
     if (!poem) return
-    getApp().globalData.currentPoem = poem
-    wx.navigateTo({ url: "/pages-sub/info/poem/poem" })
+    wx.navigateTo({ url: "/pages-sub/info/poem/poem?id=" + poem._id })
   },
 
   onTapAuthor(e) {
     const author = e.currentTarget.dataset.author
     if (!author) return
-    getApp().globalData.currentAuthor = author
     wx.navigateTo({ url: "/pages-sub/info/author/author?name=" + encodeURIComponent(author.name) })
   },
 

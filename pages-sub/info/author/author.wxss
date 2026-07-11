@@ -1,5 +1,5 @@
 /* ===== 作者详情 — 沉浸水墨 ===== */
-.page { min-height: 100vh; padding: 24rpx 24rpx calc(40rpx + env(safe-area-inset-bottom)); }
+.page { min-height: 100vh; padding: 24rpx 24rpx calc(140rpx + env(safe-area-inset-bottom)); }
 
 .author-hero { padding: 40rpx 36rpx; }
 .author-name { font-size: 50rpx; font-weight: 700; margin-bottom: 16rpx; color: var(--paper-text); letter-spacing: 0.08em; }

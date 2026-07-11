@@ -4,6 +4,7 @@
  */
 const { getDB, wrapPromise } = require("../../utils/cloudbase.js")
 const { throttle } = require("../../utils/util.js")
+const { locToLngLat } = require("../../utils/loc.js")
 const config = require("../../config.js")
 
 // 预定义旅行路线（M4 静态数据，M5 可改由 AI 生成）
@@ -61,7 +62,6 @@ Page({
   },
 
   onLoad() {
-    this._pendingMapUpdate = null
     this._markerIdCounter = 0
     this._markerMap = {}
     // 推荐卡"关闭"仅在本次生命周期内保持，避免 loadMarkers 重复触发又把卡弹出来
@@ -167,20 +167,15 @@ Page({
     return (lng1 - lng2) * (lng1 - lng2) + (lat1 - lat2) * (lat1 - lat2)
   },
 
-  /** 加载推荐：取离用户当前位置最近的地点（首按诗数兜底）；若有朝代筛选则尊重筛选 */
+  /** 加载推荐：取离用户当前位置最近的地点（首按诗数兜底）*/
   async loadFeatured(places, center) {
     if (!places || !places.length) return
     let top
     if (center) {
       let best = Infinity
       for (const p of places) {
-        const loc = p.location
-        if (!loc) continue
-        let lng = 0, lat = 0
-        if (typeof loc.longitude === "number") { lng = loc.longitude; lat = loc.latitude }
-        else if (Array.isArray(loc.coordinates) && loc.coordinates.length >= 2) {
-          lng = loc.coordinates[0]; lat = loc.coordinates[1]
-        }
+        const { longitude: lng, latitude: lat } = locToLngLat(p.location)
+        if (!lng && !lat) continue
         const d = this._dist2(center.longitude, center.latitude, lng, lat)
         if (d < best) { best = d; top = p }
       }
@@ -246,14 +241,7 @@ Page({
 
   /** 地点文档 → marker */
   placeToMarker(p, scale) {
-    let lng = 0, lat = 0
-    const loc = p.location
-    if (loc) {
-      if (typeof loc.longitude === "number") { lng = loc.longitude; lat = loc.latitude }
-      else if (Array.isArray(loc.coordinates) && loc.coordinates.length >= 2) {
-        lng = loc.coordinates[0]; lat = loc.coordinates[1]
-      }
-    }
+    const { longitude: lng, latitude: lat } = locToLngLat(p.location)
     const markerImg = this._getMarkerIconByType(p.type)
     return {
       id: this._nextMarkerId({ name: p.name, cluster: false, placeId: p._id || '' }),

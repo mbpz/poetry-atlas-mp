@@ -97,6 +97,7 @@ Page({
   onTapPoem(e) {
     const day = e.currentTarget.dataset.day
     if (!day) return
+    // 旅行页诗句无 _id，用 globalData 传递一首合成的诗词对象
     getApp().globalData.currentPoem = {
       title: day.poemTitle,
       author: day.poemAuthor,

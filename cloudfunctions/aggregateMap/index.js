@@ -7,6 +7,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const db = cloud.database()
 const _ = db.command
+const { locToLngLat } = require('./loc.js')
 
 const PROVINCE_CENTERS = {
   '北京': [116.40, 39.90], '天津': [117.20, 39.13], '上海': [121.47, 31.23],
@@ -40,20 +41,7 @@ function detectProvince(lng, lat) {
  *   (b) 扁平对象:        { longitude, latitude }
  */
 function placeToMarker(p) {
-  let lng = 0, lat = 0
-  const loc = p.location
-  if (loc) {
-    if (typeof loc.longitude === 'number' && typeof loc.latitude === 'number') {
-      lng = loc.longitude
-      lat = loc.latitude
-    } else {
-      const coords = loc.coordinates || (loc.geometry && loc.geometry.coordinates)
-      if (Array.isArray(coords) && coords.length >= 2) {
-        lng = coords[0]
-        lat = coords[1]
-      }
-    }
-  }
+  const { longitude: lng, latitude: lat } = locToLngLat(p.location)
   return {
     _id: p._id,
     name: p.name,

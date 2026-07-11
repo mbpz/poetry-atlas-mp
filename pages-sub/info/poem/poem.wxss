@@ -171,6 +171,7 @@
 .ai-tag { padding: 6rpx 20rpx; background: var(--ink-surface-2); color: var(--gold); border-radius: 20rpx; font-size: 24rpx; border: 1rpx solid var(--ink-line); }
 
 .ai-raw { font-size: 28rpx; line-height: 1.9; color: var(--paper-text-2); white-space: pre-wrap; }
+.ai-empty { display: flex; align-items: center; justify-content: center; height: 200rpx; color: var(--paper-text-2); font-size: 26rpx; }
 
 .spring-card { transition: transform 0.12s ease; }
 .spring-card:active { transform: scale(0.985); }

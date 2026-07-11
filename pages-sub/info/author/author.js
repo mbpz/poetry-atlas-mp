@@ -10,8 +10,6 @@ Page({
     author: null,
     poems: [],
     loading: true,
-    mapMarkers: [],
-    mapPolyline: [],
   },
 
   onLoad(options) {
@@ -65,8 +63,7 @@ Page({
   onTapPoem(e) {
     const poem = e.currentTarget.dataset.poem
     if (!poem) return
-    getApp().globalData.currentPoem = poem
-    wx.navigateTo({ url: "/pages-sub/info/poem/poem" })
+    wx.navigateTo({ url: "/pages-sub/info/poem/poem?id=" + poem._id })
   },
 
   onShareAppMessage() {

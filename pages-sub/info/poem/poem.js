@@ -23,7 +23,7 @@ Page({
       const poem = getApp().globalData.currentPoem
       if (!poem) {
         wx.showToast({ title: '请先选择一首诗', icon: 'none' })
-        setTimeout(() => wx.navigateBack(), 1000)
+        this._backTimer = setTimeout(() => wx.navigateBack(), 1000)
         return
       }
       this.poemId = poem._id || ''
@@ -33,6 +33,7 @@ Page({
 
   onUnload() {
     getApp().globalData.currentPoem = null
+    if (this._backTimer) clearTimeout(this._backTimer)
   },
 
   async loadPoemById(id) {

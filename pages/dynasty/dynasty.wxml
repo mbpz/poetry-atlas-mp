@@ -57,4 +57,8 @@
   </view>
 </scroll-view>
 
-<view wx:if="{{loading && !dynasties.length}}" class="empty">载入中…</view>
+<view wx:if="{{loading && !dynasties.length}}" class="page-inner">
+  <skeleton rows="3" />
+  <skeleton rows="2" />
+  <skeleton rows="3" />
+</view>

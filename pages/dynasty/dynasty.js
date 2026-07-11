@@ -65,12 +65,16 @@ Page({
 
       // 内容不够填满屏幕 → 自动继续加载下一批
       if (newDynasties.length === 4) {
-        setTimeout(() => this.fillScreenIfShort(), 300)
+        this._fillTimer = setTimeout(() => this.fillScreenIfShort(), 300)
       }
     } catch (err) {
       console.error('[dynasty] loadDynasties error:', err)
       this.setData({ loading: false, refreshing: false })
     }
+  },
+
+  onUnload() {
+    if (this._fillTimer) clearTimeout(this._fillTimer)
   },
 
   /** 内容不够填满屏幕时自动加载更多 */
