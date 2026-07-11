@@ -125,8 +125,9 @@ Component({
 
     // ===== 播放控制 =====
     onTogglePlay() {
-      if (!this.properties.src) {
-        wx.showToast({ title: '暂无朗诵音频', icon: 'none' })
+      const src = this.properties.src
+      if (!src || src.startsWith('data:')) {
+        wx.showToast({ title: '暂无朗诵', icon: 'none' })
         return
       }
       const ctx = this._ensureAudio()

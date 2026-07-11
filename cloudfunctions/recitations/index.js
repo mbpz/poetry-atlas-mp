@@ -13,10 +13,8 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const COLLECTION = 'recitations'
 
-// 占位静音 MP3（约 1 秒，base64 内嵌，避免 MVP 阶段外链失效）
-// 来源：最小合法 MP3（静音帧），~0.6 KB — 仅用于 UI 占位，不发声
-const PLACEHOLDER_AUDIO_URL =
-  'data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA//////////////////////////////////////////////////////////////////8AAABhTEFNRTMuMTAwA8MAAAAAAAAAABQgJAUHAAABAAACcQCsDXQAAAAAAAD/7kMQAAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq';
+// MVP 阶段：不内嵌占位音频 data URI。微信 InnerAudioContext 无法播放 data: URI，内嵌只会让"朗诵"报错失效。
+// audio_url 置空串，待后续接入真实朗诵音频 / CloudBase Storage 后再填真实 URL。
 
 // 热门诗词 seed（poem_id 对应 seed.json 中的 _id）
 const SEED_POEMS = [
@@ -73,7 +71,7 @@ async function seedRecitations(db) {
     await db.collection(COLLECTION).add({
       data: {
         poem_id: seed.poem_id,
-        audio_url: PLACEHOLDER_AUDIO_URL,
+        audio_url: '',
         duration,
         voice: seed.voice,
         play_count: 0,
