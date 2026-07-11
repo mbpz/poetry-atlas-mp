@@ -1,0 +1,38 @@
+<!-- 我的路线列表页 -->
+<view class="page">
+  <view wx:if="{{routes.length}}" class="route-list">
+    <view
+      wx:for="{{routes}}"
+      wx:key="_id"
+      class="card route-row spring-card"
+      data-id="{{item._id}}"
+      bindtap="onTapRoute"
+      bindlongpress="onLongPressRoute"
+    >
+      <view class="route-row-main">
+        <view class="route-name">{{item.name}}</view>
+        <view wx:if="{{item.theme}}" class="route-theme">「{{item.theme}}」</view>
+        <view wx:if="{{item.description}}" class="route-desc">{{item.description}}</view>
+      </view>
+      <view class="route-row-meta">
+        <view class="route-pts">{{item.points.length}} 站</view>
+        <text class="route-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && !routes.length}}" class="empty-wrap">
+    <empty-state
+      icon="🗺️"
+      title="还没有自建路线"
+      tip="创建一条属于你的诗词之旅"
+      showBtn
+      btnText="立即创建"
+      bind:tap="onCreateTap"
+    />
+  </view>
+
+  <view wx:if="{{loading}}" class="empty-wrap">
+    <view class="list-loading">载入中…</view>
+  </view>
+</view>

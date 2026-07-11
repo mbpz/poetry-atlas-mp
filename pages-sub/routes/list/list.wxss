@@ -1,0 +1,28 @@
+/* ===== 我的路线列表 ===== */
+.page {
+  min-height: 100vh;
+  padding: 24rpx 24rpx calc(140rpx + env(safe-area-inset-bottom));
+  background: var(--ink-bg);
+}
+
+.route-list { display: flex; flex-direction: column; gap: 16rpx; }
+
+.route-row {
+  padding: 28rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.route-row-main { flex: 1; min-width: 0; }
+.route-name { font-size: 32rpx; font-weight: 600; color: var(--paper-text); letter-spacing: 0.06em; margin-bottom: 8rpx; }
+.route-theme { font-size: 26rpx; color: var(--gold); margin-bottom: 8rpx; font-style: italic; }
+.route-desc { font-size: 24rpx; color: var(--paper-text-2); line-height: 1.6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.route-row-meta { display: flex; align-items: center; gap: 12rpx; flex-shrink: 0; }
+.route-pts { font-size: 24rpx; color: var(--cinnabar); background: rgba(158,43,35,0.06); padding: 6rpx 16rpx; border-radius: 20rpx; }
+.route-arrow { font-size: 40rpx; color: var(--gold); }
+
+.empty-wrap { padding-top: 120rpx; }
+
+.list-loading { text-align: center; padding: 60rpx 0; color: var(--paper-text-2); font-size: 26rpx; }
