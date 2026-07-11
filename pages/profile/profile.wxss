@@ -1,7 +1,8 @@
 /* ===== 我的 — 沉浸水墨 ===== */
 .page { min-height: 100vh; padding: 24rpx 24rpx calc(140rpx + env(safe-area-inset-bottom)); }
 
-.profile-hero { text-align: center; padding: 48rpx 32rpx; }
+.profile-hero { text-align: center; padding: 48rpx 32rpx; transition: background 0.15s; }
+.profile-hero:active { background: rgba(158, 43, 35, 0.04); }
 .profile-avatar {
   width: 128rpx; height: 128rpx; border-radius: 50%;
   background: linear-gradient(135deg, var(--cinnabar), var(--gold)); color: #fff;
@@ -25,11 +26,31 @@
 .openid-copy-txt { font-size: 22rpx; color: var(--cinnabar); }
 .openid-copy.disabled { opacity: 0.4; }
 
-.stats-card { padding: 32rpx; margin-top: 16rpx; transition: background 0.15s; }
-.stats-card:active { background: rgba(158, 43, 35, 0.05); }
-.stat-item.Center { text-align: center; }
-.stat-num { font-size: 52rpx; font-weight: 700; color: var(--cinnabar); }
-.stat-label { font-size: 26rpx; color: var(--paper-text-2); margin-top: 8rpx; }
+.stats-card { padding: 32rpx; margin-top: 16rpx; }
+.stat-grid { display: flex; flex-direction: row; }
+.stat-item { flex: 1; text-align: center; padding: 8rpx 0; }
+.stat-item:active { background: rgba(158, 43, 35, 0.04); border-radius: 8rpx; }
+.stat-num { font-size: 40rpx; font-weight: 700; color: var(--cinnabar); }
+.stat-label { font-size: 22rpx; color: var(--paper-text-2); margin-top: 4rpx; letter-spacing: 0.08em; }
+
+/* Hub 入口 */
+.hub-card { margin-top: 16rpx; padding: 28rpx 24rpx; }
+.hub-title { font-size: 26rpx; color: var(--paper-text-2); margin-bottom: 20rpx; letter-spacing: 0.08em; }
+.hub-grid { display: flex; flex-direction: row; gap: 12rpx; }
+.hub-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8rpx; padding: 16rpx 0; border-radius: 12rpx; background: var(--ink-surface-2); border: 1rpx solid var(--ink-line); }
+.hub-item:active { transform: scale(0.95); background: rgba(158, 43, 35, 0.06); }
+.hub-ico { font-size: 40rpx; }
+.hub-txt { font-size: 22rpx; color: var(--paper-text); letter-spacing: 0.05em; }
+
+/* 昵称编辑弹窗 */
+.nick-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(58, 54, 50, 0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+.nick-modal { width: 560rpx; background: var(--ink-surface); border-radius: 24rpx; padding: 40rpx 36rpx; box-shadow: 0 8rpx 40rpx rgba(0,0,0,0.15); }
+.nick-title { font-size: 32rpx; font-weight: 600; text-align: center; margin-bottom: 28rpx; color: var(--paper-text); }
+.nick-input { height: 80rpx; border: 1rpx solid var(--ink-line); border-radius: 12rpx; padding: 0 24rpx; font-size: 28rpx; color: var(--paper-text); background: var(--ink-bg); margin-bottom: 32rpx; }
+.nick-btns { display: flex; gap: 20rpx; }
+.nick-btn { flex: 1; text-align: center; height: 72rpx; line-height: 72rpx; border-radius: 36rpx; font-size: 28rpx; }
+.nick-btn.cancel { background: var(--ink-surface-2); color: var(--paper-text-2); border: 1rpx solid var(--ink-line); }
+.nick-btn.save { background: var(--cinnabar); color: #fff; }
 
 .menu-card { margin-top: 16rpx; padding: 0; overflow: hidden; }
 .menu-item {

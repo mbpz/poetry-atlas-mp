@@ -1,8 +1,8 @@
-<!-- 我的 -->
+<!-- 我的（Hub 入口）-->
 <view class="page">
-  <view class="profile-hero card">
-    <view class="profile-avatar">诗</view>
-    <view class="profile-name">诗词爱好者</view>
+  <view class="profile-hero card" bindtap="onEditNickname">
+    <view class="profile-avatar">{{avatarText}}</view>
+    <view class="profile-name">{{nickname || '点击设置昵称'}}</view>
     <view class="profile-sub">CloudBase 自动身份 · 无需注册</view>
   </view>
 
@@ -16,10 +16,48 @@
     </view>
   </view>
 
+  <!-- 自建数据统计 -->
   <view class="card stats-card">
-    <view class="stat-item Center" bindtap="onTapFavorites">
-      <view class="stat-num">{{favCount}}</view>
-      <view class="stat-label">诗词收藏</view>
+    <view class="stat-grid">
+      <view class="stat-item" bindtap="onTapFavorites">
+        <view class="stat-num">{{favCount}}</view>
+        <view class="stat-label">收藏</view>
+      </view>
+      <view class="stat-item" bindtap="onTapRoute">
+        <view class="stat-num">{{stats.routes_count}}</view>
+        <view class="stat-label">路线</view>
+      </view>
+      <view class="stat-item" bindtap="onTapQuiz">
+        <view class="stat-num">{{stats.quiz_total}}</view>
+        <view class="stat-label">对战</view>
+      </view>
+      <view class="stat-item" bindtap="onTapRecitation">
+        <view class="stat-num">{{stats.recitation_count}}</view>
+        <view class="stat-label">朗诵</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 新方向入口 Hub -->
+  <view class="card hub-card">
+    <view class="hub-title">探索更多</view>
+    <view class="hub-grid">
+      <view class="hub-item" bindtap="onTapRoute">
+        <view class="hub-ico">🗺️</view>
+        <view class="hub-txt">自建路线</view>
+      </view>
+      <view class="hub-item" bindtap="onTapRecitation">
+        <view class="hub-ico">🎧</view>
+        <view class="hub-txt">诗词朗诵</view>
+      </view>
+      <view class="hub-item" bindtap="onTapQuiz">
+        <view class="hub-ico">⚔️</view>
+        <view class="hub-txt">诗词对战</view>
+      </view>
+      <view class="hub-item" bindtap="onTapCommunity">
+        <view class="hub-ico">💬</view>
+        <view class="hub-txt">社区</view>
+      </view>
     </view>
   </view>
 
@@ -36,4 +74,16 @@
   </view>
 
   <view class="profile-footer">v{{version}} · Powered by CloudBase</view>
+</view>
+
+<!-- 昵称编辑弹窗 -->
+<view wx:if="{{showNickModal}}" class="nick-mask" bindtap="onCancelNick">
+  <view class="nick-modal" catchtap>
+    <view class="nick-title">设置昵称</view>
+    <input class="nick-input" placeholder="输入昵称（≤12字）" maxlength="12" value="{{nickname}}" bindinput="onNickInput" focus />
+    <view class="nick-btns">
+      <view class="nick-btn cancel" bindtap="onCancelNick">取消</view>
+      <view class="nick-btn save" bindtap="onSaveNick">保存</view>
+    </view>
+  </view>
 </view>

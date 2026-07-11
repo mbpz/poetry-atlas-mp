@@ -80,6 +80,14 @@ poetry-atlas-mp/
 | `authors` | 作者 | `name`, `dynasty`, `biography`, `route[]`, `poem_count`, `birth_year/death_year` | 公开读 |
 | `dynasties` | 朝代 | `name`, `start_year`, `end_year`, `sort_order`, `poem_count` | 公开读 |
 | `favorites` | 收藏 | `openid`, `poem_id`, `poem_title`, `poem_author`, `created_at` | 仅本人读写 |
+| `users` | 用户档案 | `_id`(=openid), `nickname`, `avatar_url`, `created_at`, `stats`(routes_count/quiz_total/quiz_wins/recitation_count) | 仅本人读写 |
+| `routes` | 自建旅行路线 | `openid`, `name`, `theme`, `description`, `points[]`(地点+配诗), `is_public`, `created_at`, `likes_count` | 公开读/本人写 |
+| `recitations` | 诗词朗诵音频 | `poem_id`, `audio_url`, `duration`, `voice`, `play_count` | 公开读 |
+| `quiz_questions` | 答题题库 | `type`(fill/choice), `poem_id`, `stem`, `options[]`, `answer`, `difficulty`, `explain` | 公开读 |
+| `posts` | 社区动态 | `openid`, `nickname`, `poem_id?`, `content`, `images[]`, `likes_count`, `comments_count`, `created_at` | 公开读/本人写 |
+| `comments` | 评论 | `post_id`, `openid`, `nickname`, `content`, `created_at` | 公开读/本人写 |
+| `likes` | 点赞 | `target_type`, `target_id`, `openid` | 公开读/本人写 |
+| `follows` | 关注 | `follower_openid`, `following_openid` | 公开读/本人写 |
 
 GeoPoint 存储统一用 WGS-84 坐标；代码兼容两种返回格式（GeoJSON `coordinates` / 扁平 `longitude+latitude`）。
 

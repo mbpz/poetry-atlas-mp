@@ -94,11 +94,10 @@ Page({
   },
 
   onShow() {
-    // 全屏地图页隐藏底部 TabBar，避免遮挡地图；右上角工具入口已够用
+    // 同步 TabBar 激活态到地图
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ active: 'map' })
     }
-    try { wx.hideTabBar({ animation: false }) } catch (e) {}
     if (this.mapCtx) this.loadMarkers()
   },
 

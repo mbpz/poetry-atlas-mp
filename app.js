@@ -21,9 +21,10 @@ App({
   login() {
     wx.cloud.callFunction({ name: 'login' })
       .then((res) => {
-        const openid = (res.result && res.result.openid) || ''
-        this.globalData.openid = openid
-        console.log('[app] login ok, openid =', openid ? openid.slice(0, 6) + '…' : '(empty)')
+        const r = res.result || {}
+        this.globalData.openid = r.openid || ''
+        this.globalData.user = r.user || null
+        console.log('[app] login ok, openid =', this.globalData.openid ? this.globalData.openid.slice(0, 6) + '…' : '(empty)')
       })
       .catch((err) => {
         console.warn('[app] login failed:', err && err.errMsg || err)
