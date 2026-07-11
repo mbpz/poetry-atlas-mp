@@ -20,13 +20,12 @@ exports.main = async (event, context) => {
     if (!exists.data) {
       const initUser = {
         _id: openid,
+        _openid: openid,
         nickname: '',
         avatar_url: '',
         created_at: Date.now(),
-        // TODO(recitation_count-sync): recitation_count 初始化=0，当前没有任何写入路径
-        //   维护它（recordPlay 仅累加 recitations 文档的 play_count，不回头写 users.stats）。
-        //   若想启用：recordPlay 内追加 users.doc(openid).update({ 'stats.recitation_count': _.inc(1) })。
-        stats: { routes_count: 0, quiz_total: 0, quiz_wins: 0, recitation_count: 0 },
+        // TODO: recitation_count 占位已清，等 recordPlay 联动累加 users.stats 时再加回。
+        stats: { routes_count: 0, quiz_total: 0, quiz_wins: 0 },
       }
       await db.collection(DB_COLLECTION).doc(openid).set({ data: initUser }).catch(() => null)
       user = initUser

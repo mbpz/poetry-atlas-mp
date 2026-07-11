@@ -35,10 +35,18 @@ Page({
 
   async loadFavorites(refresh) {
     const { db } = getDB()
+    const app = getApp()
+    const openid = app.globalData.openid || ''
+    // 客户端锁定 owner：无 openid 时不查，避免全表或脏数据
+    if (!openid) {
+      this.setData({ hasMore: false, loading: false })
+      return
+    }
     this.setData({ loading: true })
     try {
       // 分页查收藏记录（按时间倒序，skip+limit 避免全表）
       const favRes = await db.collection("favorites")
+        .where({ _openid: openid })
         .orderBy("created_at", "desc")
         .skip(this._favOffset || 0)
         .limit(PAGE_SIZE)
