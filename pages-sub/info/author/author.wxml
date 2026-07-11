@@ -23,7 +23,7 @@
     <view class="section-title">代表作 ({{author.poem_count}} 首收录)</view>
     <view
       wx:for="{{poems}}"
-      wx:key="title"
+      wx:key="_id"
       class="card poem-card"
       data-poem="{{item}}"
       bindtap="onTapPoem"

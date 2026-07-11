@@ -15,8 +15,8 @@
 .search-icon { font-size: 28rpx; margin-right: 12rpx; }
 .search-input { flex: 1; font-size: 28rpx; color: var(--paper-text); }
 .clear-btn {
-  width: 40rpx; height: 40rpx; border-radius: 50%;
-  background: var(--ink-line); color: #fff; text-align: center; line-height: 36rpx;
+  width: 48rpx; height: 48rpx; border-radius: 50%;
+  background: var(--cinnabar); color: #fff; text-align: center; line-height: 44rpx;
   font-size: 28rpx;
 }
 

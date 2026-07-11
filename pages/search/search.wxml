@@ -75,7 +75,7 @@
           <view class="group-title">作者 ({{authors.length}})</view>
           <view
             wx:for="{{authors}}"
-            wx:key="name"
+            wx:key="_id"
             class="card result-card"
             data-author="{{item}}"
             bindtap="onTapAuthor"

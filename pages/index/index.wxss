@@ -101,7 +101,7 @@
 .loading-mask {
   position: absolute; bottom: 200rpx; left: 50%; transform: translateX(-50%);
   background: rgba(58, 54, 50, 0.85); color: #fff;
-  padding: 16rpx 40rpx; border-radius: 30rpx; font-size: 26rpx;
+  padding: 16rpx 40rpx; border-radius: 30rpx; font-size: 26rpx; z-index: 30;
 }
 
 /* ===== 冷启动引导 ===== */

@@ -72,7 +72,7 @@ Page({
       content: item.content,
       _id: item.poemId,
     }
-    wx.navigateTo({ url: "/pages/poem/poem?id=" + item.poemId })
+    wx.navigateTo({ url: "/pages-sub/info/poem/poem?id=" + item.poemId })
   },
 
   onExplore() {

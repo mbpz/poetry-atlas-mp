@@ -78,19 +78,19 @@ Page({
     const poem = e.currentTarget.dataset.poem
     if (!poem) return
     getApp().globalData.currentPoem = poem
-    wx.navigateTo({ url: "/pages/poem/poem" })
+    wx.navigateTo({ url: "/pages-sub/info/poem/poem" })
   },
 
   onTapAuthor(e) {
     const author = e.currentTarget.dataset.author
     if (!author) return
     getApp().globalData.currentAuthor = author
-    wx.navigateTo({ url: "/pages/author/author?name=" + encodeURIComponent(author.name) })
+    wx.navigateTo({ url: "/pages-sub/info/author/author?name=" + encodeURIComponent(author.name) })
   },
 
   onTapPlace(e) {
     const place = e.currentTarget.dataset.place
     if (!place) return
-    wx.navigateTo({ url: "/pages/place/place?id=" + place._id })
+    wx.navigateTo({ url: "/pages-sub/info/place/place?id=" + place._id })
   },
 })

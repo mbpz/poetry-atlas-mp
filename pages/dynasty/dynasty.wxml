@@ -38,7 +38,7 @@
               <view
                 wx:for="{{poemsByDynasty[item.name]}}"
                 wx:for-item="poem"
-                wx:key="title"
+                wx:key="_id"
                 class="dynasty-poem spring-btn"
                 data-poem="{{poem}}"
                 bindtap="onTapPoem"

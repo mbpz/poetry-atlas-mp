@@ -37,7 +37,7 @@
     <view class="section-title">相关诗词</view>
     <view
       wx:for="{{poems}}"
-      wx:key="title"
+      wx:key="_id"
       class="card poem-card spring-card {{touchedIndex === index ? 'card-pressed' : 'card-enter'}}"
       data-poem="{{item}}"
       data-index="{{index}}"

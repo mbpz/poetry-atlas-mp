@@ -66,7 +66,7 @@ Page({
     const poem = e.currentTarget.dataset.poem
     if (!poem) return
     getApp().globalData.currentPoem = poem
-    wx.navigateTo({ url: "/pages/poem/poem" })
+    wx.navigateTo({ url: "/pages-sub/info/poem/poem" })
   },
 
   onShareAppMessage() {

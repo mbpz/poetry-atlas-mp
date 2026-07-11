@@ -103,7 +103,7 @@ Page({
       dynasty: "唐",
       content: day.poemContent,
     }
-    wx.navigateTo({ url: "/pages/poem/poem" })
+    wx.navigateTo({ url: "/pages-sub/info/poem/poem" })
   },
 
   onShareAppMessage() {
