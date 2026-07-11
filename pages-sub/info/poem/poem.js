@@ -123,6 +123,8 @@ Page({
       return
     }
     const { db } = getDB()
+    const app = getApp()
+    const openid = app.globalData.openid || ''
     const wasFav = this.data.isFavorited
     this.setData({ isFavorited: !wasFav })
     try {
@@ -132,7 +134,13 @@ Page({
         wx.showToast({ title: '已取消', icon: 'success' })
       } else {
         await db.collection('favorites').add({
-          data: { poem_id: this.poemId, poem_title: this.data.poem.title, poem_author: this.data.poem.author },
+          data: {
+            _openid: openid,
+            poem_id: this.poemId,
+            poem_title: this.data.poem.title,
+            poem_author: this.data.poem.author,
+            created_at: Date.now(),
+          },
         })
         wx.showToast({ title: '收藏成功', icon: 'success' })
       }
@@ -255,6 +263,10 @@ Page({
   onPlayRecitation(e) {
     const item = e.currentTarget.dataset.item
     if (!item) return
+    // MVP 客户端防连点：5s 内重复点击忽略；生产改用 recitation_plays 幂等表（服务端按 recitation_id+openid 去重）
+    const now = Date.now()
+    if (this._lastPlayAt && now - this._lastPlayAt < 5000) return
+    this._lastPlayAt = now
     this.setData({
       showMiniPlayer: true,
       playerSrc: item.audio_url || '',

@@ -39,6 +39,11 @@ async function feed(openid, query) {
     .orderBy('created_at', 'desc')
     .skip((page - 1) * pageSize)
     .limit(pageSize)
+    .field({
+      _id: true, content: true, images: true,
+      nickname: true, avatar_url: true,
+      likes_count: true, comments_count: true, created_at: true,
+    })
     .get()
   const posts = res.data || []
 
@@ -105,9 +110,14 @@ async function comments(openid, event) {
     .where({ post_id: postId })
     .orderBy('created_at', 'asc')
     .limit(200)
+    // openid 保留于 field 仅供服务端算 owner（下拉后即剥离，不下发）
     .field({ _id: true, post_id: true, openid: true, nickname: true, content: true, created_at: true })
     .get()
-  const data = (res.data || []).map((c) => ({ ...c, owner: c.openid === openid }))
+  // 显式拆构剥离 openid；owner 由服务端 openid 比对，不下发 openid 原文
+  const data = (res.data || []).map((c) => {
+    const { _id, post_id, nickname, content, created_at } = c
+    return { _id, post_id, nickname, content, created_at, owner: c.openid === openid }
+  })
   return { ok: true, data }
 }
 
