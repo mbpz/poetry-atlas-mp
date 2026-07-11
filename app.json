@@ -15,7 +15,8 @@
         "info/author/author",
         "info/travel/travel",
         "routes/create/create",
-        "routes/list/list"
+        "routes/list/list",
+        "quiz/quiz"
       ]
     }
   ],

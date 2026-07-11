@@ -1,0 +1,138 @@
+<!-- 诗词对战 — 单人闯关（宣纸淡墨） -->
+<view class="page">
+
+  <!-- ============ 开始页 ============ -->
+  <view wx:if="{{phase === 'start'}}" class="start-screen">
+    <view class="start-embigger">{{rank.emoji}}</view>
+    <view class="start-rank gold-title">{{rank.name}}</view>
+    <view class="start-sub">当前段位</view>
+
+    <view class="start-stats card">
+      <view class="stat-cell">
+        <view class="stat-num gold-title">{{bestScore}}</view>
+        <view class="stat-label">最高正确率 %</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-cell">
+        <view class="stat-num gold-title">{{quizTotal}}</view>
+        <view class="stat-label">已闯关</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-cell">
+        <view class="stat-num gold-title">{{quizWins}}</view>
+        <view class="stat-label">胜利场次</view>
+      </view>
+    </view>
+
+    <view class="start-rules">
+      <view class="rule-tip">每轮 10 题 · 每题 15 秒</view>
+      <view class="rule-tip">正确率 ≥ 60% 记为胜利，晋升段位</view>
+    </view>
+
+    <view class="btn-gold start-btn" bindtap="onStart">开始挑战</view>
+  </view>
+
+  <!-- ============ 答题页 ============ -->
+  <view wx:elif="{{phase === 'playing' && currentQuestion}}" class="play-screen">
+    <!-- 进度 + 倒计时 -->
+    <view class="play-top">
+      <view class="play-progress">
+        <text class="play-index">{{currentIndex + 1}}</text>
+        <text class="play-total">/ {{questions.length}}</text>
+      </view>
+      <view class="timer">
+        <text class="timer-num {{remaining <= 5 ? 'timer-warn' : ''}}">{{remaining}}</text>
+        <text class="timer-unit">秒</text>
+      </view>
+    </view>
+    <view class="timer-bar">
+      <view class="timer-bar-fill {{remaining <= 5 ? 'timer-warn' : ''}}" style="width: {{remaining * 100 / 15}}%;"></view>
+    </view>
+
+    <!-- 题干（诗句挖空 / 选择题问句） -->
+    <view class="stem card">
+      <view class="stem-type">{{currentQuestion.type === 'fill' ? '填空题' : '选择题'}}</view>
+      <view wx:for="{{currentQuestion.stemLines}}" wx:key="*this" class="stem-line">{{item}}</view>
+    </view>
+
+    <!-- 选择题：4 个选项 -->
+    <view wx:if="{{currentQuestion.type === 'choice'}}" class="options">
+      <view
+        wx:for="{{currentQuestion.options}}"
+        wx:key="*this"
+        class="option card spring-btn {{selectedOption === index ? 'option-picked' : ''}}"
+        data-index="{{index}}"
+        bindtap="onPickOption"
+      >
+        <text class="option-label">{{['A','B','C','D'][index]}}</text>
+        <text class="option-text">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- 填空题：输入 + 提交 -->
+    <view wx:elif="{{currentQuestion.type === 'fill'}}" class="fill">
+      <input
+        class="form-input fill-input"
+        placeholder="填写缺失的字"
+        maxlength="10"
+        value="{{fillValue}}"
+        bindinput="onFillInput"
+        confirm-type="done"
+        bindconfirm="onSubmitFill"
+      />
+      <view class="btn-primary fill-submit {{fillValue ? '' : 'disabled'}}" bindtap="onSubmitFill">确认</view>
+    </view>
+  </view>
+
+  <!-- ============ 结果页 ============ -->
+  <view wx:elif="{{phase === 'result' && result}}" class="result-screen">
+    <!-- 段位晋升动画 -->
+    <view class="rank-badge card">
+      <view class="rank-emoji">{{newRank.emoji}}</view>
+      <view class="rank-name gold-title">{{newRank.name}}</view>
+      <view wx:if="{{isPromoted}}" class="promoted-tag">段位晋升！</view>
+      <view wx:elif="{{result.won}}" class="promoted-tag promoted-ok">闯关成功</view>
+      <view wx:else class="promoted-tag promoted-fail">继续加油</view>
+    </view>
+
+    <!-- 总得分 -->
+    <view class="score-card card">
+      <view class="score-big">
+        <text class="score-num gold-title">{{result.accuracy}}</text>
+        <text class="score-pct">%</text>
+      </view>
+      <view class="score-sub">答对 {{result.correct_count}} / {{result.total}} 题</view>
+    </view>
+
+    <!-- 逐题解析 -->
+    <view class="review-title gold-title">答题解析</view>
+    <view class="review-list">
+      <view
+        wx:for="{{result.results}}"
+        wx:key="question_id"
+        class="review-item card {{item.correct ? 'review-correct' : 'review-wrong'}}"
+      >
+        <view class="review-head">
+          <text class="review-icon">{{item.correct ? '✓' : '✗'}}</text>
+          <text class="review-stem">{{item.stem}}</text>
+        </view>
+        <view class="review-ans">
+          <text class="review-label">你的答案：</text>
+          <text class="{{item.correct ? 'text-ok' : 'text-fail'}}">{{item.user_answer === null || item.user_answer === '' ? '(未作答)' : item.user_answer}}</text>
+        </view>
+        <view wx:if="{{!item.correct}}" class="review-ans">
+          <text class="review-label">正确答案：</text>
+          <text class="text-ok">{{item.answer}}</text>
+        </view>
+        <view wx:if="{{item.explain}}" class="review-explain">{{item.explain}}</view>
+      </view>
+    </view>
+
+    <!-- 操作 -->
+    <view class="result-actions">
+      <view class="btn-gold act-btn" bindtap="onRetry">再来一局</view>
+      <view class="btn-ghost act-btn" bindtap="onBack">返回</view>
+    </view>
+  </view>
+
+</view>
