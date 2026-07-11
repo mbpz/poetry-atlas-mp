@@ -69,7 +69,7 @@ Page({
   onShareAppMessage() {
     return {
       title: this.authorName + " — 诗词地图",
-      path: "/pages/author/author?name=" + encodeURIComponent(this.authorName),
+      path: "/pages-sub/info/author/author?name=" + encodeURIComponent(this.authorName),
     }
   },
 })

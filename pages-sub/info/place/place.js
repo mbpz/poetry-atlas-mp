@@ -157,7 +157,7 @@ Page({
     const name = this.data.place ? this.data.place.name : '诗词地点'
     return {
       title: `${name} — 诗词地图`,
-      path: `/pages/place/place?id=${this.placeId}`,
+      path: `/pages-sub/info/place/place?id=${this.placeId}`,
     }
   },
 })

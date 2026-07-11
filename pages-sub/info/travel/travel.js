@@ -109,6 +109,6 @@ Page({
 
   onShareAppMessage() {
     const name = this.data.route ? this.data.route.name : "诗词旅行"
-    return { title: name + " — 诗词地图", path: "/pages/travel/travel?route=" + (this.options.route || "") }
+    return { title: name + " — 诗词地图", path: "/pages-sub/info/travel/travel?route=" + (this.options.route || "") }
   },
 })
