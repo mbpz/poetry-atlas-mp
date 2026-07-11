@@ -1,11 +1,15 @@
 /**
  * 旅行路线详情页 — 展示主题路线各站 + 配诗
- * 入参: route (路线 id)
+ * 入参: route (路线 id), from=db 表示查自建路线；否则保留静态示例路线
+ *
+ * 加载策略:
+ *   - from=db → 首选云函数 routes.detail，失败回退 ROUTE_DETAILS[route]
+ *   - 否则 → 直接读 ROUTE_DETAILS（静态示例）
  */
 const { getDB } = require("../../../utils/cloudbase.js")
 const { splitPoemLines } = require("../../../utils/util.js")
 
-// 路线详情（静态数据，M5 可改由 AI 生成）
+// 路线详情（静态示例数据，作为回退兜底）
 const ROUTE_DETAILS = {
   libai_yangtze: {
     name: "李白长江壮游行",
@@ -72,11 +76,42 @@ Page({
   data: {
     route: null,
     loading: true,
+    isDynamic: false,
   },
 
   onLoad(options) {
-    const routeId = options.route || "libai_yangtze"
-    const route = ROUTE_DETAILS[routeId]
+    this.routeId = options.route || 'libai_yangtze'
+    this.fromDb = options.from === 'db'
+    if (this.fromDb) {
+      this.loadFromDb()
+    } else {
+      this.loadStatic()
+    }
+  },
+
+  // 优先查 DB，失败回退静态
+  async loadFromDb() {
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'routes',
+        data: { action: 'detail', routeId: this.routeId },
+      })
+      const result = (res && res.result) || {}
+      if (result.ok && result.data) {
+        this.renderDynamic(result.data)
+        return
+      }
+      // 回退静态
+      console.warn('[travel] db detail failed, fallback static:', result.error)
+      this.loadStatic()
+    } catch (err) {
+      console.error('[travel] loadFromDb error:', err)
+      this.loadStatic()
+    }
+  },
+
+  loadStatic() {
+    const route = ROUTE_DETAILS[this.routeId]
     if (route) {
       this.setData({
         route: {
@@ -87,11 +122,36 @@ Page({
           })),
         },
         loading: false,
+        isDynamic: false,
       })
     } else {
       wx.showToast({ title: "路线不存在", icon: "none" })
       this.setData({ loading: false })
     }
+  },
+
+  // 将自建路线结构映射为 UI 需要的 days 展示格式
+  renderDynamic(data) {
+    const points = Array.isArray(data.points) ? data.points : []
+    const days = points.map((p, i) => ({
+      day: i + 1,
+      city: p.name || '',
+      poemTitle: p.poem_title || '',
+      poemAuthor: p.poem_author || '',
+      poemContent: p.poem_content || '',
+      note: p.note || '',
+      lines: splitPoemLines(p.poem_content || ''),
+    }))
+    this.setData({
+      route: {
+        name: data.name,
+        theme: data.theme || '',
+        description: data.description || '',
+        days,
+      },
+      loading: false,
+      isDynamic: true,
+    })
   },
 
   onTapPoem(e) {
@@ -101,7 +161,7 @@ Page({
     getApp().globalData.currentPoem = {
       title: day.poemTitle,
       author: day.poemAuthor,
-      dynasty: "唐",
+      dynasty: "未知",
       content: day.poemContent,
     }
     wx.navigateTo({ url: "/pages-sub/info/poem/poem" })
@@ -109,6 +169,9 @@ Page({
 
   onShareAppMessage() {
     const name = this.data.route ? this.data.route.name : "诗词旅行"
-    return { title: name + " — 诗词地图", path: "/pages-sub/info/travel/travel?route=" + (this.options.route || "") }
+    const path = this.fromDb
+      ? '/pages-sub/info/travel/travel?route=' + this.routeId + '&from=db'
+      : '/pages-sub/info/travel/travel?route=' + this.routeId
+    return { title: name + " — 诗词地图", path }
   },
 })

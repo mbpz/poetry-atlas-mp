@@ -3,7 +3,7 @@
   <view class="travel-hero card">
     <view class="travel-name-row">
       <view class="travel-name">{{route.name}}</view>
-      <view class="travel-badge">示例</view>
+      <view class="travel-badge">{{isDynamic ? '自建' : '示例'}}</view>
     </view>
     <view class="travel-theme">「{{route.theme}}」</view>
     <view class="travel-desc">{{route.description}}</view>
@@ -21,12 +21,12 @@
         <view class="day-badge">D{{item.day}}</view>
         <view class="day-city">{{item.city}}</view>
       </view>
-      <view class="day-poem-title">{{item.poemTitle}}</view>
-      <view class="day-poem-author">{{item.poemAuthor}}</view>
-      <view class="day-poem-lines">
+      <view wx:if="{{item.poemTitle}}" class="day-poem-title">{{item.poemTitle}}</view>
+      <view wx:if="{{item.poemAuthor}}" class="day-poem-author">{{item.poemAuthor}}</view>
+      <view wx:if="{{item.lines.length}}" class="day-poem-lines">
         <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="day-line">{{line}}</view>
       </view>
-      <view class="day-note">{{item.note}}</view>
+      <view wx:if="{{item.note}}" class="day-note">{{item.note}}</view>
     </view>
   </view>
 </view>
