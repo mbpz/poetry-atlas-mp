@@ -48,6 +48,29 @@
     <view class="poem-seal">{{poem.dynasty}}</view>
   </view>
 
+  <!-- 朗诵入口 -->
+  <view class="card recitation-card" wx:if="{{recitationCount > 0}}">
+    <view class="section-title gold-title">朗诵版 · {{recitationCount}} 段</view>
+    <view class="recitation-list">
+      <view
+        wx:for="{{recitations}}"
+        wx:key="_id"
+        class="recitation-item spring-btn"
+        data-item="{{item}}"
+        bindtap="onPlayRecitation"
+      >
+        <view class="recitation-play">▶</view>
+        <view class="recitation-meta">
+          <view class="recitation-voice">{{item.voice === 'female' ? '女声' : '男声'}}朗诵</view>
+          <view class="recitation-dur">{{item.duration}}秒 · {{item.play_count}}次播放</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="card recitation-card empty" wx:elif="{{!loading}}">
+    <view class="recitation-empty-text">朗诵版敬请期待</view>
+  </view>
+
   <!-- 解读区：单一"注释与赏析" + AI 主入口 -->
   <view class="card interpret-card">
     <view class="section-title gold-title">注释与赏析</view>
@@ -139,3 +162,16 @@
     <view wx:else class="ai-sheet-body ai-empty">解读失败，请重试</view>
   </view>
 </view>
+
+<!-- 朗诵播放组件（mini / 全屏） -->
+<audio-player
+  wx:if="{{showMiniPlayer}}"
+  src="{{playerSrc}}"
+  duration="{{playerDuration}}"
+  lines="{{poem.lines}}"
+  title="{{poem.title}}"
+  author="{{poem.author}}"
+  recitation-id="{{playerRecitationId}}"
+  bind:play="onPlayerPlay"
+  bind:close="onClosePlayer"
+/>

@@ -96,6 +96,41 @@
 .interpret-text { font-size: 28rpx; line-height: 2; color: var(--paper-text-2); white-space: pre-wrap; }
 .empty.small { font-size: 26rpx; }
 
+/* ===== 朗诵入口 ===== */
+.recitation-card { margin-top: 24rpx; padding: 24rpx 28rpx; }
+.recitation-card.empty { padding: 32rpx 28rpx; }
+.recitation-empty-text {
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--paper-text-2);
+  letter-spacing: 0.08em;
+}
+.recitation-list { display: flex; flex-direction: column; gap: 8rpx; margin-top: 8rpx; }
+.recitation-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 16rpx;
+  border-radius: 12rpx;
+  background: var(--ink-surface-2);
+  border: 1rpx solid var(--ink-line);
+  transition: transform 0.12s;
+}
+.recitation-play {
+  width: 64rpx; height: 64rpx;
+  border-radius: 50%;
+  background: var(--cinnabar);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+.recitation-meta { flex: 1; min-width: 0; }
+.recitation-voice { font-size: 26rpx; color: var(--paper-text); font-weight: 600; letter-spacing: 0.06em; }
+.recitation-dur { font-size: 22rpx; color: var(--paper-text-2); margin-top: 2rpx; }
+
 /* AI 主入口（hero 卡与解读区之间）*/
 .ai-main-btn {
   margin: 0 24rpx 24rpx; padding: 28rpx 32rpx; border-radius: 20rpx;

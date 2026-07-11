@@ -12,6 +12,13 @@ Page({
     isFavorited: false,
     AI: { show: false, loading: false, content: '', structured: null, dragging: false, sheetHeight: 30 },
     poemMode: 'v', // v=竖排卷轴, h=横排（沉浸主题默认竖排）
+    // 朗诵
+    recitations: [],
+    recitationCount: 0,
+    showMiniPlayer: false,
+    playerSrc: '',
+    playerDuration: 0,
+    playerRecitationId: '',
   },
 
   onLoad(options) {
@@ -34,6 +41,26 @@ Page({
   onUnload() {
     getApp().globalData.currentPoem = null
     if (this._backTimer) clearTimeout(this._backTimer)
+  },
+
+  // 加载朗诵列表（静默失败 — 不影响诗词详情主流程）
+  async loadRecitations() {
+    if (!this.poemId) return
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'recitations',
+        data: { action: 'list', poem_id: this.poemId },
+      })
+      const result = res.result || {}
+      const recitations = (result.ok && result.data) || []
+      this.setData({
+        recitations,
+        recitationCount: recitations.length,
+      })
+    } catch (err) {
+      console.warn('[poem] loadRecitations failed:', err)
+      this.setData({ recitations: [], recitationCount: 0 })
+    }
   },
 
   async loadPoemById(id) {
@@ -68,7 +95,10 @@ Page({
       },
       places, loading: false,
     })
-    if (this.poemId) this.checkFavorite()
+    if (this.poemId) {
+      this.checkFavorite()
+      this.loadRecitations()
+    }
   },
 
   // 横/竖排卷轴切换
@@ -217,6 +247,31 @@ Page({
       wx.hideLoading()
       wx.showToast({ title: '地点详情暂不可用', icon: 'none' })
     })
+  },
+
+  // ===== 朗诵播放 =====
+  onPlayRecitation(e) {
+    const item = e.currentTarget.dataset.item
+    if (!item) return
+    this.setData({
+      showMiniPlayer: true,
+      playerSrc: item.audio_url || '',
+      playerDuration: item.duration || 0,
+      playerRecitationId: item._id || '',
+    })
+  },
+
+  onPlayerPlay(e) {
+    const recitationId = e.detail && e.detail.recitationId
+    if (!recitationId) return
+    wx.cloud.callFunction({
+      name: 'recitations',
+      data: { action: 'recordPlay', recitation_id: recitationId },
+    }).catch((err) => console.warn('[poem] recordPlay failed:', err))
+  },
+
+  onClosePlayer() {
+    this.setData({ showMiniPlayer: false })
   },
 
   onShareAppMessage() {
