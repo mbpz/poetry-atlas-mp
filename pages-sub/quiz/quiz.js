@@ -39,9 +39,10 @@ Page({
     remaining: 15,
     answers: [], // { question_id, user_answer }
     showExplain: false,
-    lastResult: null, // { correct, answer, explain }
+    lastResult: null, // { correct, answer, explain, userAnswer }
     roundStart: 0,
     questionStart: 0,
+    secondsPerQuestion: 15,
     // result
     result: null,
     newRank: null,
@@ -71,6 +72,10 @@ Page({
       clearInterval(this._timer)
       this._timer = null
     }
+    if (this._explainTimer) {
+      clearTimeout(this._explainTimer)
+      this._explainTimer = null
+    }
   },
 
   // ===== start =====
@@ -90,6 +95,7 @@ Page({
           ? splitPoemLines(q.stem)
           : [q.stem],
       }))
+      const secs = r.seconds_per_question || 15
       this.setData({
         phase: 'playing',
         questions,
@@ -100,11 +106,12 @@ Page({
         answers: [],
         showExplain: false,
         lastResult: null,
-        remaining: r.seconds_per_question || 15,
+        secondsPerQuestion: secs,
+        remaining: secs,
         roundStart: Date.now(),
         questionStart: Date.now(),
       })
-      this._startCountdown(r.seconds_per_question || 15)
+      this._startCountdown(secs)
     } catch (err) {
       wx.hideLoading()
       wx.showToast({ title: '网络异常', icon: 'none' })
@@ -127,9 +134,9 @@ Page({
   },
 
   _onTimeout() {
-    // 到时不答算错
+    // 到时不答算错：用 -1 作哨兵，确保不会命中任何有效选项下标
     if (this.data.showExplain) return
-    this._submitAnswer(null)
+    this._submitAnswer(-1)
   },
 
   // ===== playing: choose =====
@@ -155,13 +162,31 @@ Page({
     this._clearTimer()
     const q = this.data.currentQuestion
     const question_id = q._id
-    // 本地先"判分"：需要服务端答案才能判对错 → 改为全部进入"下一题"，结算时统一提交
-    // 为实现每题显示解析的效果，我们在 submit 每题时立即拿到正确答案
+    // 本地立即判分（start 已下发 answer + explain），用于单题解析展示
+    const correct = q.type === 'fill'
+      ? this._matchFill(userAnswer, q.answer)
+      : Number(userAnswer) === Number(q.answer)
     this.setData({
-      showExplain: false,
+      showExplain: true,
+      lastResult: {
+        correct,
+        answer: q.answer,
+        explain: q.explain,
+        userAnswer,
+      },
       answers: this.data.answers.concat({ question_id, userAnswer }),
     })
-    this._advance()
+    // 展示解析约 2 秒后自动进入下一题
+    this._explainTimer = setTimeout(() => {
+      this._advance()
+    }, 2000)
+  },
+
+  _matchFill(userAnswer, correct) {
+    const u = String(userAnswer || '').trim()
+    const c = String(correct || '').trim()
+    if (!u || !c) return false
+    return u.includes(c) || c.includes(u)
   },
 
   _advance() {
@@ -179,7 +204,7 @@ Page({
       lastResult: null,
       questionStart: Date.now(),
     })
-    this._startCountdown(this.data.remaining > 0 ? this.data.secondsPerQuestion || 15 : 15)
+    this._startCountdown(this.data.secondsPerQuestion)
   },
 
   // 下一题

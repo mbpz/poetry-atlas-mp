@@ -140,7 +140,7 @@ function run() {
       stem: stemText,
       options: [],
       answer,
-      difficulty: 1,
+      difficulty: Math.ceil(Math.random() * 3),
       explain: `出自《${poem.title}》，作者${poem.author}`
         + (poem.dynasty ? `（${poem.dynasty}）` : '')
         + (poem.place_name ? `，与「${poem.place_name}」相关` : '') + '。',
@@ -184,7 +184,7 @@ function run() {
         stem,
         options,
         answer,
-        difficulty: 2,
+        difficulty: Math.ceil(Math.random() * 3),
         explain: `《${poem.title}》是${poem.dynasty}${poem.author}的代表作。`,
       })
     } else {
@@ -213,7 +213,7 @@ function run() {
         stem,
         options,
         answer,
-        difficulty: 2,
+        difficulty: Math.ceil(Math.random() * 3),
         explain: `《${poem.title}》是${poem.dynasty}诗人${poem.author || '佚名'}的作品。`,
       })
     }

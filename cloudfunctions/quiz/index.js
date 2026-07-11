@@ -83,7 +83,7 @@ async function initQuiz() {
 async function startRound() {
   // 全量读取 _id 后客户端抽样（库不大，较简单）；需要 answer 字段用于服务端判分但与客户端隔离
   const res = await db.collection(QUESTION_COLLECTION)
-    .field({ _id: true, type: true, stem: true, options: true, poem_id: true, difficulty: true })
+    .field({ _id: true, type: true, stem: true, options: true, poem_id: true, difficulty: true, answer: true, explain: true })
     .limit(1000)
     .get()
   let list = res.data || []
@@ -107,6 +107,8 @@ async function startRound() {
       stem: q.stem,
       options: q.options || [],
       difficulty: q.difficulty || 1,
+      answer: q.answer,
+      explain: q.explain,
     })
   }
   // poem_id 不够去重时放宽去重限制（兼容题库 poem 数量少的情况）
@@ -120,6 +122,8 @@ async function startRound() {
         stem: q.stem,
         options: q.options || [],
         difficulty: q.difficulty || 1,
+        answer: q.answer,
+        explain: q.explain,
       })
     }
   }
