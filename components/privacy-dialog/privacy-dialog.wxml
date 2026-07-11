@@ -1,5 +1,5 @@
 <!-- 隐私协议弹框 — 全屏覆盖，阻断使用 -->
-<view wx:if="{{show}}" class="privacy-mask">
+<view wx:if="{{show}}" class="privacy-mask" catchtap="noop">
   <view class="privacy-card" catchtap="noop">
     <view class="privacy-logo">诗</view>
     <view class="privacy-title">隐私保护承诺</view>

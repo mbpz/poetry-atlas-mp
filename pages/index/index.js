@@ -403,7 +403,10 @@ Page({
         if (res.authSetting['scope.userLocation'] === false) {
           // 曾被拒绝 → 引导用户手动打开设置
           wx.openSetting({
-            success: (s) => { if (s.authSetting['scope.userLocation']) this._doLocate() },
+            success: (s) => {
+              if (s.authSetting['scope.userLocation']) this._doLocate()
+              else wx.showToast({ title: "未开启定位权限", icon: "none" })
+            },
           })
         } else {
           this._doLocate()
