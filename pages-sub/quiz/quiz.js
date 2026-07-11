@@ -1,6 +1,6 @@
 /**
  * 诗词对战 — 单人闯关页
- * 流程: start(段位/开始) → playing(10 题 + 15s 倒计时, 每题显示解析) → result(结算+段位晋升)
+ * 流程: start(段位/开始) → playing(10 题 + 15s 倒计时) → result(结算+集中显示解析)
  * 云函数: quiz (start/submit)
  */
 const { splitPoemLines } = require('../../../utils/util.js')
@@ -38,8 +38,6 @@ Page({
     fillValue: '',
     remaining: 15,
     answers: [], // { question_id, user_answer }
-    showExplain: false,
-    lastResult: null, // { correct, answer, explain, userAnswer }
     roundStart: 0,
     questionStart: 0,
     secondsPerQuestion: 15,
@@ -72,9 +70,9 @@ Page({
       clearInterval(this._timer)
       this._timer = null
     }
-    if (this._explainTimer) {
-      clearTimeout(this._explainTimer)
-      this._explainTimer = null
+    if (this._advanceTimer) {
+      clearTimeout(this._advanceTimer)
+      this._advanceTimer = null
     }
   },
 
@@ -95,6 +93,7 @@ Page({
           ? splitPoemLines(q.stem)
           : [q.stem],
       }))
+      this._locked = false
       const secs = r.seconds_per_question || 15
       this.setData({
         phase: 'playing',
@@ -104,8 +103,6 @@ Page({
         selectedOption: -1,
         fillValue: '',
         answers: [],
-        showExplain: false,
-        lastResult: null,
         secondsPerQuestion: secs,
         remaining: secs,
         roundStart: Date.now(),
@@ -135,13 +132,13 @@ Page({
 
   _onTimeout() {
     // 到时不答算错：用 -1 作哨兵，确保不会命中任何有效选项下标
-    if (this.data.showExplain) return
+    if (this._locked) return
     this._submitAnswer(-1)
   },
 
   // ===== playing: choose =====
   onPickOption(e) {
-    if (this.data.showExplain) return
+    if (this._locked) return
     const idx = Number(e.currentTarget.dataset.index)
     this.setData({ selectedOption: idx })
     this._submitAnswer(idx)
@@ -152,41 +149,25 @@ Page({
   },
 
   onSubmitFill() {
-    if (this.data.showExplain) return
+    if (this._locked) return
     const v = this.data.fillValue
     this._submitAnswer(v)
   },
 
   _submitAnswer(userAnswer) {
-    if (this.data.showExplain) return
+    if (this._locked) return
+    this._locked = true
     this._clearTimer()
     const q = this.data.currentQuestion
     const question_id = q._id
-    // 本地立即判分（start 已下发 answer + explain），用于单题解析展示
-    const correct = q.type === 'fill'
-      ? this._matchFill(userAnswer, q.answer)
-      : Number(userAnswer) === Number(q.answer)
+    // 仅记录作答，判分与解析统一在 submit 后由服务端返回并在 result 阶段集中展示
     this.setData({
-      showExplain: true,
-      lastResult: {
-        correct,
-        answer: q.answer,
-        explain: q.explain,
-        userAnswer,
-      },
       answers: this.data.answers.concat({ question_id, userAnswer }),
     })
-    // 展示解析约 2 秒后自动进入下一题
-    this._explainTimer = setTimeout(() => {
+    // 稍后自动进入下一题（无单题解析，直接推进）
+    this._advanceTimer = setTimeout(() => {
       this._advance()
-    }, 2000)
-  },
-
-  _matchFill(userAnswer, correct) {
-    const u = String(userAnswer || '').trim()
-    const c = String(correct || '').trim()
-    if (!u || !c) return false
-    return u.includes(c) || c.includes(u)
+    }, 800)
   },
 
   _advance() {
@@ -195,13 +176,12 @@ Page({
       this._finishRound()
       return
     }
+    this._locked = false
     this.setData({
       currentIndex: next,
       currentQuestion: this.data.questions[next],
       selectedOption: -1,
       fillValue: '',
-      showExplain: false,
-      lastResult: null,
       questionStart: Date.now(),
     })
     this._startCountdown(this.data.secondsPerQuestion)

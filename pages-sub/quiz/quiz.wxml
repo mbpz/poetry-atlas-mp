@@ -83,24 +83,6 @@
       <view class="btn-primary fill-submit {{fillValue ? '' : 'disabled'}}" bindtap="onSubmitFill">确认</view>
     </view>
 
-    <!-- 单题解析（提交后 / 到时后展示约 2 秒） -->
-    <view wx:if="{{showExplain && lastResult}}" class="explain-overlay">
-      <view class="explain-card card">
-        <view class="explain-result {{lastResult.correct ? 'text-ok' : 'text-fail'}}">
-          <text class="explain-mark">{{lastResult.correct ? '✓' : '✗'}}</text>
-          <text>{{lastResult.correct ? '回答正确' : '回答错误'}}</text>
-        </view>
-        <view wx:if="{{currentQuestion.type === 'choice'}}" class="explain-ans">
-          <text class="review-label">正确答案：</text>
-          <text class="text-ok">{{currentQuestion.options[lastResult.answer]}}</text>
-        </view>
-        <view wx:if="{{currentQuestion.type === 'fill' && !lastResult.correct}}" class="explain-ans">
-          <text class="review-label">正确答案：</text>
-          <text class="text-ok">{{lastResult.answer}}</text>
-        </view>
-        <view wx:if="{{lastResult.explain}}" class="explain-text">{{lastResult.explain}}</view>
-      </view>
-    </view>
   </view>
 
   <!-- ============ 结果页 ============ -->

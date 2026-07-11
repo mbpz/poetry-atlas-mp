@@ -355,36 +355,3 @@
   font-size: 32rpx;
 }
 
-/* ============ 单题解析浮层 ============ */
-.explain-overlay {
-  margin-top: 32rpx;
-}
-.explain-card {
-  padding: 32rpx;
-  text-align: center;
-}
-.explain-result {
-  font-size: 36rpx;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  margin-bottom: 16rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12rpx;
-}
-.explain-mark {
-  font-size: 40rpx;
-}
-.explain-ans {
-  font-size: 28rpx;
-  color: var(--paper-text);
-  margin-bottom: 12rpx;
-  letter-spacing: 0.06em;
-}
-.explain-text {
-  font-size: 24rpx;
-  color: var(--paper-text-2);
-  line-height: 1.8;
-  letter-spacing: 0.04em;
-}

@@ -148,7 +148,7 @@ await col.where(cond).orderBy('poem_count', 'desc').limit(200).get()
 | `analyzePoem` | AI 诗词解析（混元 hy3） | — |
 | `routes` | 自建旅行路线 CRUD | `create / update / delete / list / detail` |
 | `recitations` | 朗诵列表 / 播放计数 / 种子 | `list / recordPlay / seedRecitations` |
-| `quiz` | 诗词对战（题库+判分） | `initQuiz / start / submit` |
+| `quiz` | 诗词对战（题库+判分） | `initQuiz / start / submit`。`start` 仅下发题目 stem/options/type，不下发 answer/explain，避免客户端提前拿到正确答案；answer/explain 只在 `submit` 服务端判分后逐题返回。 |
 | `community` | 社区 Feed / 发布 / 评论 / 点赞 / 关注 | `feed / publish / removePost / comments / comment / toggleLike / follow` |
 | `initData` | 一次性种子迁移 | — |
 
