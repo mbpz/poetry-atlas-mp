@@ -1,89 +1,144 @@
-/* 全局样式 — 诗词地图小程序 */
-/* 设计语言：米白宣纸底 + 墨黑文字 + 朱砂红强调（水墨主题） */
+/* ============================================================
+   全局样式 — 诗词地图小程序
+   设计语言：宣纸淡墨·古籍纸面
+   米白底 + 墨黑字 + 朱砂红强调 + 描金点缀
+   ============================================================ */
 
 page {
-  --color-bg: #f8f6f0;          /* 宣纸米白 */
-  --color-bg-card: #ffffff;
-  --color-text: #2c2c2c;        /* 墨黑 */
-  --color-text-secondary: #8a8a8a;
-  --color-primary: #8b1a1a;     /* 朱砂红 */
-  --color-primary-light: #b85c5c;
-  --color-accent: #2d5d7b;      /* 青灰 */
-  --color-border: #e8e4dc;
-  --color-tag-bg: #f0ebe3;
+  /* 主色 — 宣纸米白（古籍纸面）*/
+  --ink-bg: #f6f1e4;          /* 宣纸米白底 */
+  --ink-surface: #fffef9;     /* 卡片纸面 */
+  --ink-surface-2: #efe7d4;   /* 浮起面（略深）*/
+  --ink-line: #e2d9c6;        /* 墨线分隔 */
 
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft YaHei', serif;
+  /* 主色 — 墨 */
+  --paper-text: #3a3632;      /* 墨黑（主文字）*/
+  --paper-text-2: #9a9386;    /* 淡墨（次文字）*/
+
+  /* 强调色 */
+  --cinnabar: #9e2b23;        /* 朱砂（印章 / 主强调）*/
+  --cinnabar-soft: #c0493f;   /* 浅朱砂（hover）*/
+  --gold: #a88848;            /* 描金（标题 / 装饰）*/
+  --gold-soft: #c9a96a;       /* 浅描金 */
+  --teal: #3d6b86;            /* 青灰辅色 */
+
+  background-color: var(--ink-bg);
+  color: var(--paper-text);
+  /* 书法栈：宋/楷优先，回退 PingFang / serif */
+  font-family: 'Songti SC', 'STSong', 'KaiTi', 'Kaiti SC',
+    'PingFang SC', 'Hiragino Sans GB', serif;
   font-size: 28rpx;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 view, text { box-sizing: border-box; }
 
-/* 通用卡片 */
+/* ===== 卷轴 / 卡片 ===== */
 .card {
-  background: var(--color-bg-card);
-  border-radius: 16rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  background: var(--ink-surface);
+  border-radius: 12rpx;
+  border: 1rpx solid var(--ink-line);
+  box-shadow: 0 2rpx 10rpx rgba(120, 100, 70, 0.06);
+  overflow: hidden;
+}
+/* 带描金左色带的卡片（地点/朝代/路线用） */
+.card-accent {
+  background: var(--ink-surface);
+  border-radius: 12rpx;
+  border: 1rpx solid var(--ink-line);
+  border-left: 6rpx solid var(--gold);
+  box-shadow: 0 2rpx 10rpx rgba(120, 100, 70, 0.06);
   overflow: hidden;
 }
 
-/* 朝代标签 */
+/* ===== 朝代 / 类型标签 — 印章风格 ===== */
 .dynasty-tag {
   display: inline-block;
   padding: 2rpx 14rpx;
-  border-radius: 20rpx;
+  border-radius: 6rpx;
   font-size: 22rpx;
-  background: var(--color-tag-bg);
-  color: var(--color-primary);
-  margin-right: 8rpx;
+  background: rgba(158, 43, 35, 0.08);
+  color: var(--cinnabar);
+  border: 1rpx solid rgba(158, 43, 35, 0.25);
+  letter-spacing: 0.06em;
 }
 
-/* 朱砂红强调按钮 */
+/* ===== 按钮 ===== */
 .btn-primary {
-  background: var(--color-primary);
+  background: var(--cinnabar);
   color: #fff;
   border-radius: 40rpx;
   font-size: 28rpx;
   padding: 16rpx 40rpx;
   border: none;
+  letter-spacing: 0.08em;
 }
 .btn-primary::after { border: none; }
 
-/* 次要按钮 */
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  padding: 16rpx 40rpx;
+  border: none;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.btn-gold::after { border: none; }
+
 .btn-ghost {
   background: transparent;
-  color: var(--color-primary);
-  border: 1rpx solid var(--color-primary);
+  color: var(--cinnabar);
+  border: 1rpx solid var(--cinnabar);
   border-radius: 40rpx;
   font-size: 26rpx;
   padding: 12rpx 32rpx;
 }
 .btn-ghost::after { border: none; }
 
-/* 诗词正文竖排风格（可选） */
+/* ===== 诗词竖排 — 卷轴感 ===== */
+.poem-vertical {
+  writing-mode: vertical-rl;
+  -webkit-writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: 32rpx;
+  line-height: 2;
+  letter-spacing: 0.18em;
+  color: var(--paper-text);
+}
 .poem-text {
   font-size: 30rpx;
   line-height: 2;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  color: var(--paper-text);
 }
 
-/* 分割线 */
+/* ===== 金色描边标题 ===== */
+.gold-title {
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+/* ===== 分割线（墨线） ===== */
 .divider {
   height: 1rpx;
-  background: var(--color-border);
+  background: var(--ink-line);
   margin: 24rpx 0;
 }
 
-/* 空状态 */
+/* ===== 空状态 ===== */
 .empty {
   text-align: center;
-  color: var(--color-text-secondary);
+  color: var(--paper-text-2);
   padding: 80rpx 40rpx;
   font-size: 26rpx;
 }
 
-/* 隐藏滚动条 */
+/* ===== 通用 ===== */
+.spring-card { transition: transform 0.15s; }
+.spring-card:active { transform: scale(0.98); }
+.spring-btn { transition: transform 0.15s; }
+.spring-btn:active { transform: scale(0.9); }
+
 ::-webkit-scrollbar { width: 0; height: 0; color: transparent; }

@@ -1,22 +1,20 @@
 /* ============================================================
-   TabBar — 悬浮透明 4 等分
-   底部 4 个等宽透明按钮 + 右下浮动搜索珠
+   TabBar — 宣纸淡墨
+   底部 4 分米白胶囊 + 文字标签 + 右下搜索珠
    ============================================================ */
 
 .tab-bar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 140rpx;
+  bottom: 0; left: 0; right: 0;
+  height: 128rpx;
   z-index: 999;
   padding-bottom: env(safe-area-inset-bottom);
-  pointer-events: none;     /* 让地图触摸穿透空白区域 */
+  pointer-events: none;
 }
 
-.tab-bar > view { pointer-events: auto; }  /* 子元素恢复点击 */
+.tab-bar > view { pointer-events: auto; }
 
-/* ===== 状态 A: 主导航（4 等分）===== */
+/* ===== 主导航 ===== */
 .tab-nav {
   position: relative;
   display: flex;
@@ -24,106 +22,64 @@
   width: 100%;
   height: 100%;
   padding: 0 24rpx;
-  gap: 0;
 }
 
 .tab-item {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 4rpx;
   height: 100%;
-  background: transparent;           /* 默认完全透明 */
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
 }
-.tab-item:active { transform: scale(0.88); }
-
-/* 选中态：圆形浮动胶囊 + 半透明背景 */
-.tab-item.active {
-  background: rgba(139, 26, 26, 0.10);
-  border-radius: 40rpx;
-  margin: 20rpx 8rpx;
-  height: 80rpx;
-}
+.tab-item:active { transform: scale(0.9); }
 
 .tab-ico {
-  width: 48rpx;
-  height: 48rpx;
-  opacity: 0.5;                   /* 未选中半透明 */
-  transition: all 0.2s;
+  width: 44rpx; height: 44rpx;
+  opacity: 0.5;
+  transition: opacity 0.2s;
 }
-.tab-item.active .tab-ico {
-  opacity: 1;                     /* 选中不透明 */
-  transform: scale(1.1);
+.tab-item.active .tab-ico { opacity: 1; }
+
+.tab-label {
+  font-size: 20rpx;
+  color: var(--paper-text-2);
+  letter-spacing: 0.12em;
+  transition: color 0.2s;
+}
+.tab-item.active .tab-label {
+  color: var(--cinnabar);
+}
+
+/* 激活指示 — 顶部朱砂小点 */
+.tab-dot {
+  position: absolute;
+  top: 14rpx;
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--cinnabar);
+  box-shadow: 0 0 8rpx rgba(158, 43, 35, 0.6);
 }
 
 /* ===== 右下角浮动搜索珠 ===== */
 .search-fab {
   position: fixed;
   right: 32rpx;
-  bottom: calc(160rpx + env(safe-area-inset-bottom));
-  width: 100rpx;
-  height: 100rpx;
+  bottom: calc(148rpx + env(safe-area-inset-bottom));
+  width: 96rpx;
+  height: 96rpx;
   border-radius: 50%;
-  background: rgba(139, 26, 26, 0.12);
-  backdrop-filter: blur(20rpx);
-  -webkit-backdrop-filter: blur(20rpx);
-  border: 1rpx solid rgba(139, 26, 26, 0.18);
+  background: linear-gradient(135deg, rgba(158, 43, 35, 0.15), rgba(168, 136, 72, 0.15));
+  border: 1rpx solid rgba(168, 136, 72, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  box-shadow: 0 4rpx 20rpx rgba(139, 26, 26, 0.15);
-  transition: all 0.2s;
+  box-shadow: 0 4rpx 20rpx rgba(120, 100, 70, 0.15);
+  transition: transform 0.2s;
 }
 .search-fab:active { transform: scale(0.88); }
-.fab-ico {
-  width: 48rpx;
-  height: 48rpx;
-}
-
-/* ===== 状态 B: 搜索模式 ===== */
-.tab-search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  padding: 0 24rpx;
-  gap: 16rpx;
-  animation: slideUpIn 0.3s ease;
-}
-@keyframes slideUpIn {
-  from { opacity: 0; transform: translateY(20rpx); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.tab-back {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(44, 44, 44, 0.08);
-  transition: all 0.2s;
-}
-.tab-back:active { transform: scale(0.88); }
-
-.search-input-wrap {
-  flex: 1;
-  height: 80rpx;
-  border-radius: 40rpx;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1rpx solid rgba(0, 0, 0, 0.08);
-  display: flex;
-  align-items: center;
-  padding: 0 28rpx;
-}
-.search-input {
-  width: 100%;
-  height: 80rpx;
-  font-size: 28rpx;
-  color: #2c2c2c;
-}
-.search-ph { color: #aaa; }
+.fab-ico { width: 44rpx; height: 44rpx; }

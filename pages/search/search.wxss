@@ -1,53 +1,57 @@
-.page { min-height: 100vh; padding-bottom: 40rpx; }
+/* ===== 发现/搜索页 — 沉浸水墨 ===== */
+.page { min-height: 100vh; padding-bottom: calc(40rpx + env(safe-area-inset-bottom)); }
 
 .search-bar {
   padding: 20rpx 24rpx;
-  background: #fff;
+  background: var(--ink-bg);
   position: sticky; top: 0; z-index: 10;
 }
 .search-input-wrap {
   display: flex; align-items: center;
-  background: #f5f3ee; border-radius: 40rpx;
+  background: var(--ink-surface-2); border-radius: 40rpx;
+  border: 1rpx solid var(--ink-line);
   padding: 0 24rpx; height: 76rpx;
 }
 .search-icon { font-size: 28rpx; margin-right: 12rpx; }
-.search-input { flex: 1; font-size: 28rpx; }
+.search-input { flex: 1; font-size: 28rpx; color: var(--paper-text); }
 .clear-btn {
   width: 40rpx; height: 40rpx; border-radius: 50%;
-  background: #ccc; color: #fff; text-align: center; line-height: 36rpx;
+  background: var(--ink-line); color: #fff; text-align: center; line-height: 36rpx;
   font-size: 28rpx;
 }
 
 .hot-section { padding: 24rpx; }
-.section-title { font-size: 28rpx; color: var(--color-text-secondary); margin-bottom: 16rpx; }
+.section-title { font-size: 28rpx; color: var(--paper-text-2); margin-bottom: 16rpx; }
 .hot-tags { display: flex; flex-wrap: wrap; gap: 16rpx; }
 .hot-tag {
-  padding: 12rpx 28rpx; background: var(--color-tag-bg);
-  border-radius: 30rpx; font-size: 26rpx; color: var(--color-primary);
+  padding: 12rpx 28rpx; background: var(--ink-surface-2);
+  border-radius: 30rpx; font-size: 26rpx; color: var(--gold);
+  border: 1rpx solid var(--ink-line);
 }
 
 .result-tabs {
-  display: flex; padding: 0 24rpx; gap: 16rpx; margin-bottom: 16rpx;
+  white-space: nowrap; padding: 0 24rpx; margin-bottom: 16rpx;
 }
 .result-tab {
-  padding: 12rpx 28rpx; font-size: 26rpx; color: var(--color-text-secondary);
-  border-radius: 30rpx;
+  display: inline-block; padding: 12rpx 28rpx; margin-right: 16rpx;
+  font-size: 26rpx; color: var(--paper-text-2);
+  border-radius: 30rpx; transition: background 0.15s, color 0.15s;
 }
-.result-tab.active { background: var(--color-primary); color: #fff; }
+.result-tab.active { background: var(--cinnabar); color: #fff; }
 
 .result-list { padding: 0 24rpx; }
 .group-title {
-  font-size: 26rpx; color: var(--color-text-secondary);
+  font-size: 26rpx; color: var(--gold);
   margin: 24rpx 0 12rpx; padding-left: 8rpx;
 }
 .result-card { margin: 12rpx 0; padding: 28rpx 32rpx; }
-.result-title { font-size: 30rpx; font-weight: 600; margin-bottom: 8rpx; }
-.result-sub { display: flex; align-items: center; gap: 12rpx; font-size: 24rpx; color: var(--color-text-secondary); }
+.result-title { font-size: 30rpx; font-weight: 600; margin-bottom: 8rpx; color: var(--paper-text); }
+.result-sub { display: flex; align-items: center; gap: 12rpx; font-size: 24rpx; color: var(--paper-text-2); }
 
 .result-preview {
   margin-top: 12rpx;
   font-size: 24rpx;
-  color: #888;
+  color: var(--paper-text-2);
   line-height: 1.6;
   overflow: hidden;
   text-overflow: ellipsis;

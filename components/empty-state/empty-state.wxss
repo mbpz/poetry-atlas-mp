@@ -9,20 +9,20 @@
 }
 .empty-title {
   font-size: 30rpx;
-  color: var(--color-text-secondary);
+  color: var(--paper-text-2);
   margin-bottom: 12rpx;
   font-weight: 500;
 }
 .empty-tip {
   font-size: 24rpx;
-  color: #bbb;
+  color: var(--paper-text-2);
   line-height: 1.6;
 }
 .empty-btn {
   display: inline-block;
   margin-top: 32rpx;
   padding: 16rpx 48rpx;
-  background: var(--color-primary);
+  background: var(--cinnabar);
   color: #fff;
   border-radius: 40rpx;
   font-size: 26rpx;

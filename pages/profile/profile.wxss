@@ -1,30 +1,34 @@
-.page { min-height: 100vh; padding: 24rpx 24rpx 60rpx; }
+/* ===== 我的 — 沉浸水墨 ===== */
+.page { min-height: 100vh; padding: 24rpx 24rpx calc(40rpx + env(safe-area-inset-bottom)); }
 
 .profile-hero { text-align: center; padding: 48rpx 32rpx; }
 .profile-avatar {
-  width: 120rpx; height: 120rpx; border-radius: 50%;
-  background: linear-gradient(135deg, #8b1a1a, #2d5d7b); color: #fff;
-  font-size: 48rpx; font-weight: 700;
+  width: 128rpx; height: 128rpx; border-radius: 50%;
+  background: linear-gradient(135deg, var(--cinnabar), var(--gold)); color: #fff;
+  font-size: 52rpx; font-weight: 700; letter-spacing: 0.05em;
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 20rpx;
+  box-shadow: 0 4rpx 24rpx rgba(158, 43, 35, 0.25);
 }
-.profile-name { font-size: 32rpx; font-weight: 600; margin-bottom: 8rpx; }
-.profile-sub { font-size: 24rpx; color: var(--color-text-secondary); }
+.profile-name { font-size: 34rpx; font-weight: 600; margin-bottom: 8rpx; color: var(--paper-text); letter-spacing: 0.08em; }
+.profile-sub { font-size: 24rpx; color: var(--paper-text-2); }
 
-.stats-card { padding: 32rpx; margin-top: 16rpx; }
+.stats-card { padding: 32rpx; margin-top: 16rpx; transition: background 0.15s; }
+.stats-card:active { background: rgba(158, 43, 35, 0.05); }
 .stat-item.Center { text-align: center; }
-.stat-num { font-size: 48rpx; font-weight: 700; color: var(--color-primary); }
-.stat-label { font-size: 26rpx; color: var(--color-text-secondary); margin-top: 8rpx; }
+.stat-num { font-size: 52rpx; font-weight: 700; color: var(--cinnabar); }
+.stat-label { font-size: 26rpx; color: var(--paper-text-2); margin-top: 8rpx; }
 
 .menu-card { margin-top: 16rpx; padding: 0; overflow: hidden; }
 .menu-item {
   display: flex; align-items: center; justify-content: space-between;
   padding: 32rpx;
 }
-.menu-text { font-size: 28rpx; }
-.menu-arrow { font-size: 36rpx; color: #ccc; }
-.menu-divider { height: 1rpx; background: var(--color-border); margin: 0 32rpx; }
+.menu-item:active { background: rgba(158, 43, 35, 0.05); }
+.menu-text { font-size: 28rpx; color: var(--paper-text); }
+.menu-arrow { font-size: 36rpx; color: var(--gold); }
+.menu-divider { height: 1rpx; background: var(--ink-line); margin: 0 32rpx; }
 
 .profile-footer {
-  text-align: center; font-size: 22rpx; color: #bbb; margin-top: 48rpx;
+  text-align: center; font-size: 22rpx; color: var(--paper-text-2); margin-top: 48rpx;
 }

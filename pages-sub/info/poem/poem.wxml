@@ -1,4 +1,4 @@
-<!-- 诗词详情页 -->
+<!-- 诗词详情 — 沉浸水墨 + 竖排卷轴阅读 -->
 <view wx:if="{{loading}}" class="page">
   <skeleton rows="2" />
   <skeleton rows="4" />
@@ -6,30 +6,55 @@
 </view>
 <view class="page" wx:elif="{{poem}}">
 
-  <!-- 诗词英雄卡 -->
-  <view class="poem-hero card spring-card" bindtouchstart="onCardTouch" bindtouchend="onCardTouchEnd">
+  <!-- 诗词英雄卡（卷轴）-->
+  <view class="poem-hero card spring-card">
+    <!-- 卷轴顶部装饰 -->
+    <view class="scroll-rod"></view>
+
     <view class="poem-title-row">
-      <text class="poem-title">{{poem.title}}</text>
-      <view class="fav-btn {{isFavorited ? 'active' : ''}}" bindtap="onToggleFavorite">♥</view>
+      <text class="poem-title gold-title">{{poem.title}}</text>
+      <view class="fav-btn {{isFavorited ? 'on' : 'off'}}" bindtap="onToggleFavorite">{{isFavorited ? '♥' : '♡'}}</view>
     </view>
     <view class="poem-subtitle">
       <text class="dynasty-tag">{{poem.dynasty}}</text>
       <text class="poem-author-txt">{{poem.author}}</text>
     </view>
-    <view class="poem-content">
+
+    <!-- 正文：横/竖排切换 -->
+    <view class="poem-mode-toggle">
+      <view class="mode-btn {{poemMode === 'v' ? 'on' : ''}}" bindtap="onTogglePoemMode" data-mode="v">竖排</view>
+      <view class="mode-btn {{poemMode === 'h' ? 'on' : ''}}" bindtap="onTogglePoemMode" data-mode="h">横排</view>
+    </view>
+
+    <!-- 横排 -->
+    <view wx:if="{{poemMode === 'h'}}" class="poem-content poem-text">
       <view wx:for="{{poem.lines}}" wx:key="*this" class="poem-line">{{line}}</view>
     </view>
+
+    <!-- 竖排卷轴（右→左，左右淡出暗示可横滑）-->
+    <view wx:else class="poem-scroll-wrap">
+      <scroll-view scroll-x class="poem-scroll-h" enhanced show-scrollbar="{{false}}">
+        <view class="poem-vertical">
+          <view wx:for="{{poem.linesChars}}" wx:key="*this" class="poem-v-col">
+            <text wx:for="{{item}}" wx:for-item="ch" wx:key="*this" class="poem-v-ch">{{ch}}</text>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="poem-fade-left"></view>
+      <view class="poem-fade-right"></view>
+    </view>
+
+    <!-- 印章落款 -->
+    <view class="poem-seal">{{poem.dynasty}}</view>
   </view>
 
   <!-- 解读 Tab -->
   <view class="card interpret-card">
     <view class="tab-bar">
       <view
-        wx:for="{{tabs}}"
-        wx:key="key"
+        wx:for="{{tabs}}" wx:key="key"
         class="tab-item spring-btn {{activeTab === item.key ? 'active' : ''}}"
-        data-key="{{item.key}}"
-        bindtap="onSelectTab"
+        data-key="{{item.key}}" bindtap="onSelectTab"
       >{{item.label}}</view>
     </view>
     <view class="tab-body">
@@ -45,20 +70,18 @@
 
   <!-- 相关地点 -->
   <view wx:if="{{places.length}}" class="card place-card">
-    <view class="section-title">相关地点</view>
+    <view class="section-title gold-title">相关地点</view>
     <view class="place-tags">
       <view
-        wx:for="{{places}}"
-        wx:key="name"
+        wx:for="{{places}}" wx:key="name"
         class="place-tag spring-btn"
-        data-place="{{item}}"
-        bindtap="onTapPlace"
+        data-place="{{item}}" bindtap="onTapPlace"
       >{{item.name}}</view>
     </view>
   </view>
 </view>
 
-<!-- ===== Spotify 底部抽屉: AI 解读面板 ===== -->
+<!-- ===== 底部抽屉: AI 解读面板 ===== -->
 <view wx:if="{{AI.show}}" class="ai-mask" bindtap="onHideAI" catchtouchmove="onMaskTouchMove">
   <view
     class="ai-sheet {{AI.dragging ? '' : 'ai-sheet-transition'}}"
@@ -68,12 +91,10 @@
     bindtouchmove="onSheetTouchMove"
     bindtouchend="onSheetTouchEnd"
   >
-    <!-- 抽屉把手 -->
     <view class="ai-sheet-handle" catchtap="onHandleTap">
       <view class="ai-sheet-bar"></view>
     </view>
 
-    <!-- loading 骨架 -->
     <view wx:if="{{AI.loading}}" class="ai-sheet-body">
       <view class="ai-skeleton-title"></view>
       <view class="ai-skeleton-line"></view>
@@ -84,7 +105,6 @@
       <view class="ai-skeleton-line"></view>
     </view>
 
-    <!-- 解读内容 -->
     <scroll-view wx:elif="{{AI.structured}}" scroll-y class="ai-sheet-body" enhanced show-scrollbar="{{false}}">
       <view class="ai-section">
         <view class="ai-section-title">白话译文</view>

@@ -1,24 +1,24 @@
-.page { min-height: 100vh; padding: 24rpx 24rpx 60rpx; }
+/* ===== 作者详情 — 沉浸水墨 ===== */
+.page { min-height: 100vh; padding: 24rpx 24rpx calc(40rpx + env(safe-area-inset-bottom)); }
 
 .author-hero { padding: 40rpx 36rpx; }
-.author-name { font-size: 48rpx; font-weight: 700; margin-bottom: 16rpx; }
+.author-name { font-size: 50rpx; font-weight: 700; margin-bottom: 16rpx; color: var(--paper-text); letter-spacing: 0.08em; }
 .author-meta { display: flex; align-items: center; gap: 20rpx; margin-bottom: 20rpx; }
-.meta-text { font-size: 24rpx; color: var(--color-text-secondary); }
+.meta-text { font-size: 24rpx; color: var(--gold); }
 .author-bio {
-  font-size: 26rpx; line-height: 1.8; color: #5a5a5a;
+  font-size: 26rpx; line-height: 1.8; color: var(--paper-text-2);
   text-align: justify;
 }
 
-.section-title { font-size: 30rpx; font-weight: 600; margin-bottom: 20rpx; }
+.section-title { font-size: 30rpx; font-weight: 600; margin-bottom: 20rpx; color: var(--gold); }
 
-.route-timeline { padding: 8rpx 0; }
-.route-item { display: flex; align-items: baseline; gap: 20rpx; padding: 12rpx 0; border-bottom: 1rpx dashed var(--color-border); }
+.route-item { display: flex; align-items: baseline; gap: 20rpx; padding: 12rpx 0; border-bottom: 1rpx dashed var(--ink-line); }
 .route-item:last-child { border-bottom: none; }
-.route-year { font-size: 24rpx; color: var(--color-primary); min-width: 100rpx; }
-.route-name { font-size: 26rpx; }
+.route-year { font-size: 24rpx; color: var(--cinnabar); min-width: 100rpx; }
+.route-name { font-size: 26rpx; color: var(--paper-text); }
 
 .poem-section { margin-top: 24rpx; }
 .poem-card { margin: 16rpx 0; padding: 28rpx 32rpx; }
-.poem-title { font-size: 32rpx; font-weight: 600; margin-bottom: 8rpx; }
-.poem-dynasty { font-size: 24rpx; color: var(--color-text-secondary); margin-bottom: 12rpx; }
-.poem-line { font-size: 28rpx; line-height: 2; color: #4a4a4a; }
+.poem-title { font-size: 32rpx; font-weight: 600; margin-bottom: 8rpx; color: var(--paper-text); }
+.poem-dynasty { font-size: 24rpx; color: var(--gold); margin-bottom: 12rpx; }
+.poem-line { font-size: 28rpx; line-height: 2; color: var(--paper-text-2); letter-spacing: 0.05em; }

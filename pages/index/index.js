@@ -57,18 +57,14 @@ Page({
     featuredPoem: null,
     featuredPlace: "",
     featuredHidden: false,
-    ico: {
-      heat: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTIgM2MtMyAwLTYgMy02IDcgMCA0IDYgMTAgMTAgMTAgMTBzNi02IDEwLTEwYzAtNC0zLTctNi03em0wIDljLTEuNyAwLTMtMS4zLTMtM3MxLjMtMyAzLTMgMyAxLjMgMyAzLTEuMyAzLTMgM3oiLz48L3N2Zz4=',
-      route: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTIgM2MtNC40IDAtOCAzLjYtOCAwczggMTQgOCAxNCA4LTE0IDgtMTRjMC00LjQtMy42LTgtOC04em0wIDExYTIuNSAyLjUgMCAxIDEgMC01IDIuNSAyLjUgMCAwIDEgMCA1eiIvPjwvc3ZnPg==',
-      profile: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGIxYTFhIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjgiIHI9IjQuNSIvPjxwYXRoIGQ9Ik00IDIyYzAtNSA0LTggOC04czggMyA4IDgiLz48L3N2Zz4=',
-      locate: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjODg4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48cGF0aCBkPSJNMTIgM2MtNC40IDAtOCAzLjYtOCAwczggMTQgOCAxNCA4LTE0IDgtMTRjMC00LjQtMy42LTgtOC04em0wIDlhMiAyIDAgMSAxIDAtNCAyIDIgMCAwIDEgMCA0eiIvPjwvc3ZnPg==',
-    },
   },
 
   onLoad() {
     this._pendingMapUpdate = null
     this._markerIdCounter = 0
     this._markerMap = {}
+    // 推荐卡"关闭"仅在本次生命周期内保持，避免 loadMarkers 重复触发又把卡弹出来
+    this._featuredClosedThisSession = false
     // 首次进入显示冷启动引导
     const guided = wx.getStorageSync("poetry_guided")
     if (!guided) {
@@ -94,6 +90,11 @@ Page({
   },
 
   onShow() {
+    // 全屏地图页隐藏底部 TabBar，避免遮挡地图；右上角工具入口已够用
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ active: 'map' })
+    }
+    try { wx.hideTabBar({ animation: false }) } catch (e) {}
     if (this.mapCtx) this.loadMarkers()
   },
 
@@ -143,17 +144,38 @@ Page({
 
       this.setData({ markers, loading: false })
       this.updatePolyline()
-      this.loadFeatured(placesData)
+      // 传当前地图中心 → 推荐离用户视野中心最近的地点
+      this.loadFeatured(placesData, { longitude: this.data.longitude, latitude: this.data.latitude })
     } catch (err) {
       console.error("[index] loadMarkers error:", err)
       this.setData({ loading: false })
     }
   },
 
-  /** 加载今日推荐（取诗词最多的地点 + 其热门诗词首行）*/
-  async loadFeatured(places) {
+  /** 经纬度简化距离平方（仅用于比较，无需开根号）*/
+  _dist2(lng1, lat1, lng2, lat2) {
+    return (lng1 - lng2) * (lng1 - lng2) + (lat1 - lat2) * (lat1 - lat2)
+  },
+
+  /** 加载推荐：取离用户当前位置最近的地点（首按诗数兜底）；若有朝代筛选则尊重筛选 */
+  async loadFeatured(places, center) {
     if (!places || !places.length) return
-    const top = places[0]
+    let top
+    if (center) {
+      let best = Infinity
+      for (const p of places) {
+        const loc = p.location
+        if (!loc) continue
+        let lng = 0, lat = 0
+        if (typeof loc.longitude === "number") { lng = loc.longitude; lat = loc.latitude }
+        else if (Array.isArray(loc.coordinates) && loc.coordinates.length >= 2) {
+          lng = loc.coordinates[0]; lat = loc.coordinates[1]
+        }
+        const d = this._dist2(center.longitude, center.latitude, lng, lat)
+        if (d < best) { best = d; top = p }
+      }
+    }
+    top = top || places[0]
     const hotPoems = top.hot_poems || []
     if (!hotPoems.length) return
     const poem = hotPoems[Math.floor(Math.random() * hotPoems.length)]
@@ -161,7 +183,8 @@ Page({
     this.setData({
       featuredPoem: { title: poem.title, author: poem.author, dynasty: poem.dynasty, firstLine: lines[0] || '' },
       featuredPlace: top.name,
-      featuredHidden: false,
+      // 只要用户本次没关过就不再隐藏；关过就保持隐藏
+      featuredHidden: !!this._featuredClosedThisSession,
     })
   },
 
@@ -173,15 +196,38 @@ Page({
         data: { type: "province", dynasty: this.data.selectedDynasty || "" },
       })
       const provinces = (res.result && res.result.data) || []
-      return provinces.map((p) => ({
-        id: this._nextMarkerId({ name: p.name, cluster: true, placeId: p.provinceId || p.name }),
-        longitude: p.longitude,
-        latitude: p.latitude,
-        width: 56,
-        height: 56,
-        iconPath: "/images/marker-city.png",
-        title: p.name + " (" + (p.poem_count || 0) + "首)",
-      }))
+      return provinces.map((p) => {
+        const cnt = p.poem_count || 0
+        return {
+          id: this._nextMarkerId({ name: p.name, cluster: true, placeId: p.provinceId || p.name }),
+          longitude: p.longitude,
+          latitude: p.latitude,
+          width: 48,
+          height: 48,
+          // anchor 把 marker 坐标对到圆心，label 才能居中于气泡
+          anchor: { x: 0.5, y: 0.5 },
+          iconPath: "/images/marker-cluster.png",
+          title: p.name + " (" + cnt + "首)",
+          // label 在气泡中心显示真实聚合数量（按位数动态锚点，精确居中）
+          ...(cnt
+            ? (() => {
+                const text = String(cnt)
+                const w = text.length * 7 + 2 // fontSize 14 下≈每字 7px
+                const h = 16
+                return {
+                  label: {
+                    content: text,
+                    color: "#9e2b23",
+                    fontSize: 14,
+                    textAlign: "center",
+                    anchorX: w / 2,
+                    anchorY: h / 2,
+                  },
+                }
+              })()
+            : {}),
+        }
+      })
     } catch (err) {
       console.error("[index] loadProvinceClusters error:", err)
       return []
@@ -278,7 +324,28 @@ Page({
     wx.navigateTo({ url: '/pages-sub/info/poem/poem' })
   },
   onFeaturedHide(e) {
+    this._featuredClosedThisSession = true
     this.setData({ featuredHidden: true })
+  },
+
+  // 推荐卡下滑关闭手势
+  onFeaturedTouch(e) {
+    this._fy = e.touches[0].clientY
+    this._fmoved = false
+  },
+  onFeaturedMove(e) {
+    if (this._fy == null) return
+    const dy = e.touches[0].clientY - this._fy
+    if (dy > 8) { this._fmoved = true }
+  },
+  onFeaturedEnd(e) {
+    if (this._fy == null) return
+    const dy = (e.changedTouches[0] ? e.changedTouches[0].clientY : this._fy) - this._fy
+    this._fy = null
+    if (dy > 60) { // 下滑超过 60px 关闭
+      this._featuredClosedThisSession = true
+      this.setData({ featuredHidden: true })
+    }
   },
 
   moveToLocation(lng, lat, scale) {

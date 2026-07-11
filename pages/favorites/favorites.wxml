@@ -1,6 +1,5 @@
 <!-- 收藏页 -->
 <view class="page">
-  <!-- 加载态 -->
   <view wx:if="{{loading}}" class="fav-list">
     <skeleton rows="3" avatar />
     <skeleton rows="2" avatar />
@@ -23,7 +22,9 @@
           <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="fav-line">{{line}}</view>
         </view>
       </view>
-      <view class="fav-del" data-item="{{item}}" bindtap="onRemove">×</view>
+      <view class="fav-del" data-item="{{item}}" catchtap="onRemove">
+        <text class="fav-del-ico">×</text>
+      </view>
     </view>
   </view>
 

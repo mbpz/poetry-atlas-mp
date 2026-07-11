@@ -17,6 +17,7 @@ Page({
     loading: true,
     isFavorited: false,
     AI: { show: false, loading: false, content: '', structured: null, dragging: false, sheetHeight: 30 },
+    poemMode: 'v', // v=竖排卷轴, h=横排（沉浸主题默认竖排）
   },
 
   onLoad(options) {
@@ -57,10 +58,12 @@ Page({
 
   renderPoem(poem) {
     const places = (poem.place_names || []).map((name) => ({ name }))
+    const lines = splitPoemLines(poem.content)
     this.setData({
       poem: {
         title: poem.title, author: poem.author, dynasty: poem.dynasty, content: poem.content,
-        lines: splitPoemLines(poem.content),
+        lines,
+        linesChars: lines.map((l) => Array.from(l)),
         annotation: poem.annotation || '', translation: poem.translation || '', appreciation: poem.appreciation || '',
       },
       places, loading: false,
@@ -69,6 +72,12 @@ Page({
   },
 
   onSelectTab(e) { this.setData({ activeTab: e.currentTarget.dataset.key }) },
+
+  // 横/竖排卷轴切换
+  onTogglePoemMode(e) {
+    const mode = e.currentTarget.dataset.mode
+    this.setData({ poemMode: mode })
+  },
 
   async checkFavorite() {
     const { db } = getDB()

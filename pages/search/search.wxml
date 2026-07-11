@@ -39,8 +39,8 @@
   <!-- 结果 -->
   <view wx:if="{{searched && !loading}}">
     <view wx:if="{{poems.length || authors.length || places.length}}">
-      <!-- 结果 Tab -->
-      <view class="result-tabs">
+      <!-- 结果 Tab（可横滑）-->
+      <scroll-view scroll-x class="result-tabs" enhanced show-scrollbar="{{false}}">
         <view
           wx:for="{{tabs}}"
           wx:key="key"
@@ -48,7 +48,7 @@
           data-key="{{item.key}}"
           bindtap="onSelectTab"
         >{{item.label}}</view>
-      </view>
+      </scroll-view>
 
       <!-- 诗词结果 -->
       <view class="result-list">

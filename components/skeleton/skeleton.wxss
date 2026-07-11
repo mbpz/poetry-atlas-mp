@@ -7,7 +7,7 @@
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  background: linear-gradient(90deg, #ece8e0 25%, #f5f2ec 50%, #ece8e0 75%);
+  background: linear-gradient(90deg, var(--ink-surface-2) 25%, var(--ink-line) 50%, var(--ink-surface-2) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   flex-shrink: 0;
@@ -22,7 +22,7 @@
 .skeleton-line {
   height: 28rpx;
   border-radius: 8rpx;
-  background: linear-gradient(90deg, #ece8e0 25%, #f5f2ec 50%, #ece8e0 75%);
+  background: linear-gradient(90deg, var(--ink-surface-2) 25%, var(--ink-line) 50%, var(--ink-surface-2) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

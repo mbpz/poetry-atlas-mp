@@ -1,41 +1,22 @@
-<!-- TabBar: 悬浮透 明 风 — 4 等分 + 搜索珠 -->
+<!-- TabBar — 沉浸水墨风
+  [🗺地图] [🔍发现] [📜朝代] [♡收藏]   +  🔎(右下跳转搜索页)
+  注：搜索珠直接跳转搜索 Tab 页（navigateTo 无法打开 tab 页）
+-->
 <view class="tab-bar">
-  <!-- 状态 A: 主导航 -->
-  <view wx:if="{{!searchMode}}" class="tab-nav">
-    <view class="tab-item {{active === 'map' ? 'active' : ''}}" data-key="map"     bindtap="switchTab" catchtouchstart="noop">
-      <image src="{{ico.map}}"     class="tab-ico" mode="aspectFit"></image>
-    </view>
-    <view class="tab-item {{active === 'find' ? 'active' : ''}}" data-key="find"    bindtap="switchTab" catchtouchstart="noop">
-      <image src="{{ico.find}}"    class="tab-ico" mode="aspectFit"></image>
-    </view>
-    <view class="tab-item {{active === 'dyn' ? 'active' : ''}}"  data-key="dynasty" bindtap="switchTab" catchtouchstart="noop">
-      <image src="{{ico.dynasty}}" class="tab-ico" mode="aspectFit"></image>
-    </view>
-    <view class="tab-item {{active === 'fav' ? 'active' : ''}}"  data-key="fav"     bindtap="switchTab" catchtouchstart="noop">
-      <image src="{{ico.fav}}"     class="tab-ico" mode="aspectFit"></image>
-    </view>
-  </view>
-
-  <!-- 状态 B: 搜索模式 -->
-  <view wx:else class="tab-search">
-    <view class="tab-back" bindtap="exitSearch" catchtouchstart="noop">
-      <image src="{{ico.home}}" class="tab-ico" mode="aspectFit"></image>
-    </view>
-    <view class="search-input-wrap">
-      <input class="search-input"
-        placeholder="搜索诗词、作者、地点..."
-        placeholder-class="search-ph"
-        value="{{query}}"
-        bindinput="onInput"
-        bindconfirm="onConfirm"
-        confirm-type="search"
-        focus="{{searchMode}}"
-      />
+  <view class="tab-nav">
+    <view
+      wx:for="{{tabs}}" wx:key="key"
+      class="tab-item {{active === item.key ? 'active' : ''}}"
+      data-key="{{item.key}}" bindtap="switchTab" catchtouchstart="noop"
+    >
+      <image src="{{ico[item.icon]}}" class="tab-ico" mode="aspectFit"></image>
+      <text class="tab-label">{{item.label}}</text>
+      <view wx:if="{{active === item.key}}" class="tab-dot"></view>
     </view>
   </view>
 </view>
 
-<!-- 右下角浮动搜索珠 -->
-<view wx:if="{{!searchMode}}" class="search-fab" bindtap="enterSearch" catchtouchstart="noop">
+<!-- 右下角浮动搜索珠：直接跳到搜索 Tab（该页有 autofocus 搜索框 + 热词）-->
+<view class="search-fab" bindtap="enterSearch" catchtouchstart="noop">
   <image src="{{ico.search}}" class="fab-ico" mode="aspectFit"></image>
 </view>

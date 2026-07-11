@@ -1,27 +1,30 @@
-.page { min-height: 100vh; padding-bottom: 40rpx; }
-.place-map { width: 100%; }
+/* ===== 地点详情 — 沉浸水墨 ===== */
+.page { min-height: 100vh; padding-bottom: calc(40rpx + env(safe-area-inset-bottom)); }
+.place-map { width: 100%; border-radius: 0; }
 
-.place-info { margin: 24rpx; padding: 32rpx; transition: transform 0.12s; }
+.place-info { margin: 24rpx; padding: 32rpx 36rpx; }
 .place-name {
-  font-size: 44rpx;
+  font-size: 46rpx;
   font-weight: 700;
-  color: var(--color-text);
+  color: var(--paper-text);
   margin-bottom: 16rpx;
+  letter-spacing: 0.08em;
 }
 .place-meta { display: flex; align-items: center; gap: 20rpx; }
-.meta-text { font-size: 26rpx; color: var(--color-text-secondary); }
+.meta-text { font-size: 26rpx; color: var(--gold); }
 .place-desc {
   margin-top: 20rpx;
   font-size: 26rpx;
-  color: var(--color-text-secondary);
+  color: var(--paper-text-2);
   line-height: 1.7;
 }
 
 .dynasty-bar {
   margin: 0 24rpx 16rpx;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--ink-surface);
   border-radius: 40rpx;
   padding: 10rpx 20rpx;
+  border: 1rpx solid var(--ink-line);
 }
 .dynasty-scroll { white-space: nowrap; width: 100%; }
 .dynasty-item {
@@ -29,22 +32,20 @@
   padding: 8rpx 24rpx;
   margin: 0 6rpx;
   font-size: 26rpx;
-  color: #5a5a5a;
+  color: var(--paper-text-2);
   border-radius: 30rpx;
-  transition: all 0.15s;
+  border: 1rpx solid transparent;
 }
-.dynasty-item:active { transform: scale(0.92); }
-.dynasty-item.active { background: var(--color-primary); color: #fff; }
+.dynasty-item.active { background: var(--cinnabar); color: #fff; }
 
 .poem-section { padding: 0 24rpx; }
 .section-title {
   font-size: 30rpx;
   font-weight: 600;
   margin: 24rpx 0 16rpx;
-  color: var(--color-text);
+  color: var(--gold);
 }
 
-/* #2 共享元素过渡：卡片依次淡入*/
 .poem-card { margin: 16rpx 0; padding: 28rpx 32rpx; opacity: 0; transform: translateY(20rpx); animation: cardEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 @keyframes cardEnter { to { opacity: 1; transform: translateY(0); } }
 
@@ -52,22 +53,16 @@
   font-size: 32rpx;
   font-weight: 600;
   margin-bottom: 12rpx;
-  color: var(--color-text);
+  color: var(--paper-text);
 }
 .poem-author {
   display: flex; align-items: center; gap: 12rpx;
-  font-size: 24rpx; color: var(--color-text-secondary);
+  font-size: 24rpx; color: var(--gold);
   margin-bottom: 16rpx;
 }
 .poem-lines { margin-top: 8rpx; }
-.poem-line {
-  font-size: 28rpx;
-  line-height: 2;
-  color: #4a4a4a;
-  letter-spacing: 0.05em;
-}
+.poem-line { font-size: 28rpx; line-height: 2; color: var(--paper-text-2); letter-spacing: 0.06em; }
 
-/* #3 弹簧交互 */
-.spring-card { transition: transform 0.12s ease, box-shadow 0.12s; box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04); }
+.spring-card { transition: transform 0.12s ease, box-shadow 0.12s; box-shadow: 0 2rpx 12rpx rgba(120, 100, 70, 0.1); }
 .spring-card:active { transform: scale(0.98); }
-.card-pressed { transform: scale(0.97); box-shadow: 0 1rpx 6rpx rgba(0, 0, 0, 0.06); }
+.card-pressed { transform: scale(0.97); }
