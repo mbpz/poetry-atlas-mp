@@ -44,10 +44,10 @@
         <view class="post-head-actions">
           <view
             wx:if="{{item.openid && item.openid !== openid}}"
-            class="follow-btn spring-btn"
+            class="follow-btn spring-btn {{item.following ? 'follow-btn-on' : ''}}"
             data-openid="{{item.openid}}"
             catchtap="onToggleFollow"
-          >＋ 关注</view>
+          >{{item.following ? '已关注' : '＋ 关注'}}</view>
           <view
             wx:elif="{{item.owner}}"
             class="post-delete"

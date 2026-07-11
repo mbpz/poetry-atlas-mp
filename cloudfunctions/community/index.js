@@ -141,8 +141,33 @@ async function removeComment(openid, event) {
   if (owner.data.openid !== openid) return { ok: false, error: 'forbidden' }
 
   await db.collection(COL.comments).doc(id).remove()
-  await db.collection(COL.posts).doc(owner.data.post_id).update({ data: { comments_count: _.inc(-1) } }).catch(() => {})
+  // floor @0
+  await safeDecrCount(owner.data.post_id, 'comments_count')
   return { ok: true }
+}
+
+// likes_count 递减并 floor @0，避免 _.inc(-1) 产生负数
+async function safeDecrLikes(postId) {
+  try {
+    const cur = await db.collection(COL.posts).doc(postId).field({ likes_count: true }).get()
+    const v = (cur.data && cur.data.likes_count) || 0
+    if (v <= 0) return
+    await db.collection(COL.posts).doc(postId).update({ data: { likes_count: _.inc(-1) } })
+  } catch (e) {
+    console.warn('[safeDecrLikes] failed:', e)
+  }
+}
+
+// comments_count 递增容错 + 删除时 floor @0
+async function safeDecrCount(postId, field) {
+  try {
+    const cur = await db.collection(COL.posts).doc(postId).field({ [field]: true }).get()
+    const v = (cur.data && cur.data[field]) || 0
+    if (v <= 0) return
+    await db.collection(COL.posts).doc(postId).update({ data: { [field]: _.inc(-1) } })
+  } catch (e) {
+    console.warn('[safeDecrCount] failed:', e)
+  }
 }
 
 async function toggleLike(openid, event) {
@@ -159,7 +184,8 @@ async function toggleLike(openid, event) {
     // 取消点赞
     await db.collection(COL.likes).doc(exists.data[0]._id).remove()
     if (target_type === 'post') {
-      await db.collection(COL.posts).doc(target_id).update({ data: { likes_count: _.inc(-1) } }).catch(() => {})
+      // floor @0：先读到当前值，减到 0 不再降，避免负数
+      await safeDecrLikes(target_id)
     }
     return { ok: true, liked: false }
   }
@@ -167,7 +193,9 @@ async function toggleLike(openid, event) {
   // 点赞
   await db.collection(COL.likes).add({ data: { target_type, target_id, openid, created_at: Date.now() } })
   if (target_type === 'post') {
-    await db.collection(COL.posts).doc(target_id).update({ data: { likes_count: _.inc(1) } }).catch(() => {})
+    await db.collection(COL.posts).doc(target_id).update({ data: { likes_count: _.inc(1) } }).catch((e) => {
+      console.warn('[toggleLike] inc likes_count failed:', e)
+    })
   }
   return { ok: true, liked: true }
 }

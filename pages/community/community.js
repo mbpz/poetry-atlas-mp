@@ -198,25 +198,34 @@ Page({
     wx.navigateTo({ url: '/pages-sub/community/publish/publish' })
   },
 
-  // 关注 — 传入 following_openid
-  async onToggleFollow(e) {
+  // 关注 — 乐观翻转 + response 带 following bool 切换按钮文案
+  onToggleFollow(e) {
     const following = e.currentTarget.dataset.openid
     if (!following || following === this.data.openid) return
-    try {
-      const res = await wx.cloud.callFunction({
-        name: 'community',
-        data: { action: 'follow', following_openid: following },
-      })
-      const r = res.result || {}
-      if (!r.ok && r.error !== 'cannot follow self') {
-        wx.showToast({ title: r.error || '操作失败', icon: 'none' })
-      } else if (r.ok) {
-        wx.showToast({ title: r.following ? '已关注' : '已取消', icon: 'success' })
-      }
-    } catch (err) {
-      wx.showToast({ title: '网络异常', icon: 'none' })
+    const idx = this.data.posts.findIndex((p) => p.openid === following)
+    const wasFollowing = idx >= 0 && this.data.posts[idx].following
+    if (idx >= 0) {
+      this.setData({ [`posts[${idx}].following`]: !wasFollowing })
     }
+    wx.cloud.callFunction({
+      name: 'community',
+      data: { action: 'follow', following_openid: following },
+      success: (res) => {
+        const r = res.result || {}
+        const nowFollowing = typeof r.following === 'boolean' ? r.following : !wasFollowing
+        if (idx >= 0) this.setData({ [`posts[${idx}].following`]: nowFollowing })
+        if (r.ok) wx.showToast({ title: nowFollowing ? '已关注' : '已取消', icon: 'success' })
+      },
+      fail: () => {
+        // 回滚
+        if (idx >= 0) this.setData({ [`posts[${idx}].following`]: wasFollowing })
+        wx.showToast({ title: '网络异常', icon: 'none' })
+      },
+    })
   },
+
+  // 空 handler：阻止 FAB 触摸穿透触底
+  noop() {},
 
   onPreviewImage(e) {
     const { post, idx } = e.currentTarget.dataset

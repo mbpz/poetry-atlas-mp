@@ -29,6 +29,24 @@ Page({
     if (Object.keys(payload).length) this.setData(payload)
   },
 
+  onShow() {
+    // 从搜索页选诗返回后，回写 poem_id + title
+    const ret = getApp()._publishReturn
+    if (ret && ret.poem_id) {
+      this.setData({
+        poemId: ret.poem_id,
+        poemTitle: ret.poem_title || '',
+        authorName: ret.author_name || this.data.authorName,
+      })
+      getApp()._publishReturn = null
+    }
+  },
+
+  // 引用一首诗 → 跳搜索页选诗
+  onPickPoem() {
+    wx.navigateTo({ url: '/pages/search/search?from=publish' })
+  },
+
   onContentInput(e) {
     const v = e.detail.value.slice(0, MAX_CONTENT)
     this.setData({ content: v, count: v.length })

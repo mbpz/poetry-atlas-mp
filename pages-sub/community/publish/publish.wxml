@@ -36,7 +36,16 @@
     </view>
   </view>
 
-  <!-- 关联（从诗词/作者页引用入口自动带入）-->
+  <!-- 引用一首诗（可选）-->
+  <view class="card link-card" wx:if="{{!poemId && !poemTitle}}">
+    <view class="link-pick-btn" bindtap="onPickPoem">
+      <text class="link-tag-ico">📜</text>
+      <text class="link-pick-txt">引用一首诗</text>
+      <text class="link-pick-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 已关联（从诗词/作者页引用入口自动带入 / 从搜索页选择）-->
   <view class="card link-card" wx:if="{{poemId || poemTitle || authorName}}">
     <view class="link-title">关联</view>
     <view wx:if="{{poemTitle || poemId}}" class="link-tag">
