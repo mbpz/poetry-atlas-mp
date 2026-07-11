@@ -8,6 +8,13 @@ const { splitPoemLines } = require('../../utils/util.js')
 const PAGE_SIZE = 5   // 每个朝代每次诗词加载条数
 
 Page({
+  onShow() {
+    // 同步 TabBar 激活态到朝代
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ active: 'dynasty' })
+    }
+  },
+
   data: {
     dynasties: [],
     poemsByDynasty: {},       // dynasty -> poems[]

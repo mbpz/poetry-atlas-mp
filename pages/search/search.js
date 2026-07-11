@@ -4,6 +4,13 @@
 const { debounce } = require("../../utils/util.js")
 
 Page({
+  onShow() {
+    // 同步 TabBar 激活态到发现
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ active: 'find' })
+    }
+  },
+
   data: {
     keyword: "",
     tabs: [

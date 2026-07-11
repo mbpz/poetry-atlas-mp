@@ -18,6 +18,10 @@ Page({
   },
 
   onShow() {
+    // 同步 TabBar 激活态到收藏
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ active: 'fav' })
+    }
     // 每次进入刷新（收藏可能在诗词页变更）
     this.resetAndLoad()
   },

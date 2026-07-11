@@ -17,6 +17,10 @@ Page({
   },
 
   onShow() {
+    // 同步 TabBar 激活态到我的
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ active: 'me' })
+    }
     const app = getApp()
     this.setData({
       openid: app.globalData.openid || "",

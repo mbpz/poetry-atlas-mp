@@ -4,8 +4,6 @@
  *  状态 B: [⌂] [搜索输入 ................]
  *  改进：每项带文字标签 + 金色激活点，解决"切换难用"
  */
-const config = require('../config.js')
-
 // eslint-disable-next-line
 const ICO = {
   map: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjY2FhODZhIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEwIiByPSI3IiBvcGFjaXR5PSIwLjE2Ii8+PHBhdGggZD0iTTEyIDQgOCA3IDggMTBjMCA0LjUgNCA5IDQgOXM0LTQuNSA0LTljMC0yLjItMi00LTQuNS00eiIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTAiIHI9IjIiLz48L3N2Zz4=',
