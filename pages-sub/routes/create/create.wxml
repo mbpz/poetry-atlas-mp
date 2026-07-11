@@ -1,0 +1,52 @@
+<!-- 旅行路线创建页 -->
+<view class="page">
+  <view class="card form-card">
+    <view class="form-label">路线名</view>
+    <input class="form-input" placeholder="例如：苏轼黄州行" maxlength="60" value="{{name}}" bindinput="onNameInput" />
+
+    <view class="form-label">主题（一句诗词）</view>
+    <input class="form-input" placeholder="例如：竹杖芒鞋轻胜马" maxlength="120" value="{{theme}}" bindinput="onThemeInput" />
+
+    <view class="form-label">描述</view>
+    <textarea class="form-textarea" placeholder="用一两句话介绍这条路线（可选）" maxlength="500" value="{{description}}" bindinput="onDescInput" auto-height />
+  </view>
+
+  <view class="card form-card">
+    <view class="section-head">
+      <text class="gold-title">行程站点</text>
+      <view class="add-btn spring-btn" bindtap="addPoint">
+        <text class="add-btn-txt">+ 添加站点</text>
+      </view>
+    </view>
+
+    <view
+      wx:for="{{points}}"
+      wx:key="*this"
+      class="point-card"
+    >
+      <view class="point-head">
+        <text class="point-num">第 {{index + 1}} 站</text>
+        <view class="point-actions">
+          <view class="pt-btn spring-btn" data-idx="{{index}}" data-dir="-1" bindtap="movePoint" wx:if="{{index > 0}}">↑</view>
+          <view class="pt-btn spring-btn" data-idx="{{index}}" data-dir="1" bindtap="movePoint" wx:if="{{index < points.length - 1}}">↓</view>
+          <view class="pt-btn pt-del spring-btn" data-idx="{{index}}" bindtap="removePoint" wx:if="{{points.length > 1}}">×</view>
+        </view>
+      </view>
+      <input class="form-input" placeholder="地点名称（必填）" maxlength="60" value="{{item.name}}" data-idx="{{index}}" data-field="name" bindinput="onPointField" />
+      <view class="coord-row">
+        <input class="form-input coord-input" type="digit" placeholder="经度 lng" value="{{item.lng}}" data-idx="{{index}}" data-field="lng" bindinput="onPointField" />
+        <input class="form-input coord-input" type="digit" placeholder="纬度 lat" value="{{item.lat}}" data-idx="{{index}}" data-field="lat" bindinput="onPointField" />
+      </view>
+      <input class="form-input" placeholder="配诗标题（可选）" maxlength="80" value="{{item.poem_title}}" data-idx="{{index}}" data-field="poem_title" bindinput="onPointField" />
+      <view class="coord-row">
+        <input class="form-input coord-input" placeholder="诗人" maxlength="60" value="{{item.poem_author}}" data-idx="{{index}}" data-field="poem_author" bindinput="onPointField" />
+      </view>
+      <textarea class="form-textarea" placeholder="诗词正文（可选）" maxlength="500" value="{{item.poem_content}}" data-idx="{{index}}" data-field="poem_content" bindinput="onPointField" auto-height />
+      <input class="form-input" placeholder="备注（可选）" maxlength="200" value="{{item.note}}" data-idx="{{index}}" data-field="note" bindinput="onPointField" />
+    </view>
+  </view>
+
+  <view class="save-row">
+    <view class="btn-primary save-btn {{saving ? 'disabled' : ''}}" bindtap="onSave">保存路线</view>
+  </view>
+</view>
