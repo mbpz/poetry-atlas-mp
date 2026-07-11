@@ -166,11 +166,5 @@ Page({
     wx.navigateTo({ url: "/pages-sub/info/poem/poem" })
   },
 
-  onShareAppMessage() {
-    const name = this.data.route ? this.data.route.name : "诗词旅行"
-    const path = this.fromDb
-      ? '/pages-sub/info/travel/travel?route=' + this.routeId + '&from=db'
-      : '/pages-sub/info/travel/travel?route=' + this.routeId
-    return { title: name + " — 诗词地图", path }
-  },
+  // 自建路线为私有内容，不提供公开分享
 })

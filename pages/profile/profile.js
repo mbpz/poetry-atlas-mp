@@ -120,7 +120,7 @@ Page({
     // 朗诵无独立着陆页 → 跳搜索找有朗诵数据的诗词
     wx.navigateTo({ url: "/pages/search/search?kw=%E9%9D%99%E5%A4%9C%E6%80%9D" })
   },
-  onTapCommunity() { wx.navigateTo({ url: "/pages/community/community" }) },
+  // 社区功能已移除（私有工具定位，避免 UGC 社交类目）
 
   onTapAbout() {
     wx.showModal({

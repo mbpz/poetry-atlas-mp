@@ -1,5 +1,6 @@
-<!-- 我的路线列表页 -->
+<!-- 我的路线列表页（私有 · 仅自己可见）-->
 <view class="page">
+  <view class="page-private-hint">🔒 以下内容仅自己可见</view>
   <view wx:if="{{routes.length}}" class="route-list">
     <view
       wx:for="{{routes}}"

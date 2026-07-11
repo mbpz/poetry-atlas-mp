@@ -3,7 +3,7 @@
   <view class="travel-hero card">
     <view class="travel-name-row">
       <view class="travel-name">{{route.name}}</view>
-      <view class="travel-badge">{{isDynamic ? '自建' : '示例'}}</view>
+      <view class="travel-badge">{{isDynamic ? '自建·私有' : '示例'}}</view>
     </view>
     <view class="travel-theme">「{{route.theme}}」</view>
     <view class="travel-desc">{{route.description}}</view>

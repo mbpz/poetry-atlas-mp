@@ -79,15 +79,11 @@ poetry-atlas-mp/
 | `poems` | 诗词 | `title`, `content`, `author`, `dynasty`, `places[]`, `tags[]`, `popularity` | 公开读 |
 | `authors` | 作者 | `name`, `dynasty`, `biography`, `route[]`, `poem_count`, `birth_year/death_year` | 公开读 |
 | `dynasties` | 朝代 | `name`, `start_year`, `end_year`, `sort_order`, `poem_count` | 公开读 |
-| `favorites` | 收藏 | `openid`, `poem_id`, `poem_title`, `poem_author`, `created_at` | 仅本人读写 |
-| `users` | 用户档案 | `_id`(=openid), `nickname`, `avatar_url`, `created_at`, `stats`(routes_count/quiz_total/quiz_wins/recitation_count) | 仅本人读写 |
-| `routes` | 自建旅行路线 | `openid`, `name`, `theme`, `description`, `points[]`(地点+配诗), `is_public`, `created_at`, `likes_count` | 公开读/本人写 |
-| `recitations` | 诗词朗诵音频 | `poem_id`, `audio_url`, `duration`, `voice`, `play_count` | 公开读 |
-| `quiz_questions` | 答题题库 | `type`(fill/choice), `poem_id`, `stem`, `options[]`, `answer`, `difficulty`, `explain` | 公开读 |
-| `posts` | 社区动态 | `openid`, `nickname`, `poem_id?`, `content`, `images[]`, `likes_count`, `comments_count`, `created_at` | 公开读/本人写 |
-| `comments` | 评论 | `post_id`, `openid`, `nickname`, `content`, `created_at` | 公开读/本人写 |
-| `likes` | 点赞 | `target_type`, `target_id`, `openid` | 公开读/本人写 |
-| `follows` | 关注 | `follower_openid`, `following_openid` | 公开读/本人写 |
+| `favorites` | 收藏（私有） | `openid`, `poem_id`, `poem_title`, `poem_author`, `created_at` | 仅本人读写 |
+| `users` | 用户档案 | `_id`(=openid), `nickname`, `avatar_url`, `created_at`, `stats` | 仅本人读写 |
+| `routes` | 自建旅行路线（**私有·仅自己可见**） | `openid`, `name`, `theme`, `description`, `points[]`, `created_at` | 仅本人读写 |
+| `recitations` | 诗词朗诵音频（预设） | `poem_id`, `audio_url`, `duration`, `voice`, `play_count` | 公开读 |
+| `quiz_questions` | 答题题库（预设） | `type`(fill/choice), `poem_id`, `stem`, `options[]`, `answer`, `difficulty`, `explain` | 公开读 |
 
 GeoPoint 存储统一用 WGS-84 坐标；代码兼容两种返回格式（GeoJSON `coordinates` / 扁平 `longitude+latitude`）。
 
@@ -139,16 +135,22 @@ node scripts/set-favorites-permission.cjs
 
 ## 功能地图
 
-| 功能 | 入口 | 状态 |
-|---|---|---|
-| 地图浏览 + 朝代筛选 + 缩放聚合 | 首页 | ✅ |
-| 朝代时间轴 / 热力模式 / 旅行路线 | 首页 | ✅ |
-| 地点详情 + 诗词分页 | 地点页 | ✅ |
-| 诗词详情 + 注释/译文/赏析 + AI 解读 | 诗词页 | ✅ |
-| 多字段搜索 + 作者 + 收藏 | 搜索/作者/收藏页 | ✅ |
-| 旅行路线主题行程 | 旅行页 | ✅ |
-| 朝代时间轴浏览 | 朝代页 | ✅ |
-| 用户中心与关于 | 我的页 | ✅ |
+| 功能 | 入口 | 状态 | 可见性 |
+|---|---|---|---|
+| 地图浏览 + 朝代筛选 + 缩放聚合 | 首页 | ✅ | 公开 |
+| 朝代时间轴 / 热力模式 / 旅行路线 | 首页 | ✅ | 公开 |
+| 地点详情 + 诗词分页 | 地点页 | ✅ | 公开 |
+| 诗词详情 + 注释/译文/赏析 + AI 解读 | 诗词页 | ✅ | 公开 |
+| 多字段搜索 + 作者 + 收藏 | 搜索/作者/收藏页 | ✅ | 公开 |
+| 旅行路线主题行程 | 旅行页 | ✅ | 公开 |
+| 朝代时间轴浏览 | 朝代页 | ✅ | 公开 |
+| **我的旅行路线** | 我的页 | ✅ | **私有·仅自己** |
+| **诗词朗诵**（预设音频） | 诗词页 | ✅ | 公开 |
+| **诗词对战 / 答题闯关** | 我的页 | ✅ | 公开 |
+| **收藏** | 我的页 | ✅ | **私有·仅自己** |
+| 用户中心与关于 | 我的页 | ✅ | — |
+
+> 无公开 UGC 社区 / 公开分享功能：产品定位为工具-信息查询/旅游服务，规避微信"社交-笔记"类目限制（个人主体不可注册）。
 
 ## Roadmap
 
@@ -161,6 +163,16 @@ node scripts/set-favorites-permission.cjs
 | M4 | 时间轴 + 热力 + 旅行路线 | ✅ |
 | M5 | AI 诗词解析(结构化 JSON) | ✅ |
 | **M6** | 打磨收尾 + 全部页面连通 | **✅ 完成** |
+
+## 产品定位
+
+**工具-信息查询 / 旅游服务** 类目（个人主体可注册，非 UGC 社交）。
+
+核心原则：**所有用户生成内容均为私有**（仅创建者本人可见，不对外公开分享），规避"社交-笔记"类目限制。
+
+- 地图浏览 / 诗词 / 作者 / 朝代 → 展示预设开放内容（合规）
+- 我的路线 / 收藏 / 朗诵记录 / 答题记录 → **仅自己可见**（私有工具）
+- 已移除公开社区 Feed / 公开分享功能（避免 UGC 社交类目）
 
 ## 设计语言
 

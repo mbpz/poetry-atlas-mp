@@ -45,7 +45,8 @@
     <view class="hub-grid">
       <view class="hub-item" bindtap="onTapRoute">
         <view class="hub-ico">🗺️</view>
-        <view class="hub-txt">自建路线</view>
+        <view class="hub-txt">我的路线</view>
+        <view class="hub-sub">仅自己可见</view>
       </view>
       <view class="hub-item" bindtap="onTapRecitation">
         <view class="hub-ico">🎧</view>
@@ -54,10 +55,6 @@
       <view class="hub-item" bindtap="onTapQuiz">
         <view class="hub-ico">⚔️</view>
         <view class="hub-txt">诗词对战</view>
-      </view>
-      <view class="hub-item" bindtap="onTapCommunity">
-        <view class="hub-ico">💬</view>
-        <view class="hub-txt">社区</view>
       </view>
     </view>
   </view>
