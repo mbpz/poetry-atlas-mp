@@ -144,6 +144,14 @@
   border-bottom: 1rpx solid var(--ink-line);
 }
 .panel-close { width: 48rpx; height: 48rpx; text-align: center; line-height: 44rpx; font-size: 36rpx; color: var(--paper-text-2); }
+.panel-actions { display: flex; align-items: center; gap: 12rpx; }
+.panel-act {
+  padding: 10rpx 22rpx; border-radius: 24rpx;
+  font-size: 24rpx; letter-spacing: 0.08em;
+  background: var(--ink-surface-2); color: var(--paper-text);
+  border: 1rpx solid var(--ink-line);
+}
+.panel-act-primary { background: var(--cinnabar); color: #fff; border-color: var(--cinnabar); }
 .route-scroll { max-height: 47vh; padding: 16rpx 24rpx; }
 .route-card {
   padding: 24rpx; margin: 12rpx 0; border-radius: 12rpx;

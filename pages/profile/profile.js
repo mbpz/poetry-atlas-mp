@@ -77,7 +77,7 @@ Page({
 
   // ---- 入口跳转 ----
   onTapFavorites() { wx.switchTab({ url: "/pages/favorites/favorites" }) },
-  onTapRoute() { wx.showToast({ title: "自建路线（即将开放）", icon: "none" }) },
+  onTapRoute() { wx.navigateTo({ url: "/pages-sub/routes/list/list" }) },
   onTapQuiz() { wx.showToast({ title: "诗词对战（即将开放）", icon: "none" }) },
   onTapRecitation() { wx.showToast({ title: "诗词朗诵（即将开放）", icon: "none" }) },
   onTapCommunity() { wx.showToast({ title: "社区（即将开放）", icon: "none" }) },

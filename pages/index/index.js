@@ -437,6 +437,16 @@ Page({
     }
   },
 
+  // 旅行路线面板：创建 + 我的路线
+  onOpenCreateRoute() {
+    this.setData({ showRoutePanel: false })
+    wx.navigateTo({ url: '/pages-sub/routes/create/create' })
+  },
+  onOpenMyRoutes() {
+    this.setData({ showRoutePanel: false })
+    wx.navigateTo({ url: '/pages-sub/routes/list/list' })
+  },
+
   onShareAppMessage() {
     return { title: "在地图上阅读中国 — 诗词地图", path: "/pages/index/index" }
   },

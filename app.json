@@ -13,7 +13,9 @@
         "info/place/place",
         "info/poem/poem",
         "info/author/author",
-        "info/travel/travel"
+        "info/travel/travel",
+        "routes/create/create",
+        "routes/list/list"
       ]
     }
   ],

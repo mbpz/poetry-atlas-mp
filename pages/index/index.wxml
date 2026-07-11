@@ -80,7 +80,11 @@
   <view wx:if="{{showRoutePanel}}" class="route-panel">
     <view class="panel-header">
       <text class="gold-title">主题旅行路线</text>
-      <view class="panel-close spring-btn" bindtap="onToggleRoutePanel">×</view>
+      <view class="panel-actions">
+        <view class="panel-act spring-btn" bindtap="onOpenMyRoutes">我的</view>
+        <view class="panel-act panel-act-primary spring-btn" bindtap="onOpenCreateRoute">+ 新建</view>
+        <view class="panel-close spring-btn" bindtap="onToggleRoutePanel">×</view>
+      </view>
     </view>
     <scroll-view scroll-y class="route-scroll" enhanced show-scrollbar="{{false}}">
       <view
@@ -90,7 +94,7 @@
         data-id="{{item.id}}" bindtap="onSelectRoute"
       >
         <view class="route-name">{{item.name}}</view>
-        <view class="route-meta">{{item.points.length}} 站</view>
+        <view class="route-meta">{{item.points.length}} 站 · 推荐</view>
         <view class="route-points">
           <text wx:for="{{item.points}}" wx:for-item="pt" wx:key="name" class="route-pt">{{pt.name}}</text>
         </view>
