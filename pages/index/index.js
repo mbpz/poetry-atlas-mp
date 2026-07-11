@@ -94,13 +94,13 @@ Page({
     this._checkPrivacyAgreement()
   },
 
-  // 首次启动弹出隐私协议；已同意则不再弹
+  // 兜底：App 层 onLaunch 已做全局隐私门控（未同意不会加载任何主页），
+  // 此处只在极端路径（直达且绕过 gate）下弹出协议，正常流程不会执行。
   _checkPrivacyAgreement() {
-    let agreed = false
-    try { agreed = wx.getStorageSync('poetry_privacy_agreed') === 'agreed' } catch (e) {}
+    const agreed = (getApp().globalData || {}).__privacyAgreed !== false
     if (agreed) return
     const dialog = this.selectComponent('#privacyDialog')
-    if (dialog) dialog.show()
+    if (dialog && typeof dialog.show === 'function') dialog.show()
   },
 
   onPrivacyAgreed() {

@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "隐私政策",
+  "navigationBarBackgroundColor": "#f8f6f0",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#f8f6f0",
+  "usingComponents": {
+    "privacy-dialog": "/components/privacy-dialog/privacy-dialog"
+  }
+}

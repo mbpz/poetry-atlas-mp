@@ -1,0 +1,5 @@
+<!-- 隐私协议阻断页 — App 层 onLaunch 拦截未决时导航至此
+     本页不调用 initCloudBase / wx.cloud / 任何云函数，仅复用 privacy-dialog 组件 -->
+<view class="gate-root">
+  <privacy-dialog id="privacyDialog" bind:agreed="onPrivacyAgreed" />
+</view>

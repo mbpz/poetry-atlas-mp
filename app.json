@@ -18,7 +18,8 @@
         "routes/create/create",
         "routes/list/list",
         "quiz/quiz",
-        "community/publish/publish"
+        "community/publish/publish",
+        "system/privacy"
       ]
     }
   ],
