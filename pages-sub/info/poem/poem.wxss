@@ -131,6 +131,19 @@
 .recitation-voice { font-size: 26rpx; color: var(--paper-text); font-weight: 600; letter-spacing: 0.06em; }
 .recitation-dur { font-size: 22rpx; color: var(--paper-text-2); margin-top: 2rpx; }
 
+/* 社区引用入口 */
+.publish-entry {
+  margin: 0 24rpx 24rpx; padding: 24rpx 32rpx; border-radius: 20rpx;
+  background: linear-gradient(135deg, rgba(158,43,35,0.08), rgba(168,136,72,0.06));
+  border: 1rpx solid var(--ink-line);
+  display: flex; flex-direction: column; align-items: center; gap: 4rpx;
+  transition: transform 0.12s;
+}
+.publish-entry:active { transform: scale(0.97); }
+.publish-entry-ico { font-size: 36rpx; color: var(--cinnabar); }
+.publish-entry-txt { font-size: 30rpx; color: var(--paper-text); font-weight: 600; letter-spacing: 0.1em; }
+.publish-entry-sub { font-size: 22rpx; color: var(--paper-text-2); }
+
 /* AI 主入口（hero 卡与解读区之间）*/
 .ai-main-btn {
   margin: 0 24rpx 24rpx; padding: 28rpx 32rpx; border-radius: 20rpx;

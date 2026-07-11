@@ -80,6 +80,13 @@
     </view>
   </view>
 
+  <!-- 社区引用入口：写一首（关联本诗）-->
+  <view class="publish-entry spring-btn" bindtap="onTapPublishEntry">
+    <text class="publish-entry-ico">✎</text>
+    <text class="publish-entry-txt">写一首</text>
+    <text class="publish-entry-sub">分享对《{{poem.title}}》的感悟</text>
+  </view>
+
   <!-- AI 主入口（hero 卡与解读区之间）-->
   <view class="ai-main-btn spring-btn" bindtap="onAskAI">
     <text class="ai-main-ico">💡</text>

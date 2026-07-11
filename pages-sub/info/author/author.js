@@ -66,6 +66,12 @@ Page({
     wx.navigateTo({ url: "/pages-sub/info/poem/poem?id=" + poem._id })
   },
 
+  // 社区引用入口 → 打开发布器并关联本作者
+  onTapPublishEntry() {
+    const url = '/pages-sub/community/publish/publish?author_name=' + encodeURIComponent(this.authorName)
+    wx.navigateTo({ url })
+  },
+
   onShareAppMessage() {
     return {
       title: this.authorName + " — 诗词地图",

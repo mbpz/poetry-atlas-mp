@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "诗词社区",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "light",
+  "onReachBottomDistance": 120,
+  "usingComponents": {
+    "skeleton": "../../components/skeleton/skeleton",
+    "empty-state": "../../components/empty-state/empty-state",
+    "comment-panel": "../../components/comment-panel/comment-panel"
+  }
+}

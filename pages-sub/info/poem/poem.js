@@ -274,6 +274,18 @@ Page({
     this.setData({ showMiniPlayer: false })
   },
 
+  // 社区引用入口 → 打开发布器并关联本诗
+  onTapPublishEntry() {
+    const t = this.data.poem
+    if (!this.poemId || !t) {
+      wx.navigateTo({ url: '/pages-sub/community/publish/publish' })
+      return
+    }
+    const url = '/pages-sub/community/publish/publish?poem_id=' + this.poemId
+      + '&poem_title=' + encodeURIComponent(t.title)
+    wx.navigateTo({ url })
+  },
+
   onShareAppMessage() {
     const t = this.data.poem
     const title = t ? t.title + ' - ' + t.author : '诗词地图'
