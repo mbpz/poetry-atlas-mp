@@ -6,7 +6,6 @@
  *   - from=db → 首选云函数 routes.detail，失败回退 ROUTE_DETAILS[route]
  *   - 否则 → 直接读 ROUTE_DETAILS（静态示例）
  */
-const { getDB } = require("../../../utils/cloudbase.js")
 const { splitPoemLines } = require("../../../utils/util.js")
 
 // 路线详情（静态示例数据，作为回退兜底）

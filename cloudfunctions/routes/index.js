@@ -83,8 +83,8 @@ exports.main = async (event, context) => {
         const page = Math.max(1, Number(event.page) || 1)
         const pageSize = Math.min(50, Math.max(1, Number(event.pageSize) || 20))
         const where = {}
-        // openid 存在 → 我的路线（含非公开）；否则仅公开
-        if (event.openid) where.openid = event.openid
+        // 服务端 openid 存在 → 我的路线（含非公开）；否则仅公开
+        if (openid) where.openid = openid
         else where.is_public = true
         const res = await db.collection(DB_COLLECTION)
           .where(where)
@@ -108,7 +108,9 @@ exports.main = async (event, context) => {
         if (!data.is_public && data.openid !== openid) {
           return { ok: false, error: 'forbidden' }
         }
-        return { ok: true, data }
+        // 不回传 openid
+        const { openid: _, ...safe } = data
+        return { ok: true, data: safe }
       }
 
       default:
