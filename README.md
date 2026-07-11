@@ -80,7 +80,6 @@ poetry-atlas-mp/
 | `authors` | 作者 | `name`, `dynasty`, `biography`, `route[]`, `poem_count`, `birth_year/death_year` | 公开读 |
 | `dynasties` | 朝代 | `name`, `start_year`, `end_year`, `sort_order`, `poem_count` | 公开读 |
 | `favorites` | 收藏 | `openid`, `poem_id`, `poem_title`, `poem_author`, `created_at` | 仅本人读写 |
-| `imagery_network` | 意象网络 | `tag`, `related_tags[]`, `top_poems[]` | 公开读 |
 
 GeoPoint 存储统一用 WGS-84 坐标；代码兼容两种返回格式（GeoJSON `coordinates` / 扁平 `longitude+latitude`）。
 

@@ -1,7 +1,10 @@
 <!-- 旅行路线详情页 -->
 <view class="page" wx:if="{{!loading}}">
   <view class="travel-hero card">
-    <view class="travel-name">{{route.name}}</view>
+    <view class="travel-name-row">
+      <view class="travel-name">{{route.name}}</view>
+      <view class="travel-badge">示例</view>
+    </view>
     <view class="travel-theme">「{{route.theme}}」</view>
     <view class="travel-desc">{{route.description}}</view>
   </view>

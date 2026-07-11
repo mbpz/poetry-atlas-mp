@@ -48,24 +48,20 @@
     <view class="poem-seal">{{poem.dynasty}}</view>
   </view>
 
-  <!-- 解读 Tab -->
+  <!-- 解读区：单一"注释与赏析" + AI 主入口 -->
   <view class="card interpret-card">
-    <view class="tab-bar">
-      <view
-        wx:for="{{tabs}}" wx:key="key"
-        class="tab-item spring-btn {{activeTab === item.key ? 'active' : ''}}"
-        data-key="{{item.key}}" bindtap="onSelectTab"
-      >{{item.label}}</view>
-    </view>
+    <view class="section-title gold-title">注释与赏析</view>
     <view class="tab-body">
-      <text wx:if="{{activeTab === 'annotation' && poem.annotation}}" class="interpret-text">{{poem.annotation}}</text>
-      <text wx:if="{{activeTab === 'annotation' && !poem.annotation}}" class="empty small">暂无注释</text>
-      <text wx:if="{{activeTab === 'translation' && poem.translation}}" class="interpret-text">{{poem.translation}}</text>
-      <text wx:if="{{activeTab === 'translation' && !poem.translation}}" class="empty small">暂无译文</text>
-      <text wx:if="{{activeTab === 'appreciation' && poem.appreciation}}" class="interpret-text">{{poem.appreciation}}</text>
-      <text wx:if="{{activeTab === 'appreciation' && !poem.appreciation}}" class="empty small">暂无赏析</text>
+      <text wx:if="{{poem.interpretText}}" class="interpret-text">{{poem.interpretText}}</text>
+      <text wx:else class="interpret-text interpret-empty">暂无人工注释，可使用 <text class="ai-link" bindtap="onAskAI">AI 深度解读</text> 了解典故、情感与背景</text>
     </view>
-    <view class="ai-btn spring-btn" bindtap="onAskAI">AI 深度解读</view>
+  </view>
+
+  <!-- AI 主入口（hero 卡与解读区之间）-->
+  <view class="ai-main-btn spring-btn" bindtap="onAskAI">
+    <text class="ai-main-ico">💡</text>
+    <text class="ai-main-txt">AI 深度解读</text>
+    <text class="ai-main-sub">白话译文 · 典故 · 情感 · 手法</text>
   </view>
 
   <!-- 相关地点 -->

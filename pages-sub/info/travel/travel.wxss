@@ -2,7 +2,12 @@
 .page { min-height: 100vh; padding: 24rpx 24rpx calc(40rpx + env(safe-area-inset-bottom)); }
 
 .travel-hero { padding: 40rpx 36rpx; margin-bottom: 24rpx; }
-.travel-name { font-size: 42rpx; font-weight: 700; margin-bottom: 16rpx; color: var(--paper-text); letter-spacing: 0.08em; }
+.travel-name-row { display: flex; align-items: center; gap: 16rpx; margin-bottom: 12rpx; }
+.travel-name { font-size: 42rpx; font-weight: 700; color: var(--paper-text); letter-spacing: 0.08em; }
+.travel-badge {
+  display: inline-block; padding: 2rpx 12rpx; border-radius: 20rpx;
+  font-size: 20rpx; color: var(--gold); border: 1rpx solid var(--gold); letter-spacing: 0.1em;
+}
 .travel-theme { font-size: 28rpx; color: var(--gold); margin-bottom: 16rpx; font-style: italic; }
 .travel-desc { font-size: 26rpx; line-height: 1.8; color: var(--paper-text-2); }
 

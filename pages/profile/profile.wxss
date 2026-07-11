@@ -13,6 +13,18 @@
 .profile-name { font-size: 34rpx; font-weight: 600; margin-bottom: 8rpx; color: var(--paper-text); letter-spacing: 0.08em; }
 .profile-sub { font-size: 24rpx; color: var(--paper-text-2); }
 
+.openid-card { margin-top: 16rpx; padding: 24rpx 28rpx; }
+.openid-label { font-size: 22rpx; color: var(--paper-text-2); margin-bottom: 8rpx; letter-spacing: 0.05em; }
+.openid-row { display: flex; align-items: center; gap: 16rpx; }
+.openid-value { flex: 1; font-size: 22rpx; color: var(--paper-text); word-break: break-all; font-family: monospace; }
+.openid-copy {
+  flex-shrink: 0; padding: 8rpx 20rpx; border-radius: 20rpx;
+  background: var(--ink-surface-2); border: 1rpx solid var(--ink-line);
+}
+.openid-copy:active { transform: scale(0.92); }
+.openid-copy-txt { font-size: 22rpx; color: var(--cinnabar); }
+.openid-copy.disabled { opacity: 0.4; }
+
 .stats-card { padding: 32rpx; margin-top: 16rpx; transition: background 0.15s; }
 .stats-card:active { background: rgba(158, 43, 35, 0.05); }
 .stat-item.Center { text-align: center; }

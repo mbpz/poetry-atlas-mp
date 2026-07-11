@@ -3,7 +3,17 @@
   <view class="profile-hero card">
     <view class="profile-avatar">诗</view>
     <view class="profile-name">诗词爱好者</view>
-    <view class="profile-sub">OPENID 自动登录 · 无需注册</view>
+    <view class="profile-sub">CloudBase 自动身份 · 无需注册</view>
+  </view>
+
+  <view class="card openid-card">
+    <view class="openid-label">用户标识 (OPENID)</view>
+    <view class="openid-row">
+      <text class="openid-value">{{openid || '获取中…'}}</text>
+      <view class="openid-copy {{openid ? '' : 'disabled'}}" bindtap="onCopyOpenid">
+        <text class="openid-copy-txt">复制</text>
+      </view>
+    </view>
   </view>
 
   <view class="card stats-card">

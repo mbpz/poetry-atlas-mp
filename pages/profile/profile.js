@@ -16,6 +16,8 @@ Page({
   },
 
   onShow() {
+    // 显示启动时已静默拿到的 openid（失败时为空，按钮会引导重试）
+    this.setData({ openid: getApp().globalData.openid || "" })
     this.loadStats()
   },
 

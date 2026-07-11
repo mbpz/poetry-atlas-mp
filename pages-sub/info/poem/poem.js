@@ -7,12 +7,6 @@ const { splitPoemLines } = require('../../../utils/util.js')
 Page({
   data: {
     poem: null,
-    tabs: [
-      { key: 'annotation', label: '注释' },
-      { key: 'translation', label: '译文' },
-      { key: 'appreciation', label: '赏析' },
-    ],
-    activeTab: 'annotation',
     places: [],
     loading: true,
     isFavorited: false,
@@ -60,18 +54,21 @@ Page({
     const places = (poem.place_names || []).map((name) => ({ name }))
     const lines = splitPoemLines(poem.content)
     this.setData({
+      // 合成一个"注释与赏析"字段（拼接三段，用空行分隔；全空则留空让模板引导 AI）
+      const parts = [poem.annotation, poem.translation, poem.appreciation].filter(Boolean)
       poem: {
         title: poem.title, author: poem.author, dynasty: poem.dynasty, content: poem.content,
         lines,
         linesChars: lines.map((l) => Array.from(l)),
-        annotation: poem.annotation || '', translation: poem.translation || '', appreciation: poem.appreciation || '',
+        annotation: poem.annotation || '',
+        translation: poem.translation || '',
+        appreciation: poem.appreciation || '',
+        interpretText: parts.join('\n\n'),
       },
       places, loading: false,
     })
     if (this.poemId) this.checkFavorite()
   },
-
-  onSelectTab(e) { this.setData({ activeTab: e.currentTarget.dataset.key }) },
 
   // 横/竖排卷轴切换
   onTogglePoemMode(e) {

@@ -96,12 +96,21 @@
 .interpret-text { font-size: 28rpx; line-height: 2; color: var(--paper-text-2); white-space: pre-wrap; }
 .empty.small { font-size: 26rpx; }
 
-.ai-btn {
-  margin: 0 36rpx 36rpx; padding: 22rpx; text-align: center;
-  background: linear-gradient(135deg, var(--teal), var(--cinnabar)); color: #fff;
-  border-radius: 40rpx; font-size: 26rpx; letter-spacing: 0.1em;
-  box-shadow: 0 4rpx 16rpx rgba(158, 43, 35, 0.25);
+/* AI 主入口（hero 卡与解读区之间）*/
+.ai-main-btn {
+  margin: 0 24rpx 24rpx; padding: 28rpx 32rpx; border-radius: 20rpx;
+  background: linear-gradient(135deg, rgba(61,107,134,0.1), rgba(158,43,35,0.08));
+  border: 1rpx solid var(--ink-line);
+  display: flex; flex-direction: column; align-items: center; gap: 4rpx;
+  transition: transform 0.12s;
 }
+.ai-main-btn:active { transform: scale(0.97); }
+.ai-main-ico { font-size: 40rpx; }
+.ai-main-txt { font-size: 30rpx; color: var(--paper-text); font-weight: 600; letter-spacing: 0.1em; }
+.ai-main-sub { font-size: 22rpx; color: var(--paper-text-2); }
+
+.interpret-empty { color: var(--paper-text-2); }
+.ai-link { color: var(--cinnabar); text-decoration: underline; }
 
 .place-card { margin-top: 24rpx; padding: 32rpx; }
 .section-title { font-size: 30rpx; font-weight: 600; margin-bottom: 20rpx; }
