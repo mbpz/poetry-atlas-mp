@@ -9,9 +9,10 @@ Page({
     theme: '',
     description: '',
     points: [
-      { name: '', lng: '', lat: '', poem_title: '', poem_author: '', poem_content: '', note: '' },
+      { _id: 1, name: '', lng: '', lat: '', poem_title: '', poem_author: '', poem_content: '', note: '' },
     ],
     saving: false,
+    _pointCounter: 1,
   },
 
   // ---- 路线基本信息 ----
@@ -28,9 +29,10 @@ Page({
     this.setData({ [key]: value })
   },
   addPoint() {
+    const counter = this.data._pointCounter + 1
     const list = this.data.points.slice()
-    list.push({ name: '', lng: '', lat: '', poem_title: '', poem_author: '', poem_content: '', note: '' })
-    this.setData({ points: list })
+    list.push({ _id: counter, name: '', lng: '', lat: '', poem_title: '', poem_author: '', poem_content: '', note: '' })
+    this.setData({ points: list, _pointCounter: counter })
   },
   removePoint(e) {
     const idx = Number(e.currentTarget.dataset.idx)

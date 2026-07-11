@@ -21,7 +21,7 @@
 
     <view
       wx:for="{{points}}"
-      wx:key="*this"
+      wx:key="_id"
       class="point-card"
     >
       <view class="point-head">
