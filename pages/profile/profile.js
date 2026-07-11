@@ -45,6 +45,39 @@ Page({
     }
   },
 
+  // ---- 微信昵称接入（必须由用户点击触发 getUserProfile）----
+  onUseWxProfile() {
+    wx.getUserProfile({
+      desc: '用于完善您的昵称和头像',
+      success: (res) => {
+        const u = res.userInfo || {}
+        const nick = u.nickName || ''
+        const avatar = u.avatarUrl || ''
+        if (!nick) {
+          wx.showToast({ title: '获取昵称失败', icon: 'none' })
+          return
+        }
+        wx.showLoading({ title: '保存…' })
+        wx.cloud.callFunction({
+          name: 'updateUser',
+          data: { nickname: nick, avatar_url: avatar },
+        }).then((r) => {
+          const user = (r.result && r.result.user) || { nickname: nick, avatar_url: avatar }
+          const app = getApp()
+          app.globalData.user = Object.assign({}, app.globalData.user || {}, user)
+          this.setData({
+            nickname: user.nickname || nick,
+            avatarText: (user.nickname || nick).slice(0, 1) || '诗',
+          })
+          wx.showToast({ title: '已同步微信昵称', icon: 'success' })
+        }).catch((err) => {
+          wx.showToast({ title: '保存失败', icon: 'none' })
+        }).finally(() => wx.hideLoading())
+      },
+      fail: () => { wx.showToast({ title: '已取消', icon: 'none' }) },
+    })
+  },
+
   // ---- 昵称编辑 ----
   onEditNickname() { this.setData({ showNickModal: true }) },
   onCancelNick() { this.setData({ showNickModal: false }) },

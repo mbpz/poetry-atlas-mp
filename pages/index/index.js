@@ -91,6 +91,21 @@ Page({
     this._throttledLoadMarkers = throttle(this.loadMarkers, 350)
     this.loadDynasties()
     this.loadMarkers()
+    this._checkPrivacyAgreement()
+  },
+
+  // 首次启动弹出隐私协议；已同意则不再弹
+  _checkPrivacyAgreement() {
+    let agreed = false
+    try { agreed = wx.getStorageSync('poetry_privacy_agreed') === 'agreed' } catch (e) {}
+    if (agreed) return
+    const dialog = this.selectComponent('#privacyDialog')
+    if (dialog) dialog.show()
+  },
+
+  onPrivacyAgreed() {
+    // 用户同意隐私协议 → 引导页自然按 showGuide 逻辑展示
+    if (this.data.showGuide) this.setData({ showGuide: true })
   },
 
   onShow() {
@@ -383,13 +398,29 @@ Page({
   },
 
   onLocate() {
+    wx.getSetting({
+      success: (res) => {
+        if (res.authSetting['scope.userLocation'] === false) {
+          // 曾被拒绝 → 引导用户手动打开设置
+          wx.openSetting({
+            success: (s) => { if (s.authSetting['scope.userLocation']) this._doLocate() },
+          })
+        } else {
+          this._doLocate()
+        }
+      },
+      fail: () => this._doLocate(),
+    })
+  },
+
+  _doLocate() {
     wx.getLocation({
       type: "gcj02",
       success: (res) => {
         this.moveToLocation(res.longitude, res.latitude, 8)
         this.setData({ hasLocation: true })
       },
-      fail: () => { wx.showToast({ title: "定位失败，请检查权限", icon: "none" }) },
+      fail: () => { wx.showToast({ title: "定位失败，请检查系统权限", icon: "none" }) },
     })
   },
 

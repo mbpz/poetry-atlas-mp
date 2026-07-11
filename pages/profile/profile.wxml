@@ -4,6 +4,7 @@
     <view class="profile-avatar">{{avatarText}}</view>
     <view class="profile-name">{{nickname || '点击设置昵称'}}</view>
     <view class="profile-sub">CloudBase 自动身份 · 无需注册</view>
+    <view class="profile-wxbtn" catchtap="onUseWxProfile">使用微信昵称</view>
   </view>
 
   <view class="card openid-card">

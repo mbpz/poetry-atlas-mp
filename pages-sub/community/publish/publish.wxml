@@ -1,9 +1,19 @@
 <!-- 发布动态 -->
 <view class="page">
+  <!-- 发布隐私提示（必须勾选才能发布）-->
+  <view class="card privacy-notice">
+    <view class="privacy-notice-text">提示：发布的内容对所有用户可见，请勿包含个人隐私信息。</view>
+    <view class="privacy-notice-check">
+      <checkbox-group bindchange="onTogglePrivacy">
+        <checkbox value="agree" checked="{{privacyAgreed}}" />
+      </checkbox-group>
+      <text class="privacy-notice-label">我已阅读并同意</text>
+    </view>
+  </view>
+
   <!-- 文字输入 -->
   <view class="card write-card">
-    <textarea
-      class="write-input"
+    <textarea class="write-input"
       placeholder="分享你对诗词的感悟…（最多 {{MAX_CONTENT}} 字）"
       placeholder-class="write-placeholder"
       value="{{content}}"

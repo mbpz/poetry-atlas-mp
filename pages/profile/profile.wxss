@@ -12,7 +12,15 @@
   box-shadow: 0 4rpx 24rpx rgba(158, 43, 35, 0.25);
 }
 .profile-name { font-size: 34rpx; font-weight: 600; margin-bottom: 8rpx; color: var(--paper-text); letter-spacing: 0.08em; }
-.profile-sub { font-size: 24rpx; color: var(--paper-text-2); }
+.profile-sub { font-size: 24rpx; color: var(--paper-text-2); margin-bottom: 24rpx; }
+.profile-wxbtn {
+  display: inline-block; margin-top: 8rpx;
+  padding: 12rpx 32rpx; border-radius: 32rpx;
+  font-size: 26rpx; font-weight: 600;
+  color: #fff; background: var(--teal);
+  letter-spacing: 0.05em;
+}
+.profile-wxbtn:active { transform: scale(0.95); opacity: 0.85; }
 
 .openid-card { margin-top: 16rpx; padding: 24rpx 28rpx; }
 .openid-label { font-size: 22rpx; color: var(--paper-text-2); margin-bottom: 8rpx; letter-spacing: 0.05em; }

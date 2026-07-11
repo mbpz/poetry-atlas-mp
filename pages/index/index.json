@@ -1,5 +1,7 @@
 {
   "navigationBarTitleText": "诗词地图",
   "enablePullDownRefresh": false,
-  "usingComponents": {}
+  "usingComponents": {
+    "privacy-dialog": "/components/privacy-dialog/privacy-dialog"
+  }
 }

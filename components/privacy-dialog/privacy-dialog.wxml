@@ -1,0 +1,16 @@
+<!-- 隐私协议弹框 — 全屏覆盖，阻断使用 -->
+<view wx:if="{{show}}" class="privacy-mask">
+  <view class="privacy-card" catchtap="noop">
+    <view class="privacy-logo">诗</view>
+    <view class="privacy-title">隐私保护承诺</view>
+    <scroll-view scroll-y class="privacy-body">
+      <text class="privacy-text">
+诗词地图 重视您的隐私。我们将收集您的位置信息用于展示附近的诗词地点，收集您的发布内容用于社区服务。请点击「同意」继续使用。
+      </text>
+    </scroll-view>
+    <view class="privacy-btns">
+      <view class="privacy-btn disagree" bindtap="onDisagree">不同意</view>
+      <view class="privacy-btn agree" bindtap="onAgree">同意</view>
+    </view>
+  </view>
+</view>

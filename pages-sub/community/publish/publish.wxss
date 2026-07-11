@@ -4,6 +4,17 @@
   padding: 24rpx 24rpx calc(160rpx + env(safe-area-inset-bottom));
 }
 
+/* 发布隐私提示 */
+.privacy-notice { padding: 24rpx 28rpx; }
+.privacy-notice-text {
+  font-size: 24rpx; color: var(--paper-text-2); line-height: 1.7;
+  margin-bottom: 16rpx;
+}
+.privacy-notice-check {
+  display: flex; align-items: center; gap: 12rpx;
+}
+.privacy-notice-label { font-size: 26rpx; color: var(--paper-text); }
+
 /* 文字输入 */
 .write-card { padding: 28rpx 28rpx 16rpx; position: relative; }
 .write-input {

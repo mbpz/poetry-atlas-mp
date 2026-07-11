@@ -19,6 +19,7 @@ Page({
     authorName: '',
     count: 0,
     submitting: false,
+    privacyAgreed: false,
   },
 
   onLoad(options) {
@@ -99,11 +100,20 @@ Page({
   onClearPoem() { this.setData({ poemId: '', poemTitle: '' }) },
   onClearAuthor() { this.setData({ authorName: '' }) },
 
+  onTogglePrivacy(e) {
+    // checkbox-group change → e.detail.value 为选中项 value 数组
+    this.setData({ privacyAgreed: (e.detail.value || []).length > 0 })
+  },
+
   onSubmit: debounce(function () {
     this._submit()
   }, 500),
 
   async _submit() {
+    if (!this.data.privacyAgreed) {
+      wx.showToast({ title: '请确认已阅读发布提示', icon: 'none' })
+      return
+    }
     const content = this.data.content.trim()
     if (!content) {
       wx.showToast({ title: '写点什么吧', icon: 'none' })

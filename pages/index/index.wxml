@@ -121,4 +121,7 @@
       <view class="guide-btn btn-gold" bindtap="onGuideClose">开启旅程</view>
     </view>
   </view>
+
+  <!-- 隐私协议弹框（首次启动全屏阻断，必须在引导前决策）-->
+  <privacy-dialog id="privacyDialog" bind:agreed="onPrivacyAgreed" />
 </view>
