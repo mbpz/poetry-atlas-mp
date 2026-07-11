@@ -21,8 +21,9 @@ Page({
     hotKeywords: ["西湖", "李白", "月亮", "长江", "泰山", "杜甫"],
   },
 
-  onLoad() {
+  onLoad(options) {
     this._doSearch = debounce((kw) => this.search(kw), 300)
+    this._fromPublish = (options || {}).from === 'publish'
   },
 
   onInput(e) {
@@ -77,12 +78,32 @@ Page({
   onTapPoem(e) {
     const poem = e.currentTarget.dataset.poem
     if (!poem) return
+    // 来自发布器选诗 → 回写并返回
+    if (this._fromPublish) {
+      getApp()._publishReturn = {
+        poem_id: poem._id,
+        poem_title: poem.title,
+        author_name: poem.author,
+      }
+      wx.navigateBack()
+      return
+    }
     wx.navigateTo({ url: "/pages-sub/info/poem/poem?id=" + poem._id })
   },
 
   onTapAuthor(e) {
     const author = e.currentTarget.dataset.author
     if (!author) return
+    // 来自发布器选诗 → 回写作者并返回（无 poem）
+    if (this._fromPublish) {
+      getApp()._publishReturn = {
+        poem_id: '',
+        poem_title: '',
+        author_name: author.name,
+      }
+      wx.navigateBack()
+      return
+    }
     wx.navigateTo({ url: "/pages-sub/info/author/author?name=" + encodeURIComponent(author.name) })
   },
 
