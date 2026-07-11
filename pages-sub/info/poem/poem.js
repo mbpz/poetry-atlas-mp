@@ -95,6 +95,8 @@ Page({
       },
       places, loading: false,
     })
+    // globalData 路径（如旅行页跳转）可能未带 _id，补上以便加载朗诵
+    if (!this.poemId && poem._id) this.poemId = poem._id
     if (this.poemId) {
       this.checkFavorite()
       this.loadRecitations()

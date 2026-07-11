@@ -79,8 +79,11 @@ Page({
   onTapFavorites() { wx.switchTab({ url: "/pages/favorites/favorites" }) },
   onTapRoute() { wx.navigateTo({ url: "/pages-sub/routes/list/list" }) },
   onTapQuiz() { wx.navigateTo({ url: "/pages-sub/quiz/quiz" }) },
-  onTapRecitation() { wx.showToast({ title: "诗词朗诵（即将开放）", icon: "none" }) },
-  onTapCommunity() { wx.showToast({ title: "社区（即将开放）", icon: "none" }) },
+  onTapRecitation() {
+    // 朗诵无独立着陆页 → 跳搜索找有朗诵数据的诗词
+    wx.navigateTo({ url: "/pages/search/search?kw=%E9%9D%99%E5%A4%9C%E6%80%9D" })
+  },
+  onTapCommunity() { wx.navigateTo({ url: "/pages/community/community" }) },
 
   onTapAbout() {
     wx.showModal({

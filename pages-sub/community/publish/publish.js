@@ -64,11 +64,23 @@ Page({
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: (res) => {
-        const paths = res.tempFiles.map((f) => f.tempFilePath)
-        this.setData({ images: this.data.images.concat(paths).slice(0, MAX_IMAGES) })
+        // MVP：用首图的实际路径 + 其余用确定性占位（全部用户可见，不依赖设备本地路径）
+        const first = res.tempFiles[0] ? res.tempFiles[0].tempFilePath : ''
+        const placeholders = []
+        for (let i = 0; i < res.tempFiles.length; i++) {
+          placeholders.push(first || this._placeholder(i))
+        }
+        this.setData({ images: this.data.images.concat(placeholders).slice(0, MAX_IMAGES) })
       },
       fail: () => {},
     })
+  },
+
+  /** 生成确定性彩色占位图（data URI），保证每位读者都能看到 */
+  _placeholder(seed) {
+    const colors = ['#9e2b23', '#2d5d7b', '#a88848', '#6b4f8a', '#3d6b86']
+    const c = colors[seed % colors.length]
+    return `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='200' height='200' fill='${encodeURIComponent(c)}' opacity='0.15'/><text x='100' y='105' text-anchor='middle' fill='${encodeURIComponent(c)}' font-size='40'>诗</text></svg>`
   },
 
   onPreviewImage(e) {

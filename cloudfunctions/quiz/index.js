@@ -188,7 +188,7 @@ async function submitRound(openid, answers) {
     await db.collection('users').doc(openid).update({
       data: {
         'stats.quiz_total': _.inc(1),
-        'stats.quiz_wins': won ? _.inc(1) : _.inc(0),
+        'stats.quiz_wins': won ? _.inc(1) : _.inc(0), // no-op on loss — 显式表达"仅赢时 +1"
       },
     })
   } catch (err) {
