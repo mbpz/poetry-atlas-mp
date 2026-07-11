@@ -17,6 +17,7 @@ Page({
     loading: true,
     refreshing: false,
     loadingMoreDynasty: '',   // 当前正在加载的朝代
+    pageSize: PAGE_SIZE,      // 暴露给 WXML（点击加载更多按钮的可见性判断）
     // 朝代列表本身也做分页
     dynastyOffset: 0,
     hasMoreDynasties: true,

@@ -6,33 +6,48 @@
 const { getDB } = require("../../utils/cloudbase.js")
 const { splitPoemLines } = require("../../utils/util.js")
 
+const PAGE_SIZE = 20
+const MAX_IN = 100 // CloudBase _.in() 数组上限
+
 Page({
   data: {
     favorites: [],
     loading: true,
+    hasMore: true,
     openid: "",
   },
 
   onShow() {
     // 每次进入刷新（收藏可能在诗词页变更）
-    this.loadFavorites()
+    this.resetAndLoad()
   },
 
-  async loadFavorites() {
+  resetAndLoad() {
+    this._favOffset = 0
+    this.setData({ favorites: [], hasMore: true }, () => {
+      this.loadFavorites(true)
+    })
+  },
+
+  async loadFavorites(refresh) {
     const { db } = getDB()
     this.setData({ loading: true })
     try {
-      // 查收藏记录（按时间倒序，默认排序即插入序）
-      const favRes = await db.collection("favorites").orderBy("created_at", "desc").get()
+      // 分页查收藏记录（按时间倒序，skip+limit 避免全表）
+      const favRes = await db.collection("favorites")
+        .orderBy("created_at", "desc")
+        .skip(this._favOffset || 0)
+        .limit(PAGE_SIZE)
+        .get()
       const favs = favRes.data
 
       if (!favs.length) {
-        this.setData({ favorites: [], loading: false })
+        this.setData({ hasMore: false, loading: false })
         return
       }
 
-      // 批量查对应诗词详情（poems 集合安全规则为公开可读）
-      const poemIds = favs.map((f) => f.poem_id).filter(Boolean)
+      // 仅当次页的 poemIds（并控制在 MAX_IN 内）查 poems 集合
+      const poemIds = favs.map((f) => f.poem_id).filter(Boolean).slice(0, MAX_IN)
       let poemsMap = {}
       if (poemIds.length) {
         const poemRes = await db.collection("poems").where({
@@ -41,7 +56,7 @@ Page({
         poemRes.data.forEach((p) => { poemsMap[p._id] = p })
       }
 
-      const favorites = favs.map((f) => {
+      const newFavs = favs.map((f) => {
         const poem = poemsMap[f.poem_id] || {}
         return {
           favId: f._id,
@@ -54,7 +69,13 @@ Page({
         }
       })
 
-      this.setData({ favorites, loading: false })
+      this._favOffset = (this._favOffset || 0) + favs.length
+      const all = refresh ? newFavs : this.data.favorites.concat(newFavs)
+      this.setData({
+        favorites: all,
+        hasMore: favs.length === PAGE_SIZE,
+        loading: false,
+      })
     } catch (err) {
       console.error("[favorites] error:", err)
       this.setData({ loading: false })
@@ -77,6 +98,11 @@ Page({
 
   onExplore() {
     wx.switchTab({ url: "/pages/index/index" })
+  },
+
+  onLoadMore() {
+    if (this.data.loading || !this.data.hasMore) return
+    this.loadFavorites(false)
   },
 
   async onRemove(e) {

@@ -3,6 +3,7 @@
  * 全屏 <map> + 地点 markers(热力大小) + 朝代时间轴 + 旅行路线折线 + 缩放聚合
  */
 const { getDB, wrapPromise } = require("../../utils/cloudbase.js")
+const { throttle } = require("../../utils/util.js")
 const config = require("../../config.js")
 
 // 预定义旅行路线（M4 静态数据，M5 可改由 AI 生成）
@@ -85,6 +86,8 @@ Page({
 
   onReady() {
     this.mapCtx = wx.createMapContext("poetry-map", this)
+    // 节流版 loadMarkers：拖/放地图时避免 DB 请求风暴
+    this._throttledLoadMarkers = throttle(this.loadMarkers, 350)
     this.loadDynasties()
     this.loadMarkers()
   },
@@ -118,6 +121,9 @@ Page({
 
   // ===== 数据加载 =====
   async loadMarkers() {
+    // 防并发：上一次请求未结束则跳过（下一次 region change 会刷新到最新视野）
+    if (this._loadingMarkers) return
+    this._loadingMarkers = true
     this.setData({ loading: true })
     this._markerIdCounter = 0
     this._markerMap = {}
@@ -135,18 +141,22 @@ Page({
           cond["dynasty_stats." + this.data.selectedDynasty] = db.command.gt(0)
         }
         const res = await wrapPromise(
-          db.collection("places").where(cond).orderBy("poem_count", "desc").limit(200).get(),
+          db.collection("places").where(cond)
+            .field({ name: true, location: true, type: true, poem_count: true, hot_poems: true })
+            .orderBy("poem_count", "desc").limit(200).get(),
           { loadingText: "加载地点…" }
         )
         placesData = res.data || []
         markers = placesData.map((p) => this.placeToMarker(p, scale))
       }
 
+      this._loadingMarkers = false
       this.setData({ markers, loading: false })
       this.updatePolyline()
       // 传当前地图中心 → 推荐离用户视野中心最近的地点
       this.loadFeatured(placesData, { longitude: this.data.longitude, latitude: this.data.latitude })
     } catch (err) {
+      this._loadingMarkers = false
       console.error("[index] loadMarkers error:", err)
       this.setData({ loading: false })
     }
@@ -289,16 +299,21 @@ Page({
   // ===== 交互事件 =====
   onRegionChange(e) {
     if (e.type === "end" && (e.causedBy === "scale" || e.causedBy === "drag")) {
+      // 每次 drag/scale 都更新中心（轻量 setData），但 loadMarkers 走节流版
+      this.mapCtx.getCenterLocation({
+        success: (res) => { this.setData({ longitude: res.longitude, latitude: res.latitude }) },
+      })
       this.mapCtx.getScale({
         success: (res) => {
           if (Math.abs(res.scale - this.data.scale) >= 1) {
             this.setData({ scale: res.scale })
-            this.loadMarkers()
+            if (this._throttledLoadMarkers) {
+              this._throttledLoadMarkers()
+            } else {
+              this.loadMarkers()
+            }
           }
         },
-      })
-      this.mapCtx.getCenterLocation({
-        success: (res) => { this.setData({ longitude: res.longitude, latitude: res.latitude }) },
       })
     }
   },

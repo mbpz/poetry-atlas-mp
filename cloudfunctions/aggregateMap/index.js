@@ -68,7 +68,12 @@ function placeToMarker(p) {
 async function aggregateProvince(dynasty) {
   const col = db.collection('places')
   const cond = dynasty ? { [`dynasty_stats.${dynasty}`]: _.gt(0) } : {}
-  const res = await col.where(cond).orderBy('poem_count', 'desc').get()
+  // 仅拉聚合所需字段 + 硬上限，避免 hot_poems 等大块数据传输
+  const res = await col.where(cond)
+    .field({ name: true, location: true, type: true, poem_count: true, dynasty_stats: !!dynasty })
+    .orderBy('poem_count', 'desc')
+    .limit(500)
+    .get()
 
   const agg = {}
   for (const p of res.data) {

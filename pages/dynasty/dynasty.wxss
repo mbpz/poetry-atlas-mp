@@ -41,7 +41,6 @@
   border-top: 1rpx dashed var(--ink-line); padding-top: 16rpx;
 }
 .dynasty-poems.show { display: block; }
-.dynasty-poems-scroll { max-height: 60vh; }
 
 .dynasty-poem {
   padding: 22rpx 4rpx; border-bottom: 1rpx solid var(--ink-line);

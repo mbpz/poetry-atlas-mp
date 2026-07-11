@@ -1,5 +1,6 @@
 /* ===== 收藏页 — 沉浸水墨 ===== */
-.page { min-height: 100vh; padding: 24rpx 24rpx calc(140rpx + env(safe-area-inset-bottom)); }
+.page { height: 100vh; display: flex; flex-direction: column; }
+.fav-scroll { flex: 1; padding: 24rpx; }
 
 .fav-card {
   margin: 16rpx 0; padding: 28rpx 32rpx;

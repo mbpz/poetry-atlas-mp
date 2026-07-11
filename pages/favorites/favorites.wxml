@@ -1,40 +1,51 @@
-<!-- 收藏页 -->
+<!-- 收藏页（滚动加载更多）-->
 <view class="page">
-  <view wx:if="{{loading}}" class="fav-list">
-    <skeleton rows="3" avatar />
-    <skeleton rows="2" avatar />
-    <skeleton rows="3" avatar />
-  </view>
-
-  <view wx:if="{{!loading && favorites.length}}" class="fav-list">
-    <view
-      wx:for="{{favorites}}"
-      wx:key="favId"
-      class="card fav-card"
-    >
-      <view class="fav-content" data-item="{{item}}" bindtap="onTapPoem">
-        <view class="fav-title">{{item.title}}</view>
-        <view class="fav-sub">
-          <text class="dynasty-tag">{{item.dynasty}}</text>
-          <text>{{item.author}}</text>
-        </view>
-        <view class="fav-lines">
-          <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="fav-line">{{line}}</view>
-        </view>
-      </view>
-      <view class="fav-del" data-item="{{item}}" catchtap="onRemove">
-        <text class="fav-del-ico">×</text>
-      </view>
+  <scroll-view
+    class="fav-scroll"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    lower-threshold="80"
+    bindscrolltolower="onLoadMore"
+  >
+    <view wx:if="{{loading && !favorites.length}}" class="fav-list">
+      <skeleton rows="3" avatar />
+      <skeleton rows="2" avatar />
+      <skeleton rows="3" avatar />
     </view>
-  </view>
 
-  <empty-state
-    wx:if="{{!loading && !favorites.length}}"
-    icon="♡"
-    title="还没有收藏"
-    tip="在诗词详情页点击 ♥ 即可收藏"
-    showBtn
-    btnText="去发现"
-    bind:tap="onExplore"
-  />
+    <view wx:if="{{favorites.length}}" class="fav-list">
+      <view
+        wx:for="{{favorites}}"
+        wx:key="favId"
+        class="card fav-card"
+      >
+        <view class="fav-content" data-item="{{item}}" bindtap="onTapPoem">
+          <view class="fav-title">{{item.title}}</view>
+          <view class="fav-sub">
+            <text class="dynasty-tag">{{item.dynasty}}</text>
+            <text>{{item.author}}</text>
+          </view>
+          <view class="fav-lines">
+            <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="fav-line">{{line}}</view>
+          </view>
+        </view>
+        <view class="fav-del" data-item="{{item}}" catchtap="onRemove">
+          <text class="fav-del-ico">×</text>
+        </view>
+      </view>
+      <view wx:if="{{loading && favorites.length}}" class="list-loading">载入更多…</view>
+      <view wx:if="{{!hasMore && favorites.length}}" class="list-end">— 到底了 —</view>
+    </view>
+
+    <empty-state
+      wx:if="{{!loading && !favorites.length}}"
+      icon="♡"
+      title="还没有收藏"
+      tip="在诗词详情页点击 ♥ 即可收藏"
+      showBtn
+      btnText="去发现"
+      bind:tap="onExplore"
+    />
+  </scroll-view>
 </view>

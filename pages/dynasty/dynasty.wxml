@@ -32,23 +32,21 @@
             <view class="dynasty-count">{{item.poem_count}} 首</view>
           </view>
 
-          <!-- 展开诗词列表（独立滚动区，长列表不裁切）-->
+          <!-- 展开诗词列表（直接渲染，由外层 scroll-view 统一滚动；内层已弃用 nested scroll 避免滚动劫持）-->
           <view wx:if="{{expanded === item.name}}" class="dynasty-poems.show">
-            <scroll-view scroll-y enhanced show-scrollbar="{{false}}" class="dynasty-poems-scroll">
-              <view
-                wx:for="{{poemsByDynasty[item.name]}}"
-                wx:for-item="poem"
-                wx:key="_id"
-                class="dynasty-poem spring-btn"
-                data-poem="{{poem}}"
-                bindtap="onTapPoem"
-              >
-                <view class="dynasty-poem-title">{{poem.title}}</view>
-                <view class="dynasty-poem-author">{{poem.dynasty}} · {{poem.author}}</view>
-              </view>
-              <view wx:if="{{loadingMoreDynasty === item.name}}" class="load-more">载入中…</view>
-              <view wx:elif="{{!hasMoreDynasty[item.name] && poemsByDynasty[item.name].length >= pageSize}}" class="load-more" bindtap="onLoadMoreForDynasty" data-dynasty="{{item.name}}">点击加载更多</view>
-            </scroll-view>
+            <view
+              wx:for="{{poemsByDynasty[item.name]}}"
+              wx:for-item="poem"
+              wx:key="_id"
+              class="dynasty-poem spring-btn"
+              data-poem="{{poem}}"
+              bindtap="onTapPoem"
+            >
+              <view class="dynasty-poem-title">{{poem.title}}</view>
+              <view class="dynasty-poem-author">{{poem.dynasty}} · {{poem.author}}</view>
+            </view>
+            <view wx:if="{{loadingMoreDynasty === item.name}}" class="load-more">载入中…</view>
+            <view wx:elif="{{hasMoreDynasty[item.name] && poemsByDynasty[item.name].length >= pageSize}}" class="load-more" bindtap="onLoadMoreForDynasty" data-dynasty="{{item.name}}">点击加载更多</view>
           </view>
         </view>
       </view>
