@@ -110,7 +110,14 @@ async function listPlaces({ dynasty, keyword, limit = 200 }) {
   if (keyword) {
     const reg = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
     const all = await query.orderBy('poem_count', 'desc').limit(+limit).get()
-    return all.data.filter((p) => reg.test(p.name) || reg.test(p._id)).map(placeToMarker)
+    const matched = all.data.filter((p) => reg.test(p.name) || reg.test(p._id))
+    // 精确匹配优先
+    matched.sort((a, b) => {
+      const aEq = a.name === keyword ? 0 : 1
+      const bEq = b.name === keyword ? 0 : 1
+      return aEq - bEq
+    })
+    return matched.map(placeToMarker)
   }
 
   const res = await query.orderBy('poem_count', 'desc').limit(+limit).get()

@@ -54,9 +54,9 @@ Page({
   renderPoem(poem) {
     const places = (poem.place_names || []).map((name) => ({ name }))
     const lines = splitPoemLines(poem.content)
+    // 合成一个"注释与赏析"字段（拼接三段，用空行分隔；全空则留空让模板引导 AI）
+    const parts = [poem.annotation, poem.translation, poem.appreciation].filter(Boolean)
     this.setData({
-      // 合成一个"注释与赏析"字段（拼接三段，用空行分隔；全空则留空让模板引导 AI）
-      const parts = [poem.annotation, poem.translation, poem.appreciation].filter(Boolean)
       poem: {
         title: poem.title, author: poem.author, dynasty: poem.dynasty, content: poem.content,
         lines,
@@ -188,10 +188,35 @@ Page({
 
   onHideAI() { this.setData({ 'AI.show': false }) },
 
+  // 诗词→地点跳转（通过 name 精确查 _id）
   onTapPlace(e) {
     const place = e.currentTarget.dataset.place
     if (!place) return
-    wx.showToast({ title: place.name + '（地图联动开发中）', icon: 'none' })
+    if (!getApp()._placeNameCache) getApp()._placeNameCache = {}
+    const cache = getApp()._placeNameCache
+    if (cache[place.name]) {
+      wx.navigateTo({ url: '/pages-sub/info/place/place?id=' + cache[place.name] })
+      return
+    }
+    wx.showLoading({ title: '定位…' })
+    wx.cloud.callFunction({
+      name: 'listPlaces',
+      data: { keyword: place.name, limit: 5 },
+    }).then((res) => {
+      wx.hideLoading()
+      const list = (res.result && res.result.data) || []
+      // 精确匹配优先
+      const matched = list.find((p) => p.name === place.name) || list[0]
+      if (matched && matched._id) {
+        cache[place.name] = matched._id
+        wx.navigateTo({ url: '/pages-sub/info/place/place?id=' + matched._id })
+      } else {
+        wx.showToast({ title: '地点详情暂不可用', icon: 'none' })
+      }
+    }).catch(() => {
+      wx.hideLoading()
+      wx.showToast({ title: '地点详情暂不可用', icon: 'none' })
+    })
   },
 
   onShareAppMessage() {

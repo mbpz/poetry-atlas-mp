@@ -18,6 +18,7 @@ Page({
     hasMore: true,
     mapLongitude: 0,
     mapLatitude: 0,
+    markers: [],
     cardPressed: false,
   },
 
@@ -54,6 +55,7 @@ Page({
       const { longitude: lng, latitude: lat } = locToLngLat(place.location)
 
       this.setData({ place, dynasties, loading: false, mapLongitude: lng, mapLatitude: lat })
+      this._setPlaceMarker(place.name, lng, lat)
 
       if (place.hot_poems && place.hot_poems.length) {
         this.setData({ poems: place.hot_poems.map(this.formatPoem) })
@@ -63,6 +65,23 @@ Page({
       console.error('[place] loadPlace error:', err)
       this.setData({ loading: false })
     }
+  },
+
+  /** 给小地图加单个定位标记（带点击气泡）*/
+  _setPlaceMarker(name, lng, lat) {
+    if (!lng && !lat) return
+    this.setData({
+      markers: [{
+        id: 0,
+        longitude: lng,
+        latitude: lat,
+        iconPath: '/images/marker-city.png',
+        width: 32,
+        height: 32,
+        title: name,
+        callout: { content: name, display: 'BYCLICK' },
+      }],
+    })
   },
 
   formatPoem(p) {

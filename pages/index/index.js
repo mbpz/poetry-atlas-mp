@@ -59,6 +59,7 @@ Page({
     featuredPoem: null,
     featuredPlace: "",
     featuredHidden: false,
+    heatRange: { min: 0, max: 0 },
   },
 
   onLoad() {
@@ -134,7 +135,7 @@ Page({
       let markers = []
 
       if (scale < config.MAP.CLUSTER_THRESHOLD) {
-        markers = await this.loadProvinceClusters()
+        markers = (await this.loadProvinceClusters()).map((m) => ({ ...m, heatMode: this.data.heatMode }))
       } else {
         const cond = {}
         if (this.data.selectedDynasty) {
@@ -147,7 +148,15 @@ Page({
           { loadingText: "加载地点…" }
         )
         placesData = res.data || []
-        markers = placesData.map((p) => this.placeToMarker(p, scale))
+        // 计算 heatRange（仅热力模式使用）
+        const counts = placesData.map((p) => p.poem_count || 0)
+        const heatRange = counts.length
+          ? { min: Math.min(...counts), max: Math.max(...counts) }
+          : { min: 0, max: 0 }
+        if (heatRange.max !== this.data.heatRange.max || heatRange.min !== this.data.heatRange.min) {
+          this.setData({ heatRange })
+        }
+        markers = placesData.map((p) => this.placeToMarker(p, scale, this.data.heatMode))
       }
 
       this._loadingMarkers = false
@@ -239,21 +248,33 @@ Page({
     }
   },
 
-  /** 地点文档 → marker */
-  placeToMarker(p, scale) {
+  /** 地点文档 → marker（heat=true 时按 poem_count 调整为大圆形热力标记）*/
+  placeToMarker(p, scale, heat = false) {
     const { longitude: lng, latitude: lat } = locToLngLat(p.location)
     const markerImg = this._getMarkerIconByType(p.type)
+    const count = p.poem_count || 0
+    let width = 44
+    let height = 44
+    let iconPath = markerImg
+    if (heat && this.data.heatRange.max > 0) {
+      const { min, max } = this.data.heatRange
+      const t = (count - min) / (max - min || 1)
+      const size = Math.round(28 + t * 44)
+      width = size
+      height = size
+      iconPath = '/images/marker-cluster.png'
+    }
     return {
       id: this._nextMarkerId({ name: p.name, cluster: false, placeId: p._id || '' }),
       longitude: lng,
       latitude: lat,
-      width: 44,
-      height: 44,
-      iconPath: markerImg,
+      width,
+      height,
+      iconPath,
       title: p.name,
       cluster: false,
       placeId: p._id || '',
-      poem_count: p.poem_count || 0,
+      poem_count: count,
     }
   },
 
