@@ -46,7 +46,6 @@ exports.main = async (event, context) => {
           is_public: event.is_public !== false,
           created_at: Date.now(),
           likes_count: 0,
-          shares_count: 0,
         }
         if (!data.name) return { ok: false, error: 'name required' }
         const res = await db.collection(DB_COLLECTION).add({ data })

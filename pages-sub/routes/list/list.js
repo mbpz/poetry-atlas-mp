@@ -27,7 +27,9 @@ Page({
     }
     return wx.cloud.callFunction({
       name: 'routes',
-      data: { action: 'list', openid, page: 1, pageSize: 50 },
+      // 注意：不再传 openid；routes 云函数 list 使用服务端 wxContext.openid，
+      //       客户端 openid 不可信，无实际效果。
+      data: { action: 'list', page: 1, pageSize: 50 },
     }).then((res) => {
       const result = (res && res.result) || {}
       this.setData({ routes: result.data || [], loading: false })

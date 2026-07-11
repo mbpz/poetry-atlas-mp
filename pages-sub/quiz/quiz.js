@@ -232,6 +232,10 @@ Page({
   },
 
   onShowReload() {
+    // TODO(quiz-stats-refresh): 当前 quizTotal / quizWins 来自 globalData.user.stats，
+    //   仅首次登录 / 回到该页时从全局数据刷新；submit 后云函数返回 score/accuracy/won
+    //   但不返回更新后的 totals，因此提交一次后首页数字"停住"直到下次登录。
+    //   修法：submitRound 在返回里补 quiz_total / quiz_wins；此处 replace 全量读取。
     const app = getApp()
     const stats = (app.globalData.user && app.globalData.user.stats) || {}
     const best = wx.getStorageSync('quiz_best_score') || 0
