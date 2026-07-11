@@ -51,7 +51,8 @@ exports.main = async (event) => {
   const keyword = (event.keyword || "").trim()
   const type = event.type || "all"
   const limit = Math.min(event.limit || 30, 50)
-  console.log("[searchPoems]", JSON.stringify({ keyword, type, limit }))
+  // 仅保留 action/type/limit 供调试；keyword 属用户敏感检索词，不落入日志
+  console.log("[searchPoems]", JSON.stringify({ type, limit }))
 
   if (!keyword) return { ok: true, data: { poems: [], authors: [], places: [] }, total: 0 }
 

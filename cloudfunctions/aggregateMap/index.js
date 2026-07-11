@@ -128,7 +128,8 @@ async function listPlaces({ dynasty, keyword, limit = 200 }) {
 
 exports.main = async (event) => {
   const { type = 'places', dynasty = '', lng, lat, radius_km = 50, keyword = '', limit = 200 } = event
-  console.log('[aggregateMap]', JSON.stringify({ type, dynasty, lng, lat, radius_km, keyword, limit }))
+  // 仅保留 action/type 供调试；lng/lat/radius_km/keyword 属用户敏感定位与检索词，不落入日志
+  console.log('[aggregateMap]', JSON.stringify({ type, dynasty, limit }))
 
   try {
     let data = []
