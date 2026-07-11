@@ -1,0 +1,52 @@
+<!-- 朗诵播放组件 — 宣纸淡墨 -->
+<!-- 迷你模式：底部播放条 -->
+<view wx:if="{{!expanded}}" class="mini-player" bindtap="onExpand">
+  <view class="mini-btn {{isPlaying ? 'playing' : ''}}">
+    <text class="mini-ico">{{isPlaying ? '❚❚' : '▶'}}</text>
+  </view>
+  <view class="mini-info">
+    <view class="mini-title">{{title}} · {{author}}</view>
+    <view class="mini-progress">
+      <view class="mini-bar" style="width: {{progress}}%"></view>
+    </view>
+    <view class="mini-time"><text>{{timeText}}</text><text class="mini-time-sep">/</text><text>{{durationText}}</text></view>
+  </view>
+  <view class="mini-toggle" catchtap="onTogglePlay">
+    <text class="mini-ico-mini">{{isPlaying ? '❚❚' : '▶'}}</text>
+  </view>
+</view>
+
+<!-- 全屏模式 -->
+<view wx:else class="full-mask" bindtap="onCollapse">
+  <view class="full-sheet" catchtap>
+    <!-- 顶部：标题 + 作者 -->
+    <view class="full-header" catchtap="onCollapse">
+      <view class="full-title">{{title}}</view>
+      <view class="full-author">{{author}}</view>
+    </view>
+
+    <!-- 中部：字幕逐句高亮滚动 -->
+    <scroll-view class="lyrics-scroll" scroll-y scroll-top="{{scrollTop}}" enhanced show-scrollbar="{{false}}">
+      <view class="lyrics">
+        <text
+          wx:for="{{lines}}"
+          wx:key="*this"
+          id="line-{{index}}"
+          class="lyric-line {{index === currentLine ? 'on' : ''}}"
+        >{{item}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- 底部：进度条 + 播放控制 -->
+    <view class="full-controls">
+      <view class="full-time">{{timeText}}</view>
+      <slider class="full-slider" value="{{progress}}" activeColor="#9e2b23" backgroundColor="#e2d9c6" block-color="#9e2b23" bindchange="onSeek" />
+      <view class="full-time">{{durationText}}</view>
+    </view>
+    <view class="full-btns">
+      <view class="full-play-btn {{isPlaying ? 'playing' : ''}}" catchtap="onTogglePlay">
+        <text class="full-play-ico">{{isPlaying ? '❚❚' : '▶'}}</text>
+      </view>
+    </view>
+  </view>
+</view>

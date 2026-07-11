@@ -1,0 +1,174 @@
+/* ===== 朗诵播放组件 — 宣纸淡墨 ===== */
+
+/* 迷你模式 */
+.mini-player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: var(--ink-surface);
+  border-top: 1rpx solid var(--ink-line);
+  box-shadow: 0 -4rpx 16rpx rgba(120, 100, 70, 0.08);
+}
+.mini-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: var(--cinnabar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2rpx 8rpx rgba(158, 43, 35, 0.25);
+}
+.mini-btn.playing { background: var(--gold); }
+.mini-ico { color: #fff; font-size: 28rpx; }
+.mini-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4rpx; }
+.mini-title {
+  font-size: 26rpx;
+  color: var(--paper-text);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mini-progress {
+  height: 4rpx;
+  background: var(--ink-line);
+  border-radius: 2rpx;
+  overflow: hidden;
+}
+.mini-bar {
+  height: 100%;
+  background: var(--cinnabar);
+  transition: width 0.2s linear;
+}
+.mini-time {
+  font-size: 20rpx;
+  color: var(--paper-text-2);
+  display: flex;
+  gap: 4rpx;
+}
+.mini-time-sep { opacity: 0.6; }
+.mini-toggle {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mini-toggle:active { transform: scale(0.9); }
+.mini-ico-mini { font-size: 28rpx; color: var(--cinnabar); }
+
+/* 全屏遮罩 */
+.full-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 200;
+  background: var(--ink-bg);
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.full-sheet {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40rpx 0 calc(24rpx + env(safe-area-inset-bottom));
+}
+
+/* 顶部：标题 + 作者 */
+.full-header {
+  padding: 0 40rpx 32rpx;
+  text-align: center;
+}
+.full-title {
+  font-size: 38rpx;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 8rpx;
+}
+.full-author {
+  font-size: 24rpx;
+  color: var(--paper-text-2);
+  letter-spacing: 0.1em;
+}
+
+/* 中部：字幕滚动 */
+.lyrics-scroll {
+  flex: 1;
+  padding: 0 40rpx;
+  overflow-y: auto;
+}
+.lyrics {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 40rpx 0;
+}
+.lyric-line {
+  font-size: 34rpx;
+  line-height: 2;
+  letter-spacing: 0.12em;
+  color: var(--paper-text-2);
+  transition: color 0.4s, font-size 0.4s, font-weight 0.4s;
+  text-align: center;
+}
+.lyric-line.on {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 40rpx;
+  text-shadow: 0 0 16rpx rgba(168, 136, 72, 0.25);
+}
+
+/* 底部：进度控制 */
+.full-controls {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 32rpx 16rpx;
+}
+.full-time {
+  font-size: 22rpx;
+  color: var(--paper-text-2);
+  min-width: 72rpx;
+  text-align: center;
+}
+.full-slider { flex: 1; margin: 0; }
+
+/* 播放按钮 */
+.full-btns {
+  display: flex;
+  justify-content: center;
+  padding: 8rpx 0 16rpx;
+}
+.full-play-btn {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background: var(--cinnabar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 20rpx rgba(158, 43, 35, 0.3);
+  transition: transform 0.15s, background 0.2s;
+}
+.full-play-btn.playing { background: var(--gold); }
+.full-play-btn:active { transform: scale(0.9); }
+.full-play-ico { color: #fff; font-size: 40rpx; }
