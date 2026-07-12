@@ -1,33 +1,40 @@
 /**
  * 我的 — 用户中心 Hub
- * 收藏统计 / 自建数据（路线/朗诵）/ 昵称编辑 / 3 方向入口
+ * 微信头像昵称填写能力（chooseAvatar + type=nickname）+ 收藏/路线统计
  */
-const { getDB } = require("../../utils/cloudbase.js")
 const config = require("../../config.js")
+const { getDB } = require("../../utils/cloudbase.js")
 
 Page({
   data: {
-    openid: "",
     nickname: "",
+    avatarUrl: "",
     avatarText: "诗",
+    hasProfile: false,
     favCount: 0,
     stats: { routes_count: 0, recitation_count: 0 },
     version: config.VERSION,
-    showNickModal: false,
   },
 
   onShow() {
-    // 同步 TabBar 激活态到我的
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ active: 'me' })
+    if (typeof this.getTabBar === "function" && this.getTabBar()) {
+      this.getTabBar().setData({ active: "me" })
     }
-    const app = getApp()
-    this.setData({
-      openid: app.globalData.openid || "",
-      nickname: (app.globalData.user && app.globalData.user.nickname) || "",
-      avatarText: ((app.globalData.user && app.globalData.user.nickname) || "诗").slice(0, 1),
-    })
+    this.syncFromGlobal()
     this.loadStats()
+  },
+
+  syncFromGlobal() {
+    const app = getApp()
+    const user = (app.globalData && app.globalData.user) || {}
+    const nickname = user.nickname || ""
+    const avatarUrl = user.avatar_url || ""
+    this.setData({
+      nickname,
+      avatarUrl,
+      avatarText: (nickname || "诗").slice(0, 1),
+      hasProfile: !!(nickname || avatarUrl),
+    })
   },
 
   async loadStats() {
@@ -38,95 +45,144 @@ Page({
     } catch (e) {
       this.setData({ favCount: 0 })
     }
-    // 从 users 档案读自建统计
     const app = getApp()
     if (app.globalData.user && app.globalData.user.stats) {
       this.setData({ stats: app.globalData.user.stats })
     }
   },
 
-  // ---- 微信昵称接入（必须由用户点击触发 getUserProfile）----
-  onUseWxProfile() {
-    wx.getUserProfile({
-      desc: '用于完善您的昵称和头像',
-      success: (res) => {
-        const u = res.userInfo || {}
-        const nick = u.nickName || ''
-        const avatar = u.avatarUrl || ''
-        if (!nick) {
-          wx.showToast({ title: '获取昵称失败', icon: 'none' })
-          return
-        }
-        wx.showLoading({ title: '保存…' })
-        wx.cloud.callFunction({
-          name: 'updateUser',
-          data: { nickname: nick, avatar_url: avatar },
-        }).then((r) => {
-          const user = (r.result && r.result.user) || { nickname: nick, avatar_url: avatar }
-          const app = getApp()
-          app.globalData.user = Object.assign({}, app.globalData.user || {}, user)
-          this.setData({
-            nickname: user.nickname || nick,
-            avatarText: (user.nickname || nick).slice(0, 1) || '诗',
-          })
-          wx.showToast({ title: '已同步微信昵称', icon: 'success' })
-        }).catch((err) => {
-          wx.showToast({ title: '保存失败', icon: 'none' })
-        }).finally(() => wx.hideLoading())
-      },
-      fail: () => { wx.showToast({ title: '已取消', icon: 'none' }) },
-    })
-  },
-
-  // ---- 昵称编辑 ----
-  onEditNickname() { this.setData({ showNickModal: true }) },
-  onCancelNick() { this.setData({ showNickModal: false }) },
-
-  noop() {},
-  onNickInput(e) { this.setData({ nickname: e.detail.value }) },
-  async onSaveNick() {
-    const nick = (this.data.nickname || "").trim().slice(0, 12)
-    wx.showLoading({ title: "保存…" })
-    try {
-      await wx.cloud.callFunction({
-        name: "updateUser",
-        data: { nickname: nick },
-      })
-      getApp().globalData.user.nickname = nick
-      this.setData({ showNickModal: false, nickname: nick, avatarText: nick.slice(0, 1) || "诗" })
-      wx.showToast({ title: "已保存", icon: "success" })
-    } catch (err) {
-      wx.showToast({ title: "保存失败", icon: "none" })
-    } finally {
-      wx.hideLoading()
-    }
-  },
-
-  // ---- OPENID 复制 ----
-  onCopyOpenid() {
-    if (!this.data.openid) {
-      wx.showToast({ title: "暂无 OPENID", icon: "none" })
+  /** 选择微信头像 → 上传云存储 → 写入 users */
+  async onChooseAvatar(e) {
+    const tempPath = e.detail && e.detail.avatarUrl
+    if (!tempPath) {
+      wx.showToast({ title: "未获取到头像", icon: "none" })
       return
     }
-    wx.setClipboardData({
-      data: this.data.openid,
-      success: () => wx.showToast({ title: "已复制", icon: "success" }),
+    if (this._savingAvatar) return
+    this._savingAvatar = true
+    this.setData({ avatarUrl: tempPath, hasProfile: true })
+    wx.showLoading({ title: "保存头像…", mask: true })
+    try {
+      const cloudPath = `avatars/${Date.now()}.jpg`
+      const up = await wx.cloud.uploadFile({ cloudPath, filePath: tempPath })
+      const fileID = up.fileID
+      const user = await this._saveUser({ avatar_url: fileID })
+      const url = (user && user.avatar_url) || fileID
+      this.setData({ avatarUrl: url, hasProfile: true })
+      this._toast("头像已更新", "success")
+    } catch (err) {
+      console.warn("[profile] avatar save fail", err)
+      this._toast("头像保存失败", "none")
+    } finally {
+      this._savingAvatar = false
+    }
+  },
+
+  /** 昵称填写（键盘上方可一键选微信昵称）—— 只用 blur，避免 change+blur 双触发 */
+  async onNicknameBlur(e) {
+    const nick = String((e.detail && e.detail.value) || "").trim().slice(0, 12)
+    if (!nick) return
+    if (nick === this.data.nickname) return
+    if (this._savingNick) return
+    this._savingNick = true
+    // 先乐观更新 UI，避免输入框回跳
+    this.setData({
+      nickname: nick,
+      avatarText: nick.slice(0, 1) || "诗",
+      hasProfile: true,
+    })
+    wx.showLoading({ title: "保存…", mask: true })
+    try {
+      const user = await this._saveUser({ nickname: nick })
+      const saved = (user && user.nickname) || nick
+      this.setData({
+        nickname: saved,
+        avatarText: saved.slice(0, 1) || "诗",
+        hasProfile: true,
+      })
+      this._toast("昵称已更新", "success")
+    } catch (err) {
+      console.warn("[profile] nickname save fail", err)
+      this._toast("保存失败", "none")
+    } finally {
+      this._savingNick = false
+    }
+  },
+
+  /** 先关 loading 再 toast，避免 hideLoading 把 toast 冲掉 */
+  _toast(title, icon) {
+    wx.hideLoading({
+      complete: () => {
+        wx.showToast({ title, icon: icon || "none", duration: 2000 })
+      },
     })
   },
 
-  // ---- 入口跳转 ----
-  onTapFavorites() { wx.switchTab({ url: "/pages/favorites/favorites" }) },
-  onTapRoute() { wx.navigateTo({ url: "/pages-sub/routes/list/list" }) },
+  async _saveUser(payload) {
+    // 优先云函数（可 upsert）；失败则直写 users 集合兜底
+    try {
+      const r = await wx.cloud.callFunction({ name: "updateUser", data: payload })
+      const result = r.result || {}
+      if (result.ok) {
+        const user = result.user || payload
+        this._mergeGlobalUser(user)
+        return user
+      }
+      console.warn("[profile] updateUser not ok:", result.error)
+    } catch (err) {
+      console.warn("[profile] updateUser call fail, fallback to db:", err)
+    }
+
+    const app = getApp()
+    const openid = app.globalData && app.globalData.openid
+    if (!openid) throw new Error("no openid")
+
+    const { db } = getDB()
+    const doc = db.collection("users").doc(openid)
+    try {
+      await doc.update({ data: payload })
+    } catch (err) {
+      const prev = (app.globalData && app.globalData.user) || {}
+      await doc.set({
+        data: Object.assign(
+          {
+            nickname: "",
+            avatar_url: "",
+            created_at: Date.now(),
+            stats: { routes_count: 0, recitation_count: 0 },
+          },
+          prev,
+          payload
+        ),
+      })
+    }
+    const user = Object.assign({}, app.globalData.user || {}, payload)
+    this._mergeGlobalUser(user)
+    return user
+  },
+
+  _mergeGlobalUser(user) {
+    const app = getApp()
+    app.globalData.user = Object.assign({}, app.globalData.user || {}, user)
+  },
+
+  onTapFavorites() {
+    wx.switchTab({ url: "/pages/favorites/favorites" })
+  },
+  onTapRoute() {
+    wx.navigateTo({ url: "/pages-sub/routes/list/list" })
+  },
   onTapRecitation() {
-    // 朗诵无独立着陆页 → 跳搜索找有朗诵数据的诗词
     wx.navigateTo({ url: "/pages/search/search?kw=%E9%9D%99%E5%A4%9C%E6%80%9D" })
   },
-  // 社区功能已移除（私有工具定位，避免 UGC 社交类目）
 
   onTapAbout() {
     wx.showModal({
       title: "关于 诗词地图",
-      content: "在地图上阅读中国，在诗词中穿越历史。\n\n版本 v" + config.VERSION + "\n数据：中国古诗词开源数据集\n地图 + AI 由 CloudBase 驱动",
+      content:
+        "在地图上阅读中国，在诗词中穿越历史。\n\n版本 v" +
+        config.VERSION +
+        "\n数据：中国古诗词开源数据集\n地图 + AI 由 CloudBase 驱动",
       showCancel: false,
     })
   },

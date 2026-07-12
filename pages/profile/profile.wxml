@@ -1,19 +1,22 @@
-<!-- 我的（Hub 入口）-->
+<!-- 我的 — 微信头像昵称 + 个人数据 Hub -->
 <view class="page">
-  <view class="profile-hero card" bindtap="onEditNickname">
-    <view class="profile-avatar">{{avatarText}}</view>
-    <view class="profile-name">{{nickname || '点击设置昵称'}}</view>
-    <view class="profile-sub">CloudBase 自动身份 · 无需注册</view>
-    <view class="profile-wxbtn" catchtap="onUseWxProfile">使用微信昵称</view>
-  </view>
+  <view class="profile-hero card">
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image wx:if="{{avatarUrl}}" class="profile-avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="profile-avatar">{{avatarText}}</view>
+    </button>
 
-  <view class="card openid-card">
-    <view class="openid-label">用户标识 (OPENID)</view>
-    <view class="openid-row">
-      <text class="openid-value">{{openid || '获取中…'}}</text>
-      <view class="openid-copy {{openid ? '' : 'disabled'}}" bindtap="onCopyOpenid">
-        <text class="openid-copy-txt">复制</text>
-      </view>
+    <input
+      class="profile-name-input"
+      type="nickname"
+      maxlength="12"
+      placeholder="点击填写微信昵称"
+      value="{{nickname}}"
+      bindblur="onNicknameBlur"
+    />
+
+    <view class="profile-sub">
+      {{hasProfile ? '已使用微信资料' : '点击头像与昵称，授权使用微信信息'}}
     </view>
   </view>
 
@@ -35,7 +38,7 @@
     </view>
   </view>
 
-  <!-- 新方向入口 Hub -->
+  <!-- 入口 Hub -->
   <view class="card hub-card">
     <view class="hub-title">探索更多</view>
     <view class="hub-grid">
@@ -64,16 +67,4 @@
   </view>
 
   <view class="profile-footer">v{{version}} · Powered by CloudBase</view>
-</view>
-
-<!-- 昵称编辑弹窗 -->
-<view wx:if="{{showNickModal}}" class="nick-mask" bindtap="onCancelNick">
-  <view class="nick-modal" catchtap="noop">
-    <view class="nick-title">设置昵称</view>
-    <input class="nick-input" placeholder="输入昵称（≤12字）" maxlength="12" value="{{nickname}}" bindinput="onNickInput" focus />
-    <view class="nick-btns">
-      <view class="nick-btn cancel" bindtap="onCancelNick">取消</view>
-      <view class="nick-btn save" bindtap="onSaveNick">保存</view>
-    </view>
-  </view>
 </view>

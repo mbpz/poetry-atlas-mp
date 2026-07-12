@@ -2,7 +2,7 @@
 /**
  * 云函数：updateUser
  * 更新当前用户档案（nickname / avatar_url / stats 等可增量）
- * 入参: { nickname?, avatar_url?, stats?, [其他用户字段] }
+ * 文档不存在时自动创建，避免首次保存失败。
  */
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
@@ -14,33 +14,58 @@ exports.main = async (event, context) => {
 
   const db = cloud.database()
   const _ = db.command
+  const col = db.collection('users')
 
-  // 仅允许更新的字段（白名单）
   const ALLOW = ['nickname', 'avatar_url', 'gender', 'bio']
-  const update = {}
+  const fields = {}
   for (const k of ALLOW) {
-    if (event[k] !== undefined) update[k] = event[k]
+    if (event[k] !== undefined) fields[k] = event[k]
   }
-  // stats 支持增量合并（如 recitation_count+1）
+
+  const statsPatch = {}
   if (event.stats && typeof event.stats === 'object') {
     for (const k in event.stats) {
-      // 数字走 inc，其他走 set
-      if (typeof event.stats[k] === 'number') {
-        update['stats.' + k] = _.inc(event.stats[k])
-      } else {
-        update['stats.' + k] = event.stats[k]
-      }
+      statsPatch[k] = event.stats[k]
     }
   }
 
-  if (!Object.keys(update).length) return { ok: false, error: 'nothing to update' }
+  if (!Object.keys(fields).length && !Object.keys(statsPatch).length) {
+    return { ok: false, error: 'nothing to update' }
+  }
 
   try {
-    await db.collection('users').doc(openid).update({ data: update })
-    // 返回更新后的用户档案
-    const fresh = await db.collection('users').doc(openid).get()
+    const existing = await col.doc(openid).get().catch(() => null)
+    const hasDoc = !!(existing && existing.data)
+
+    if (hasDoc) {
+      const update = Object.assign({}, fields)
+      for (const k in statsPatch) {
+        if (typeof statsPatch[k] === 'number') {
+          update['stats.' + k] = _.inc(statsPatch[k])
+        } else {
+          update['stats.' + k] = statsPatch[k]
+        }
+      }
+      await col.doc(openid).update({ data: update })
+    } else {
+      const base = {
+        _openid: openid,
+        nickname: '',
+        avatar_url: '',
+        created_at: Date.now(),
+        stats: Object.assign(
+          { routes_count: 0, recitation_count: 0 },
+          statsPatch
+        ),
+      }
+      Object.assign(base, fields)
+      await col.doc(openid).set({ data: base })
+    }
+
+    const fresh = await col.doc(openid).get()
     return { ok: true, user: fresh.data }
   } catch (err) {
+    console.error('[updateUser]', err)
     return { ok: false, error: err.errMsg || err.message || 'update failed' }
   }
 }
