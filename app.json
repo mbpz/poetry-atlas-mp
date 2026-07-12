@@ -4,8 +4,7 @@
     "pages/profile/profile",
     "pages/search/search",
     "pages/dynasty/dynasty",
-    "pages/favorites/favorites",
-    "pages/community/community"
+    "pages/favorites/favorites"
   ],
   "subpackages": [
     {
