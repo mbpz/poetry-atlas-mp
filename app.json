@@ -44,6 +44,7 @@
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {},
   "preloadRule": {
     "pages/index/index": {
       "network": "all",

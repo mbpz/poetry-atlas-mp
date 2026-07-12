@@ -1,95 +1,73 @@
-/* ============================================================
-   TabBar — 宣纸淡墨
-   底部 4 分米白胶囊 + 文字标签 + 右下搜索珠
-   ============================================================ */
+/* cover-view 支持的样式有限：不用 backdrop-filter / 复杂阴影 / 百分比子项坑 */
 
 .tab-bar {
   position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 160rpx;
-  z-index: 999;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 112rpx;
   padding-bottom: env(safe-area-inset-bottom);
-  pointer-events: none;
+  z-index: 9999;
+  background-color: #f6f1e4;
+  border-top: 1rpx solid #e2d9c6;
 }
 
-/* 恢复触摸：不能用 ".tab-bar > view"（view 是标签选择器，组件 wxss 里被禁，
-   会被 WeChat 忽略导致整条 tab 点不了）。改用 class 选择器。 */
-.tab-nav,
-.search-fab { pointer-events: auto; }
-
-/* ===== 主导航 ===== */
 .tab-nav {
-  position: relative;
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 100%;
-  padding: 0 24rpx;
-  /* 毛玻璃：宣纸米白底 + 半透明 + 背景模糊 */
-  background: rgba(246, 241, 228, 0.78);     /* --ink-bg ≈ #f6f1e4，78% 不透明 */
-  backdrop-filter: blur(24rpx) saturate(1.1);
-  -webkit-backdrop-filter: blur(24rpx) saturate(1.1);
-  border-top: 1rpx solid var(--ink-line);      /* 顶部一线分隔 */
-  box-shadow: 0 -4rpx 20rpx rgba(120, 100, 70, 0.08); /* 顶部柔和浮起 */
+  height: 112rpx;
 }
 
 .tab-item {
   flex: 1;
+  height: 112rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6rpx;
-  height: 100%;
   position: relative;
 }
-.tab-item:active { transform: scale(0.9); }
-
-.tab-ico {
-  width: 56rpx; height: 56rpx;
-  opacity: 0.62;
-  transition: opacity 0.2s;
-}
-.tab-item.active .tab-ico { opacity: 1; }
 
 .tab-label {
   font-size: 26rpx;
-  color: var(--paper-text-2);
-  letter-spacing: 0.1em;
-  transition: color 0.2s;
+  color: #9a9386;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
 }
-.tab-item.active .tab-label {
-  color: var(--cinnabar);
+
+.tab-label.active {
+  color: #9e2b23;
   font-weight: 600;
 }
 
-/* 激活指示 — 顶部朱砂小点 */
 .tab-dot {
   position: absolute;
-  top: 12rpx;
+  top: 14rpx;
   width: 8rpx;
   height: 8rpx;
   border-radius: 50%;
-  background: var(--cinnabar);
-  box-shadow: 0 0 8rpx rgba(158, 43, 35, 0.6);
+  background-color: #9e2b23;
 }
 
-/* ===== 右下角浮动搜索珠 ===== */
 .search-fab {
   position: fixed;
   right: 32rpx;
-  bottom: calc(180rpx + env(safe-area-inset-bottom));
-  width: 96rpx;
-  height: 96rpx;
+  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(158, 43, 35, 0.15), rgba(168, 136, 72, 0.15));
-  border: 1rpx solid rgba(168, 136, 72, 0.4);
+  background-color: #9e2b23;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  box-shadow: 0 4rpx 20rpx rgba(120, 100, 70, 0.15);
-  transition: transform 0.2s;
+  z-index: 10000;
 }
-.search-fab:active { transform: scale(0.88); }
-.fab-ico { width: 44rpx; height: 44rpx; }
+
+.fab-text {
+  color: #fffef9;
+  font-size: 28rpx;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
