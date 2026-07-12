@@ -1,7 +1,7 @@
 /**
- * 上线前批量下发 8 个集合的安全规则
- *  - 公开读+本人写：routes / recitations / posts / comments / likes / follows / quiz_questions
- *  - 本人读写：users
+ * 上线前批量下发集合的安全规则
+ *  - 公开读+本人写：routes / recitations
+ *  - 本人读写：users / favorites
  *
  * 原因同 set-favorites-permission.cjs：mcporter CLI 会把 securityRule JSON 解析为对象而非字符串，
  * 导致云端报 "Expected string, received object"，故统一用 spawnSync + --args <json-string> 保留字符串类型。
@@ -57,10 +57,10 @@ const OWNER_ONLY_RULE = JSON.stringify({
 })
 
 let ok = 0
-const total = 8
+const total = 3
 
 console.log('公开读 + 本人写:')
-for (const col of ['routes', 'recitations', 'posts', 'comments', 'likes', 'follows', 'quiz_questions']) {
+for (const col of ['routes', 'recitations']) {
   if (apply(col, PUBLIC_READ_RULE)) ok++
 }
 

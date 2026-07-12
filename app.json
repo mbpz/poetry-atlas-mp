@@ -17,7 +17,6 @@
         "info/travel/travel",
         "routes/create/create",
         "routes/list/list",
-        "quiz/quiz",
         "system/privacy"
       ]
     }

@@ -21,7 +21,7 @@ exports.main = async (event, context) => {
   for (const k of ALLOW) {
     if (event[k] !== undefined) update[k] = event[k]
   }
-  // stats 支持增量合并（如 quiz_total+1）
+  // stats 支持增量合并（如 recitation_count+1）
   if (event.stats && typeof event.stats === 'object') {
     for (const k in event.stats) {
       // 数字走 inc，其他走 set

@@ -6,13 +6,16 @@
 .tab-bar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: 128rpx;
+  height: 160rpx;
   z-index: 999;
   padding-bottom: env(safe-area-inset-bottom);
   pointer-events: none;
 }
 
-.tab-bar > view { pointer-events: auto; }
+/* 恢复触摸：不能用 ".tab-bar > view"（view 是标签选择器，组件 wxss 里被禁，
+   会被 WeChat 忽略导致整条 tab 点不了）。改用 class 选择器。 */
+.tab-nav,
+.search-fab { pointer-events: auto; }
 
 /* ===== 主导航 ===== */
 .tab-nav {
@@ -43,14 +46,14 @@
 .tab-item:active { transform: scale(0.9); }
 
 .tab-ico {
-  width: 48rpx; height: 48rpx;
+  width: 56rpx; height: 56rpx;
   opacity: 0.62;
   transition: opacity 0.2s;
 }
 .tab-item.active .tab-ico { opacity: 1; }
 
 .tab-label {
-  font-size: 22rpx;
+  font-size: 26rpx;
   color: var(--paper-text-2);
   letter-spacing: 0.1em;
   transition: color 0.2s;
@@ -75,7 +78,7 @@
 .search-fab {
   position: fixed;
   right: 32rpx;
-  bottom: calc(148rpx + env(safe-area-inset-bottom));
+  bottom: calc(180rpx + env(safe-area-inset-bottom));
   width: 96rpx;
   height: 96rpx;
   border-radius: 50%;

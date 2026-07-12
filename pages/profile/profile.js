@@ -1,6 +1,6 @@
 /**
  * 我的 — 用户中心 Hub
- * 收藏统计 / 自建数据（路线/对战/朗诵）/ 昵称编辑 / 4 方向入口
+ * 收藏统计 / 自建数据（路线/朗诵）/ 昵称编辑 / 3 方向入口
  */
 const { getDB } = require("../../utils/cloudbase.js")
 const config = require("../../config.js")
@@ -11,7 +11,7 @@ Page({
     nickname: "",
     avatarText: "诗",
     favCount: 0,
-    stats: { routes_count: 0, quiz_total: 0, quiz_wins: 0, recitation_count: 0 },
+    stats: { routes_count: 0, recitation_count: 0 },
     version: config.VERSION,
     showNickModal: false,
   },
@@ -115,7 +115,6 @@ Page({
   // ---- 入口跳转 ----
   onTapFavorites() { wx.switchTab({ url: "/pages/favorites/favorites" }) },
   onTapRoute() { wx.navigateTo({ url: "/pages-sub/routes/list/list" }) },
-  onTapQuiz() { wx.navigateTo({ url: "/pages-sub/quiz/quiz" }) },
   onTapRecitation() {
     // 朗诵无独立着陆页 → 跳搜索找有朗诵数据的诗词
     wx.navigateTo({ url: "/pages/search/search?kw=%E9%9D%99%E5%A4%9C%E6%80%9D" })

@@ -28,10 +28,6 @@
         <view class="stat-num">{{stats.routes_count}}</view>
         <view class="stat-label">路线</view>
       </view>
-      <view class="stat-item" bindtap="onTapQuiz">
-        <view class="stat-num">{{stats.quiz_total}}</view>
-        <view class="stat-label">对战</view>
-      </view>
       <view class="stat-item" bindtap="onTapRecitation">
         <view class="stat-num">{{stats.recitation_count}}</view>
         <view class="stat-label">朗诵</view>
@@ -51,10 +47,6 @@
       <view class="hub-item" bindtap="onTapRecitation">
         <view class="hub-ico">🎧</view>
         <view class="hub-txt">诗词朗诵</view>
-      </view>
-      <view class="hub-item" bindtap="onTapQuiz">
-        <view class="hub-ico">⚔️</view>
-        <view class="hub-txt">诗词对战</view>
       </view>
     </view>
   </view>

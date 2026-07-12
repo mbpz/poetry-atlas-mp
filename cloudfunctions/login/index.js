@@ -24,8 +24,7 @@ exports.main = async (event, context) => {
         nickname: '',
         avatar_url: '',
         created_at: Date.now(),
-        // TODO: recitation_count 占位已清，等 recordPlay 联动累加 users.stats 时再加回。
-        stats: { routes_count: 0, quiz_total: 0, quiz_wins: 0 },
+        stats: { routes_count: 0, recitation_count: 0 },
       }
       await db.collection(DB_COLLECTION).doc(openid).set({ data: initUser }).catch(() => null)
       user = initUser
