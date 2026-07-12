@@ -68,7 +68,7 @@
 
 <!-- 昵称编辑弹窗 -->
 <view wx:if="{{showNickModal}}" class="nick-mask" bindtap="onCancelNick">
-  <view class="nick-modal" catchtap>
+  <view class="nick-modal" catchtap="noop">
     <view class="nick-title">设置昵称</view>
     <input class="nick-input" placeholder="输入昵称（≤12字）" maxlength="12" value="{{nickname}}" bindinput="onNickInput" focus />
     <view class="nick-btns">

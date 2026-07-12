@@ -109,7 +109,7 @@
 
   <!-- 冷启动引导 -->
   <view wx:if="{{showGuide}}" class="guide-mask">
-    <view class="guide-card" catchtap>
+    <view class="guide-card" catchtap="noop">
       <view class="guide-logo">诗</view>
       <view class="guide-title">诗词地图</view>
       <view class="guide-desc">在地图上发现每首诗词的故乡</view>

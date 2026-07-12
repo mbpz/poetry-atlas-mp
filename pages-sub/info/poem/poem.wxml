@@ -105,7 +105,7 @@
   <view
     class="ai-sheet {{AI.dragging ? '' : 'ai-sheet-transition'}}"
     style="height: {{AI.sheetHeight}}%;"
-    catchtap
+    catchtap="noop"
     bindtouchstart="onSheetTouchStart"
     bindtouchmove="onSheetTouchMove"
     bindtouchend="onSheetTouchEnd"

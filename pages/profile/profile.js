@@ -81,6 +81,8 @@ Page({
   // ---- 昵称编辑 ----
   onEditNickname() { this.setData({ showNickModal: true }) },
   onCancelNick() { this.setData({ showNickModal: false }) },
+
+  noop() {},
   onNickInput(e) { this.setData({ nickname: e.detail.value }) },
   async onSaveNick() {
     const nick = (this.data.nickname || "").trim().slice(0, 12)

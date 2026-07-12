@@ -18,7 +18,7 @@
 
 <!-- 全屏模式 -->
 <view wx:else class="full-mask" bindtap="onCollapse">
-  <view class="full-sheet" catchtap>
+  <view class="full-sheet" catchtap="noop">
     <!-- 顶部：标题 + 作者 -->
     <view class="full-header" catchtap="onCollapse">
       <view class="full-title">{{title}}</view>

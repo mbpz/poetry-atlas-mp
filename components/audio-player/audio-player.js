@@ -176,5 +176,7 @@ Component({
       this._pause()
       this.triggerEvent('close')
     },
+
+    noop() {},
   },
 })

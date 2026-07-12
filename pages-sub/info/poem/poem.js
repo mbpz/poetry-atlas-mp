@@ -228,6 +228,8 @@ Page({
 
   onHideAI() { this.setData({ 'AI.show': false }) },
 
+  noop() {},
+
   // 诗词→地点跳转（通过 name 精确查 _id）
   onTapPlace(e) {
     const place = e.currentTarget.dataset.place

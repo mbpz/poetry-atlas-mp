@@ -85,6 +85,8 @@ Page({
     this.setData({ showGuide: false })
   },
 
+  noop() {},
+
   onReady() {
     this.mapCtx = wx.createMapContext("poetry-map", this)
     // 节流版 loadMarkers：拖/放地图时避免 DB 请求风暴

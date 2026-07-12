@@ -1,15 +1,15 @@
 /**
- * 云函数：routes（自建旅行路线 CRUD）
+ * 云函数：routes（自建旅行路线 CRUD）— 私有路线，仅创建者本人可见
  * 动作: create / update / delete / list / detail
- * 安全: 写操作校验 openid，读公开路线无需身份
+ * 安全: 全部操作校验 openid 本人
  */
 const cloud = require('wx-server-sdk')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
 const DB_COLLECTION = 'routes'
 
-// 允许客户端直接写入的字段白名单
-const ALLOW_FIELDS = ['name', 'theme', 'description', 'points', 'is_public']
+// 允许客户端直接写入的字段白名单（路线为私有，无 is_public / likes_count）
+const ALLOW_FIELDS = ['name', 'theme', 'description', 'points']
 
 function normalizePoints(points) {
   if (!Array.isArray(points)) return []
@@ -38,14 +38,13 @@ exports.main = async (event, context) => {
     switch (action) {
       case 'create': {
         const data = {
+          _openid: openid,
           openid,
           name: String(event.name || '').slice(0, 60),
           theme: String(event.theme || '').slice(0, 120),
           description: String(event.description || '').slice(0, 500),
           points: normalizePoints(event.points),
-          is_public: event.is_public !== false,
           created_at: Date.now(),
-          likes_count: 0,
         }
         if (!data.name) return { ok: false, error: 'name required' }
         const res = await db.collection(DB_COLLECTION).add({ data })
@@ -81,18 +80,13 @@ exports.main = async (event, context) => {
       case 'list': {
         const page = Math.max(1, Number(event.page) || 1)
         const pageSize = Math.min(50, Math.max(1, Number(event.pageSize) || 20))
-        const where = {}
-        // 服务端 openid 存在 → 我的路线（含非公开）；否则仅公开
-        if (openid) where.openid = openid
-        else where.is_public = true
+        // 私有路线：严格按当前 openid 过滤
         const res = await db.collection(DB_COLLECTION)
-          .where(where)
+          .where({ openid })
           .orderBy('created_at', 'desc')
           .skip((page - 1) * pageSize)
           .limit(pageSize)
-          .field({
-            openid: false, // 不回传他人 openid
-          })
+          .field({ openid: false })
           .get()
         return { ok: true, data: res.data, page, pageSize }
       }
@@ -100,15 +94,11 @@ exports.main = async (event, context) => {
       case 'detail': {
         const doc = event.routeId
         if (!doc) return { ok: false, error: 'routeId required' }
+        const owner = await db.collection(DB_COLLECTION).doc(doc).field({ openid: true }).get()
+        if (!owner.data) return { ok: false, error: 'not found' }
+        if (owner.data.openid !== openid) return { ok: false, error: 'forbidden' }
         const res = await db.collection(DB_COLLECTION).doc(doc).get()
-        const data = res.data
-        if (!data) return { ok: false, error: 'not found' }
-        // 仅公开路线或本人可见
-        if (!data.is_public && data.openid !== openid) {
-          return { ok: false, error: 'forbidden' }
-        }
-        // 不回传 openid
-        const { openid: _, ...safe } = data
+        const { openid: _, ...safe } = res.data
         return { ok: true, data: safe }
       }
 
