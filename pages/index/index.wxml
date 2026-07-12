@@ -18,7 +18,6 @@
     enable-zoom
     enable-scroll
     enable-rotate="{{false}}"
-    style="width:100%;height:100%;"
   ></map>
 
   <!-- #1 顶部朝代筛选按钮（印章触发器）-->

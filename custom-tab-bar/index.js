@@ -18,11 +18,11 @@ const ICO = {
 }
 
 const TAB_DEFS = [
-  { key: 'map',     label: '地图', icon: 'map',     url: 'pages/index/index' },
-  { key: 'find',    label: '发现', icon: 'find',    url: 'pages/search/search' },
-  { key: 'dynasty', label: '朝代', icon: 'dynasty', url: 'pages/dynasty/dynasty' },
-  { key: 'fav',     label: '收藏', icon: 'fav',     url: 'pages/favorites/favorites' },
-  { key: 'me',      label: '我的', icon: 'me',      url: 'pages/profile/profile' },
+  { key: 'map',     label: '地图', icon: 'map',     url: '/pages/index/index' },
+  { key: 'find',    label: '发现', icon: 'find',    url: '/pages/search/search' },
+  { key: 'dynasty', label: '朝代', icon: 'dynasty', url: '/pages/dynasty/dynasty' },
+  { key: 'fav',     label: '收藏', icon: 'fav',     url: '/pages/favorites/favorites' },
+  { key: 'me',      label: '我的', icon: 'me',      url: '/pages/profile/profile' },
 ]
 
 Component({
@@ -54,7 +54,7 @@ Component({
     // 搜索珠 → 直接切到搜索 Tab（不能用 navigateTo 打开 tab 页）
     enterSearch() {
       this.setData({ active: 'find' })
-      wx.switchTab({ url: 'pages/search/search' })
+      wx.switchTab({ url: '/pages/search/search' })
     },
     noop() {},
   },

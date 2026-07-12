@@ -1,6 +1,10 @@
-/* ===== 首页：全屏地图 + 宣纸淡墨浮层 ===== */
+/* ===== 首页：全屏地图 + 宣纸淡墨浮层 =====
+   原生 map 层级高于自定义 tabBar，必须底部让出 tabBar 高度，否则点击无响应 */
 .page-root { width: 100%; height: 100vh; position: relative; overflow: hidden; }
-.map { width: 100%; height: 100%; }
+.map {
+  width: 100%;
+  height: calc(100vh - 160rpx - env(safe-area-inset-bottom));
+}
 
 /* ===== #1 朝代筛选：印章触发器 + chips ===== */
 .dynasty-trigger {
@@ -65,7 +69,9 @@
 
 /* ===== #2 今日推荐卡片 ===== */
 .featured-card {
-  position: absolute; bottom: 40rpx; left: 24rpx; right: 24rpx;
+  position: absolute;
+  bottom: calc(160rpx + env(safe-area-inset-bottom) + 24rpx);
+  left: 24rpx; right: 24rpx;
   background: var(--ink-surface); border-radius: 24rpx;
   border: 1rpx solid var(--ink-line);
   box-shadow: 0 8rpx 32rpx rgba(120, 100, 70, 0.14);
@@ -131,11 +137,12 @@
 
 /* ===== 旅行路线面板（底部抽屉） ===== */
 .route-panel {
-  position: absolute; bottom: 0; left: 0; right: 0;
+  position: absolute;
+  bottom: calc(160rpx + env(safe-area-inset-bottom));
+  left: 0; right: 0;
   background: rgba(255, 253, 249, 0.97); border-radius: 24rpx 24rpx 0 0;
   box-shadow: 0 -4rpx 24rpx rgba(120, 100, 70, 0.12);
   border-top: 1rpx solid var(--ink-line);
-  padding-bottom: env(safe-area-inset-bottom);
   max-height: 55vh; z-index: 20;
 }
 .panel-header {
