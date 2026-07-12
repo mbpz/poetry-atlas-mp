@@ -1,12 +1,5 @@
 <!-- 作者详情页 -->
 <view class="page" wx:if="{{!loading}}">
-  <!-- 社区引用入口：写一首（关联本作者）-->
-  <view class="publish-entry spring-btn" bindtap="onTapPublishEntry">
-    <text class="publish-entry-ico">✎</text>
-    <text class="publish-entry-txt">写一首</text>
-    <text class="publish-entry-sub">分享对{{author.name}}的感悟</text>
-  </view>
-
   <view class="card author-hero">
     <view class="author-name">{{author.name}}</view>
     <view class="author-meta">

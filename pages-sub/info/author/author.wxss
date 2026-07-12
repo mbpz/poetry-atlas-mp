@@ -1,19 +1,6 @@
 /* ===== 作者详情 — 沉浸水墨 ===== */
 .page { min-height: 100vh; padding: 24rpx 24rpx calc(140rpx + env(safe-area-inset-bottom)); }
 
-/* 社区引用入口 */
-.publish-entry {
-  margin: 0 0 24rpx; padding: 24rpx 32rpx; border-radius: 20rpx;
-  background: linear-gradient(135deg, rgba(158,43,35,0.08), rgba(168,136,72,0.06));
-  border: 1rpx solid var(--ink-line);
-  display: flex; flex-direction: column; align-items: center; gap: 4rpx;
-  transition: transform 0.12s;
-}
-.publish-entry:active { transform: scale(0.97); }
-.publish-entry-ico { font-size: 36rpx; color: var(--cinnabar); }
-.publish-entry-txt { font-size: 30rpx; color: var(--paper-text); font-weight: 600; letter-spacing: 0.1em; }
-.publish-entry-sub { font-size: 22rpx; color: var(--paper-text-2); }
-
 .author-hero { padding: 40rpx 36rpx; }
 .author-name { font-size: 50rpx; font-weight: 700; margin-bottom: 16rpx; color: var(--paper-text); letter-spacing: 0.08em; }
 .author-meta { display: flex; align-items: center; gap: 20rpx; margin-bottom: 20rpx; }
