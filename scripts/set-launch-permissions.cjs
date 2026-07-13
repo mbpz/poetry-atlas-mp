@@ -1,10 +1,11 @@
 /**
- * 上线前批量下发集合的安全规则
- *  - 公开读+本人写：routes / recitations
- *  - 本人读写：users / favorites
+ * 批量下发 NoSQL 集合安全规则（与当前产品定位一致）
  *
- * 原因同 set-favorites-permission.cjs：mcporter CLI 会把 securityRule JSON 解析为对象而非字符串，
- * 导致云端报 "Expected string, received object"，故统一用 spawnSync + --args <json-string> 保留字符串类型。
+ *  - 公开读 + 本人写：recitations（预设朗诵资源）
+ *  - 本人读写：users / routes / favorites
+ *
+ * 原因：mcporter CLI 会把 securityRule JSON 解析为对象而非字符串，
+ * 导致云端报 "Expected string, received object"，故用 spawnSync + --args 保留字符串类型。
  *
  * 用法：node scripts/set-launch-permissions.cjs
  */
@@ -24,7 +25,7 @@ function apply(resourceId, securityRule) {
     resourceType: 'noSqlDatabase',
     resourceId,
     permission: 'CUSTOM',
-    securityRule, // 字符串，JSON.stringify 会保留引号
+    securityRule,
   })
   let ok = false
   try {
@@ -57,15 +58,15 @@ const OWNER_ONLY_RULE = JSON.stringify({
 })
 
 let ok = 0
-const total = 3
+const total = 4
 
 console.log('公开读 + 本人写:')
-for (const col of ['routes', 'recitations']) {
-  if (apply(col, PUBLIC_READ_RULE)) ok++
-}
+if (apply('recitations', PUBLIC_READ_RULE)) ok++
 
 console.log('本人读写:')
-if (apply('users', OWNER_ONLY_RULE)) ok++
+for (const col of ['users', 'routes', 'favorites']) {
+  if (apply(col, OWNER_ONLY_RULE)) ok++
+}
 
 console.log(`\nRESULT: ok=${ok} fail=${total - ok}`)
 process.exit(ok === total ? 0 : 1)

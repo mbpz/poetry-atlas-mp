@@ -57,21 +57,26 @@ poetry-atlas-mp/
 │   ├── dynasty/                     # 朝代浏览（时间轴展开）
 │   ├── search/                      # 发现 / 搜索（实时防抖 + 热词 + 分 Tab）
 │   ├── favorites/                   # 收藏（联表展示 + 删除）
-│   ├── profile/                     # 我的（用户 / 收藏统计 / 关于）
-│   ├── place/                       # 地点详情（地图卡 + 朝代筛选 + 诗词分页）
-│   ├── poem/                        # 诗词详情（全文 + 注释/译文/赏析 + AI 解读）
-│   ├── author/                      # 作者详情（生平 + 轨迹 + 代表作）
-│   └── travel/                      # 旅行路线（主题路线 + 配诗行程）
+│   ├── profile/                     # 我的（微信头像昵称 + 统计 + Hub）
+│   └── pages-sub/                   # 分包：地点/诗词/作者/路线/隐私协议
 ├── cloudfunctions/
-│   ├── login/                       # 登录（返回 OPENID）
-│   ├── aggregateMap/                # 地图聚合（省份聚合 / 附近 geoNear / 地点列表）
+│   ├── login/                       # 静默登录（OPENID + users upsert）
+│   ├── updateUser/                  # 用户档案更新（昵称/头像/stats，支持 upsert）
+│   ├── aggregateMap/                # 地图聚合（省份 / 邻近 geoNear / 地点列表）
 │   ├── searchPoems/                 # 多字段正则搜索（标题/作者/正文/地点）
-│   ├── analyzePoem/                 # AI 深度解析（结构化 JSON）
-│   └── initData/                    # 数据迁移（一次性)
+│   ├── analyzePoem/                 # AI 深度解析（结构化 JSON，混元 hy3）
+│   ├── routes/                      # 私有旅行路线 CRUD
+│   ├── recitations/                 # 朗诵列表 + 播放计数
+│   └── initData/                    # 数据迁移（一次性，运维用）
 ├── scripts/
 │   ├── migrate-data.cjs             # places.json → NoSQL 转换脚本
 │   ├── seed-native.cjs              # 批量写入原生 NoSQL
-│   └── set-favorites-permission.cjs # 收藏集合权限修复脚本
+│   ├── set-favorites-permission.cjs # favorites 集合权限修复
+│   ├── set-launch-permissions.cjs   # users/routes/favorites/recitations 权限批量下发
+│   └── seed-recitations-direct.cjs  # 朗诵占位数据直写
+├── docs/
+│   ├── cloudbase-functions-and-database.md  # 云函数 + 文档库参考（排查/Schema）
+│   └── cloudbase-operations-log.md        # 云上部署操作日志
 ├── data/
 │   └── places.json                  # 原版数据集（164 地点 / 508 记录）
 └── README.md
@@ -86,9 +91,11 @@ poetry-atlas-mp/
 | `authors` | 作者 | `name`, `dynasty`, `biography`, `route[]`, `poem_count`, `birth_year/death_year` | 公开读 |
 | `dynasties` | 朝代 | `name`, `start_year`, `end_year`, `sort_order`, `poem_count` | 公开读 |
 | `favorites` | 收藏（私有） | `openid`, `poem_id`, `poem_title`, `poem_author`, `created_at` | 仅本人读写 |
-| `users` | 用户档案 | `_id`(=openid), `nickname`, `avatar_url`, `created_at`, `stats` | 仅本人读写 |
+| `users` | 用户档案 | `_id`(=openid), `_openid`, `nickname`, `avatar_url`, `created_at`, `stats` | 仅本人读写 |
 | `routes` | 自建旅行路线（**私有·仅自己可见**） | `openid`, `name`, `theme`, `description`, `points[]`, `created_at` | 仅本人读写 |
 | `recitations` | 诗词朗诵音频（预设） | `poem_id`, `audio_url`, `duration`, `voice`, `play_count` | 公开读 |
+
+> 线上另有遗留集合 `quiz_questions` / `posts` / `comments` / `likes` / `follows`（答题/社区功能已下线），详见 `docs/cloudbase-functions-and-database.md` §7.2。
 
 GeoPoint 存储统一用 WGS-84 坐标；代码兼容两种返回格式（GeoJSON `coordinates` / 扁平 `longitude+latitude`）。
 
@@ -110,16 +117,31 @@ GeoPoint 存储统一用 WGS-84 坐标；代码兼容两种返回格式（GeoJSO
 ### 2. 部署云函数（两种方式任选）
 
 **方式 A：CloudBase MCP（推荐）**
+
 ```bash
-npx mcporter call cloudbase.manageFunctions action=createFunction \
-  --args '{"func":{"name":"login","runtime":"Nodejs20.19","timeout":10},"functionRootPath":"cloudfunctions/login"}'
+# 更新单个函数代码（云端安装依赖，勿上传本机 node_modules）
+npx mcporter call cloudbase.manageFunctions \
+  --args '{"action":"updateFunctionCode","functionName":"login",\
+           "functionRootPath":"/abs/path/poetry-atlas-mp/cloudfunctions",\
+           "installDependency":true}' \
+  --output json --timeout 300000
 ```
-其余云函数同理：`aggregateMap` / `searchPoems` / `analyzePoem`。
+
+需部署的 8 个函数：`login` / `updateUser` / `aggregateMap` / `searchPoems` / `analyzePoem` / `routes` / `recitations` / `initData`。
 
 **方式 B：微信开发者工具**
-右键 `cloudfunctions/<name>` → "上传并部署：云端安装依赖"。
 
-### 3. 数据迁移
+右键 `cloudfunctions/<name>` → **上传并部署：云端安装依赖**。
+
+> 详细排查与 Schema 见 `docs/cloudbase-functions-and-database.md`。
+
+# 3. 设置集合权限
+```bash
+node scripts/set-launch-permissions.cjs    # users / routes / favorites / recitations
+node scripts/set-favorites-permission.cjs  # 单独修 favorites（可选）
+```
+
+### 4. 数据迁移
 ```bash
 # 1. 拉取原始数据
 gh api repos/mbpz/poetry-atlas/contents/public/data/places.json --jq '.content' | base64 -d > data/places.json
@@ -132,7 +154,7 @@ node scripts/set-favorites-permission.cjs
 ```
 或直接调用已部署的 `initData`。
 
-### 4. AI 能力配置
+### 5. AI 能力配置
 `analyzePoem` 使用 CloudBase 内置 AI（混元 hy3）。需在 [云开发控制台 → AI](https://tcb.cloud.tencent.com/dev?envId=your-env#/ai)：
 - 确认 `cloudbase` 模型组已启用 (`DescribeAIModels` 返回 Status=1)
 - 若需更多模型（DeepSeek 等），通过 `UpdateAIModel` 添加
@@ -174,8 +196,8 @@ node scripts/set-favorites-permission.cjs
 核心原则：**所有用户生成内容均为私有**（仅创建者本人可见，不对外公开分享），规避"社交-笔记"类目限制。
 
 - 地图浏览 / 诗词 / 作者 / 朝代 → 展示预设开放内容（合规）
-- 我的路线 / 收藏 / 朗诵记录 / 答题记录 → **仅自己可见**（私有工具）
-- 已移除公开社区 Feed / 公开分享功能（避免 UGC 社交类目）
+- 我的路线 / 收藏 / 朗诵记录 → **仅自己可见**（私有工具）
+- 已移除公开社区 Feed / 答题对战 / 公开分享功能（避免 UGC 社交类目）
 
 ## 设计语言
 
