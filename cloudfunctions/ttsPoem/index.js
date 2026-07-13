@@ -9,10 +9,12 @@
  * 返回:
  *   { ok, fileID, audio_url, duration, cached, voice } | { ok:false, error }
  *
- * 环境变量（云函数配置）:
- *   TTS_SECRET_ID / TTS_SECRET_KEY
+ * 环境变量（可选）:
+ *   TTS_SECRET_ID / TTS_SECRET_KEY（腾讯云 TTS；未配置则回落 edge-tts）
  *   或 TENCENTCLOUD_SECRET_ID / TENCENTCLOUD_SECRET_KEY
  *   可选 TTS_VOICE_MALE / TTS_VOICE_FEMALE（音色 ID，默认 10510000 / 1001）
+ *
+ * 回落 edge-tts（免费、无需密钥）：女 zh-CN-XiaoxiaoNeural / 男 zh-CN-YunxiNeural
  *
  * 缓存集合 tts_cache（仅云函数读写）:
  *   { _id: `${poemId}_${voice}`, poem_id, voice, text_hash, fileID, duration, updated_at }
@@ -224,6 +226,20 @@ function safeCloudPath(poemId, voice) {
   return `tts/${safe}_${voice}.mp3`
 }
 
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550 edge-tts \u514d\u8d39\u515c\u5e95\uff08\u65e0\u9700\u4e91\u51fd\u6570\u53d8\u91cf\uff09\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+// \u58f0\u97f3\uff1azh-CN-XiaoxiaoNeural\uff08\u5973\uff09 / zh-CN-YunxiNeural\uff08\u7537\uff09
+const EDGE_VOICE = { female: 'zh-CN-XiaoxiaoNeural', male: 'zh-CN-YunxiNeural' }
+
+async function synthesizeEdgeTTS(text, voice) {
+  const { Communicate } = require('edge-tts')
+  const communicator = new Communicate(text, { voice: EDGE_VOICE[voice] || EDGE_VOICE.female })
+  const chunks = []
+  for await (const chunk of communicator.stream()) {
+    if (chunk.type === 'audio') chunks.push(Buffer.from(chunk.data))
+  }
+  return Buffer.concat(chunks)
+}
+
 exports.main = async (event) => {
   const wxContext = cloud.getWXContext()
   const openid = wxContext.OPENID || ''
@@ -232,12 +248,8 @@ exports.main = async (event) => {
   const db = cloud.database()
 
   const { secretId, secretKey } = getCredentials()
-  if (!secretId || !secretKey) {
-    return {
-      ok: false,
-      error: 'TTS 未配置：请在云函数环境变量中设置 TTS_SECRET_ID / TTS_SECRET_KEY',
-    }
-  }
+  // 腾讯云 TTS 是否可用；不可用回落到免费的 edge-tts
+  const useTencent = !!(secretId && secretKey)
 
   let poem = null
   if (poemId) {
@@ -282,6 +294,17 @@ exports.main = async (event) => {
     // cache miss
   }
 
+  // 未配腾讯云 → 直接走免费 edge-tts
+  if (!useTencent) {
+    const mp3 = await synthesizeEdgeTTS(speakText, voice)
+    const cloudPath = safeCloudPath(poemId || cacheId, voice)
+    const upload = await cloud.uploadFile({ cloudPath, fileContent: mp3 })
+    const fileID = upload.fileID
+    const duration = estimateDurationSec(speakText)
+    const audio_url = (await getTempUrl(fileID)) || fileID
+    return { ok: true, cached: false, voice, fileID, audio_url, duration, fallback: 'edge-tts' }
+  }
+
   try {
     const mp3 = await synthesizeMp3(secretId, secretKey, speakText, voiceTypeOf(voice))
     const cloudPath = safeCloudPath(poemId || cacheId, voice)
@@ -318,6 +341,22 @@ exports.main = async (event) => {
       duration,
     }
   } catch (err) {
+    // 腾讯云 TTS 失败 → 回落免费 edge-tts（无需密钥）
+    if (useTencent) {
+      console.warn('[ttsPoem] tencent tts failed, fallback to edge-tts:', err.message || err)
+      try {
+        const mp3 = await synthesizeEdgeTTS(speakText, voice)
+        const cloudPath = safeCloudPath(poemId || cacheId, voice)
+        const upload = await cloud.uploadFile({ cloudPath, fileContent: mp3 })
+        const fileID = upload.fileID
+        const duration = estimateDurationSec(speakText)
+        const audio_url = (await getTempUrl(fileID)) || fileID
+        return { ok: true, cached: false, voice, fileID, audio_url, duration, fallback: 'edge-tts' }
+      } catch (e2) {
+        console.error('[ttsPoem] edge-tts fallback failed:', e2.message || e2)
+        return { ok: false, error: err.message || 'TTS failed' }
+      }
+    }
     console.error('[ttsPoem] error:', err)
     return { ok: false, error: err.message || 'TTS failed' }
   }
