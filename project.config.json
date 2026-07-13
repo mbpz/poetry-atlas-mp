@@ -56,7 +56,14 @@
   },
   "simulatorPluginLibVersion": {},
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      { "type": "folder", "value": ".git" },
+      { "type": "folder", "value": ".cursor" },
+      { "type": "folder", "value": "node_modules" },
+      { "type": "folder", "value": "docs" },
+      { "type": "folder", "value": ".agents" },
+      { "type": "folder", "value": ".superpowers" }
+    ],
     "include": []
   }
 }
