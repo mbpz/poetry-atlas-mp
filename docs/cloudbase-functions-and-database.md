@@ -93,7 +93,10 @@ const openid = cloud.getWXContext().OPENID  // 仅微信客户端调用链有值
 | `aggregateMap` | 地图聚合 / 邻近 / 地点列表 | `type`, `dynasty?`, `lng?`, `lat?`, `radius_km?`, `keyword?`, `limit?` | `{ ok, data[], total }` | `places` | `pages/index/index.js`（`type=province`） |
 | `routes` | 私有旅行路线 CRUD | `action`: `create\|update\|delete\|list\|detail` + 对应字段 | `{ ok, data? \| _id? \| error? }` | `routes` | 路线相关页面 |
 | `recitations` | 朗诵列表 / 播放计数 | `action`: `list\|recordPlay` | `{ ok, data? \| error? }` | `recitations`, `poems` | `pages-sub/info/poem/poem.js` |
+| `ttsPoem` | 即时朗读（腾讯云基础 TTS） | `poem_id` 或 `text`, `voice?` | `{ ok, audio_url, fileID, duration, cached }` | `poems`, `tts_cache` + 云存储 | `pages-sub/info/poem/poem.js` |
 | `initData` | 一次性种子迁移 | 无 | `{ ok, results }` | `places`, `poems`, `authors`, `dynasties` | 仅运维 invoke |
+
+`ttsPoem` 需配置环境变量 `TTS_SECRET_ID` / `TTS_SECRET_KEY`（腾讯云 API 密钥，开通[语音合成](https://cloud.tencent.com/product/tts)）。同诗同音色会缓存到云存储与 `tts_cache`。
 
 函数目录布局：`cloudfunctions/<name>/{index.js, package.json, [config.json], [package-lock.json]}`。
 

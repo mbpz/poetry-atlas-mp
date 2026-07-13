@@ -22,6 +22,7 @@ Component({
     title: { type: String, value: '' },
     author: { type: String, value: '' },
     recitationId: { type: String, value: '' },
+    autoplay: { type: Boolean, value: false },
   },
 
   data: {
@@ -35,6 +36,11 @@ Component({
   },
 
   lifetimes: {
+    ready() {
+      if (this.properties.autoplay && this.properties.src) {
+        this._playSrc(this.properties.src, true)
+      }
+    },
     detached() {
       this._destroyAudio()
     },
@@ -43,6 +49,21 @@ Component({
   observers: {
     duration(d) {
       this.setData({ durationText: this._fmt(d || 0) })
+    },
+    src(next) {
+      if (!next) return
+      this._reported = false
+      this._destroyAudio()
+      this.setData({
+        isPlaying: false,
+        currentTime: 0,
+        currentLine: 0,
+        progress: 0,
+        timeText: '0:00',
+      })
+      if (this.properties.autoplay) {
+        this._playSrc(next, true)
+      }
     },
   },
 
@@ -123,6 +144,21 @@ Component({
       return m + ':' + (s < 10 ? '0' : '') + s
     },
 
+    _playSrc(src, report) {
+      if (!src || src.startsWith('data:')) {
+        wx.showToast({ title: '暂无朗诵', icon: 'none' })
+        return
+      }
+      const ctx = this._ensureAudio()
+      if (ctx.src !== src) ctx.src = src
+      ctx.play()
+      this.setData({ isPlaying: true })
+      if (report && !this._reported) {
+        this._reported = true
+        this.triggerEvent('play', { recitationId: this.properties.recitationId })
+      }
+    },
+
     // ===== 播放控制 =====
     onTogglePlay() {
       const src = this.properties.src
@@ -130,18 +166,11 @@ Component({
         wx.showToast({ title: '暂无朗诵', icon: 'none' })
         return
       }
-      const ctx = this._ensureAudio()
       if (this.data.isPlaying) {
         this._pause()
-      } else {
-        ctx.play()
-        this.setData({ isPlaying: true })
-        // 首次播放上报
-        if (!this._reported) {
-          this._reported = true
-          this.triggerEvent('play', { recitationId: this.properties.recitationId })
-        }
+        return
       }
+      this._playSrc(src, true)
     },
 
     _pause() {

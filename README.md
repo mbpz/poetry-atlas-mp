@@ -67,6 +67,7 @@ poetry-atlas-mp/
 │   ├── searchPoems/                 # 多字段正则搜索（标题/作者/正文/地点）
 │   ├── routes/                      # 私有旅行路线 CRUD
 │   ├── recitations/                 # 朗诵列表 + 播放计数
+│   ├── ttsPoem/                     # 即时朗读（腾讯云 TTS）
 │   └── initData/                    # 数据迁移（一次性，运维用）
 ├── scripts/
 │   ├── migrate-data.cjs             # places.json → NoSQL 转换脚本
@@ -94,6 +95,7 @@ poetry-atlas-mp/
 | `users` | 用户档案 | `_id`(=openid), `_openid`, `nickname`, `avatar_url`, `created_at`, `stats` | 仅本人读写 |
 | `routes` | 自建旅行路线（**私有·仅自己可见**） | `openid`, `name`, `theme`, `description`, `points[]`, `created_at` | 仅本人读写 |
 | `recitations` | 诗词朗诵音频（预设） | `poem_id`, `audio_url`, `duration`, `voice`, `play_count` | 公开读 |
+| `tts_cache` | TTS 音频缓存索引 | `poem_id`, `voice`, `text_hash`, `fileID`, `duration` | 仅云函数 |
 
 > 线上另有遗留集合 `quiz_questions` / `posts` / `comments` / `likes` / `follows`（答题/社区功能已下线），详见 `docs/cloudbase-functions-and-database.md` §7.2。
 
@@ -127,7 +129,9 @@ npx mcporter call cloudbase.manageFunctions \
   --output json --timeout 300000
 ```
 
-需部署的 7 个函数：`login` / `updateUser` / `aggregateMap` / `searchPoems` / `routes` / `recitations` / `initData`。
+需部署的函数：`login` / `updateUser` / `aggregateMap` / `searchPoems` / `routes` / `recitations` / `ttsPoem` / `initData`。
+
+`ttsPoem` 额外步骤：在云函数环境变量写入 `TTS_SECRET_ID`、`TTS_SECRET_KEY`（腾讯云控制台 → 访问管理 → API 密钥；并开通语音合成 TTS）。
 
 **方式 B：微信开发者工具**
 

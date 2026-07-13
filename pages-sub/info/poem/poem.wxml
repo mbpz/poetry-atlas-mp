@@ -1,4 +1,4 @@
-<!-- 诗词详情 — 沉浸水墨 + 竖排卷轴阅读 -->
+<!-- 诗词详情 — 横排沉浸阅读 -->
 <view wx:if="{{loading}}" class="page">
   <skeleton rows="2" />
   <skeleton rows="4" />
@@ -6,9 +6,7 @@
 </view>
 <view class="page" wx:elif="{{poem}}">
 
-  <!-- 诗词英雄卡（卷轴）-->
   <view class="poem-hero card spring-card">
-    <!-- 卷轴顶部装饰 -->
     <view class="scroll-rod"></view>
 
     <view class="poem-title-row">
@@ -20,67 +18,48 @@
       <text class="poem-author-txt">{{poem.author}}</text>
     </view>
 
-    <!-- 正文：横/竖排切换 -->
-    <view class="poem-mode-toggle">
-      <view class="mode-btn {{poemMode === 'v' ? 'on' : ''}}" bindtap="onTogglePoemMode" data-mode="v">竖排</view>
-      <view class="mode-btn {{poemMode === 'h' ? 'on' : ''}}" bindtap="onTogglePoemMode" data-mode="h">横排</view>
+    <view class="poem-content">
+      <view wx:for="{{poem.lines}}" wx:key="*this" class="poem-line">{{item}}</view>
     </view>
 
-    <!-- 横排 -->
-    <view wx:if="{{poemMode === 'h'}}" class="poem-content poem-text">
-      <view wx:for="{{poem.lines}}" wx:key="*this" class="poem-line">{{line}}</view>
-    </view>
-
-    <!-- 竖排卷轴（右→左，左右淡出暗示可横滑）-->
-    <view wx:else class="poem-scroll-wrap">
-      <scroll-view scroll-x class="poem-scroll-h" enhanced show-scrollbar="{{false}}">
-        <view class="poem-vertical">
-          <view wx:for="{{poem.linesChars}}" wx:key="*this" class="poem-v-col">
-            <text wx:for="{{item}}" wx:for-item="ch" wx:key="*this" class="poem-v-ch">{{ch}}</text>
-          </view>
-        </view>
-      </scroll-view>
-      <view class="poem-fade-left"></view>
-      <view class="poem-fade-right"></view>
-    </view>
-
-    <!-- 印章落款 -->
     <view class="poem-seal">{{poem.dynasty}}</view>
   </view>
 
-  <!-- 朗诵入口 -->
-  <view class="card recitation-card" wx:if="{{recitationCount > 0}}">
-    <view class="section-title gold-title">朗诵版 · {{recitationCount}} 段</view>
-    <view class="recitation-list">
+  <view class="card recitation-card" wx:if="{{!loading}}">
+    <view class="section-title gold-title">朗读</view>
+    <view class="tts-row">
       <view
-        wx:for="{{recitations}}"
-        wx:key="_id"
-        class="recitation-item spring-btn"
-        data-item="{{item}}"
-        bindtap="onPlayRecitation"
-      >
-        <view class="recitation-play">▶</view>
-        <view class="recitation-meta">
-          <view class="recitation-voice">{{item.voice === 'female' ? '女声' : '男声'}}朗诵</view>
-          <view class="recitation-dur">{{item.duration}}秒 · {{item.play_count}}次播放</view>
+        class="tts-btn spring-btn {{ttsLoading && ttsVoice === 'female' ? 'loading' : ''}}"
+        data-voice="female"
+        bindtap="onTapTts"
+      >{{ttsLoading && ttsVoice === 'female' ? '合成中…' : '女声朗读'}}</view>
+      <view
+        class="tts-btn spring-btn {{ttsLoading && ttsVoice === 'male' ? 'loading' : ''}}"
+        data-voice="male"
+        bindtap="onTapTts"
+      >{{ttsLoading && ttsVoice === 'male' ? '合成中…' : '男声朗读'}}</view>
+    </view>
+
+    <block wx:if="{{recitationCount > 0}}">
+      <view class="section-sub">预设朗诵 · {{recitationCount}}</view>
+      <view class="recitation-list">
+        <view
+          wx:for="{{recitations}}"
+          wx:key="_id"
+          class="recitation-item spring-btn"
+          data-item="{{item}}"
+          bindtap="onPlayRecitation"
+        >
+          <view class="recitation-play">▶</view>
+          <view class="recitation-meta">
+            <view class="recitation-voice">{{item.voice === 'female' ? '女声' : '男声'}}朗诵</view>
+            <view class="recitation-dur">{{item.duration}}秒 · {{item.play_count}}次播放</view>
+          </view>
         </view>
       </view>
-    </view>
-  </view>
-  <view class="card recitation-card empty" wx:elif="{{!loading}}">
-    <view class="recitation-empty-text">朗诵版敬请期待</view>
+    </block>
   </view>
 
-  <!-- 解读区：仅展示数据集自带的注释 / 译文 / 赏析（无生成式 AI）-->
-  <view class="card interpret-card">
-    <view class="section-title gold-title">注释与赏析</view>
-    <view class="tab-body">
-      <text wx:if="{{poem.interpretText}}" class="interpret-text">{{poem.interpretText}}</text>
-      <text wx:else class="interpret-text interpret-empty">暂无注释与赏析，可收藏本诗或前往相关地点继续探索</text>
-    </view>
-  </view>
-
-  <!-- 相关地点 -->
   <view wx:if="{{places.length}}" class="card place-card">
     <view class="section-title gold-title">相关地点</view>
     <view class="place-tags">
@@ -93,7 +72,6 @@
   </view>
 </view>
 
-<!-- 朗诵播放组件（mini / 全屏） -->
 <audio-player
   wx:if="{{showMiniPlayer}}"
   src="{{playerSrc}}"
@@ -102,6 +80,7 @@
   title="{{poem.title}}"
   author="{{poem.author}}"
   recitation-id="{{playerRecitationId}}"
+  autoplay="{{playerAutoplay}}"
   bind:play="onPlayerPlay"
   bind:close="onClosePlayer"
 />

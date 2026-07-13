@@ -1,6 +1,7 @@
 /**
- * 诗词详情页 — 注释/译文/赏析（数据集原文）+ 收藏 + 朗诵
- * 合规：个人主体不提供生成式 AI / 深度合成能力。
+ * 诗词详情页 — 横排正文 + 收藏 + 朗读 + 相关地点
+ * 合规：个人主体不提供生成式 AI；注释/赏析暂不展示。
+ * 朗读：云函数 ttsPoem（腾讯云基础 TTS），非大模型生成。
  */
 const { getDB } = require('../../../utils/cloudbase.js')
 const { splitPoemLines } = require('../../../utils/util.js')
@@ -11,13 +12,15 @@ Page({
     places: [],
     loading: true,
     isFavorited: false,
-    poemMode: 'v', // v=竖排卷轴, h=横排
     recitations: [],
     recitationCount: 0,
+    ttsLoading: false,
+    ttsVoice: '',
     showMiniPlayer: false,
     playerSrc: '',
     playerDuration: 0,
     playerRecitationId: '',
+    playerAutoplay: false,
   },
 
   onLoad(options) {
@@ -41,7 +44,6 @@ Page({
     if (this._backTimer) clearTimeout(this._backTimer)
   },
 
-  // 加载朗诵列表（静默失败 — 不影响诗词详情主流程）
   async loadRecitations() {
     if (!this.poemId) return
     try {
@@ -50,7 +52,8 @@ Page({
         data: { action: 'list', poem_id: this.poemId },
       })
       const result = res.result || {}
-      const recitations = (result.ok && result.data) || []
+      const all = (result.ok && result.data) || []
+      const recitations = all.filter((r) => r.audio_url && !String(r.audio_url).startsWith('data:'))
       this.setData({
         recitations,
         recitationCount: recitations.length,
@@ -79,32 +82,22 @@ Page({
   renderPoem(poem) {
     const places = (poem.place_names || []).map((name) => ({ name }))
     const lines = splitPoemLines(poem.content)
-    // 合成「注释与赏析」：仅拼接数据集字段，不调用任何生成模型
-    const parts = [poem.annotation, poem.translation, poem.appreciation].filter(Boolean)
     this.setData({
       poem: {
-        title: poem.title, author: poem.author, dynasty: poem.dynasty, content: poem.content,
+        title: poem.title,
+        author: poem.author,
+        dynasty: poem.dynasty,
+        content: poem.content,
         lines,
-        linesChars: lines.map((l) => Array.from(l)),
-        annotation: poem.annotation || '',
-        translation: poem.translation || '',
-        appreciation: poem.appreciation || '',
-        interpretText: parts.join('\n\n'),
       },
-      places, loading: false,
+      places,
+      loading: false,
     })
-    // globalData 路径（如旅行页跳转）可能未带 _id，补上以便加载朗诵
     if (!this.poemId && poem._id) this.poemId = poem._id
     if (this.poemId) {
       this.checkFavorite()
       this.loadRecitations()
     }
-  },
-
-  // 横/竖排卷轴切换
-  onTogglePoemMode(e) {
-    const mode = e.currentTarget.dataset.mode
-    this.setData({ poemMode: mode })
   },
 
   async checkFavorite() {
@@ -148,7 +141,6 @@ Page({
     }
   },
 
-  // 诗词→地点跳转（通过 name 精确查 _id）
   onTapPlace(e) {
     const place = e.currentTarget.dataset.place
     if (!place) return
@@ -165,7 +157,6 @@ Page({
     }).then((res) => {
       wx.hideLoading()
       const list = (res.result && res.result.data) || []
-      // 精确匹配优先
       const matched = list.find((p) => p.name === place.name) || list[0]
       if (matched && matched._id) {
         cache[place.name] = matched._id
@@ -179,19 +170,72 @@ Page({
     })
   },
 
-  // ===== 朗诵播放 =====
+  async onTapTts(e) {
+    if (this.data.ttsLoading) return
+    const voice = (e.currentTarget.dataset.voice === 'male') ? 'male' : 'female'
+    const poem = this.data.poem
+    if (!poem) return
+
+    const now = Date.now()
+    if (this._lastTtsAt && now - this._lastTtsAt < 2000) return
+    this._lastTtsAt = now
+
+    this.setData({ ttsLoading: true, ttsVoice: voice })
+    wx.showLoading({ title: '朗读准备中…', mask: true })
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'ttsPoem',
+        data: {
+          poem_id: this.poemId || '',
+          voice,
+          text: this.poemId ? undefined : poem.content,
+          title: poem.title,
+          author: poem.author,
+          dynasty: poem.dynasty,
+        },
+      })
+      const result = res.result || {}
+      if (!result.ok) {
+        throw new Error(result.error || '朗读失败')
+      }
+      const src = result.audio_url || result.fileID
+      if (!src) throw new Error('未返回音频')
+      this.setData({
+        showMiniPlayer: true,
+        playerSrc: src,
+        playerDuration: result.duration || 0,
+        playerRecitationId: '',
+        playerAutoplay: true,
+      })
+    } catch (err) {
+      console.warn('[poem] tts failed:', err)
+      const msg = (err && err.message) || '朗读失败'
+      wx.showToast({
+        title: msg.length > 20 ? '朗读暂不可用' : msg,
+        icon: 'none',
+        duration: 2500,
+      })
+    } finally {
+      wx.hideLoading()
+      this.setData({ ttsLoading: false, ttsVoice: '' })
+    }
+  },
+
   onPlayRecitation(e) {
     const item = e.currentTarget.dataset.item
-    if (!item) return
-    // MVP 客户端防连点：5s 内重复点击忽略；生产改用 recitation_plays 幂等表（服务端按 recitation_id+openid 去重）
+    if (!item || !item.audio_url) {
+      wx.showToast({ title: '暂无音频', icon: 'none' })
+      return
+    }
     const now = Date.now()
     if (this._lastPlayAt && now - this._lastPlayAt < 5000) return
     this._lastPlayAt = now
     this.setData({
       showMiniPlayer: true,
-      playerSrc: item.audio_url || '',
+      playerSrc: item.audio_url,
       playerDuration: item.duration || 0,
       playerRecitationId: item._id || '',
+      playerAutoplay: true,
     })
   },
 
@@ -205,7 +249,7 @@ Page({
   },
 
   onClosePlayer() {
-    this.setData({ showMiniPlayer: false })
+    this.setData({ showMiniPlayer: false, playerAutoplay: false })
   },
 
   onShareAppMessage() {
