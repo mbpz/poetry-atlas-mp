@@ -71,20 +71,13 @@
     <view class="recitation-empty-text">朗诵版敬请期待</view>
   </view>
 
-  <!-- 解读区：单一"注释与赏析" + AI 主入口 -->
+  <!-- 解读区：仅展示数据集自带的注释 / 译文 / 赏析（无生成式 AI）-->
   <view class="card interpret-card">
     <view class="section-title gold-title">注释与赏析</view>
     <view class="tab-body">
       <text wx:if="{{poem.interpretText}}" class="interpret-text">{{poem.interpretText}}</text>
-      <text wx:else class="interpret-text interpret-empty">暂无人工注释，可使用 <text class="ai-link" bindtap="onAskAI">AI 深度解读</text> 了解典故、情感与背景</text>
+      <text wx:else class="interpret-text interpret-empty">暂无注释与赏析，可收藏本诗或前往相关地点继续探索</text>
     </view>
-  </view>
-
-  <!-- AI 主入口（hero 卡与解读区之间）-->
-  <view class="ai-main-btn spring-btn" bindtap="onAskAI">
-    <text class="ai-main-ico">💡</text>
-    <text class="ai-main-txt">AI 深度解读</text>
-    <text class="ai-main-sub">白话译文 · 典故 · 情感 · 手法</text>
   </view>
 
   <!-- 相关地点 -->
@@ -97,69 +90,6 @@
         data-place="{{item}}" bindtap="onTapPlace"
       >{{item.name}}</view>
     </view>
-  </view>
-</view>
-
-<!-- ===== 底部抽屉: AI 解读面板 ===== -->
-<view wx:if="{{AI.show}}" class="ai-mask" bindtap="onHideAI" catchtouchmove="onMaskTouchMove">
-  <view
-    class="ai-sheet {{AI.dragging ? '' : 'ai-sheet-transition'}}"
-    style="height: {{AI.sheetHeight}}%;"
-    catchtap="noop"
-    bindtouchstart="onSheetTouchStart"
-    bindtouchmove="onSheetTouchMove"
-    bindtouchend="onSheetTouchEnd"
-  >
-    <view class="ai-sheet-handle" catchtap="onHandleTap">
-      <view class="ai-sheet-bar"></view>
-    </view>
-
-    <view wx:if="{{AI.loading}}" class="ai-sheet-body">
-      <view class="ai-skeleton-title"></view>
-      <view class="ai-skeleton-line"></view>
-      <view class="ai-skeleton-line"></view>
-      <view class="ai-skeleton-line short"></view>
-      <view class="ai-skeleton-title"></view>
-      <view class="ai-skeleton-line"></view>
-      <view class="ai-skeleton-line"></view>
-    </view>
-
-    <scroll-view wx:elif="{{AI.structured}}" scroll-y class="ai-sheet-body" enhanced show-scrollbar="{{false}}">
-      <view class="ai-section">
-        <view class="ai-section-title">白话译文</view>
-        <view class="ai-section-text">{{AI.structured.translation}}</view>
-      </view>
-      <view class="ai-section" wx:if="{{AI.structured.allusions && AI.structured.allusions.length}}">
-        <view class="ai-section-title">典故</view>
-        <view wx:for="{{AI.structured.allusions}}" wx:key="phrase" class="ai-allusion">
-          <view class="ai-allusion-phrase">{{item.phrase}}</view>
-          <view class="ai-allusion-source">出处：{{item.source}}</view>
-          <view class="ai-allusion-meaning">{{item.meaning}}</view>
-        </view>
-      </view>
-      <view class="ai-section">
-        <view class="ai-section-title">情感</view>
-        <view class="ai-section-text">{{AI.structured.emotion}}</view>
-      </view>
-      <view class="ai-section">
-        <view class="ai-section-title">创作背景</view>
-        <view class="ai-section-text">{{AI.structured.background}}</view>
-      </view>
-      <view class="ai-section" wx:if="{{AI.structured.techniques && AI.structured.techniques.length}}">
-        <view class="ai-section-title">艺术手法</view>
-        <view class="ai-tags">
-          <text wx:for="{{AI.structured.techniques}}" wx:key="*this" class="ai-tag spring-btn">{{item}}</text>
-        </view>
-      </view>
-      <view class="ai-section">
-        <view class="ai-section-title">文学史地位</view>
-        <view class="ai-section-text">{{AI.structured.significance}}</view>
-      </view>
-    </scroll-view>
-
-    <text wx:elif="{{AI.content}}" class="ai-sheet-body ai-raw">{{AI.content}}</text>
-
-    <view wx:else class="ai-sheet-body ai-empty">解读失败，请重试</view>
   </view>
 </view>
 

@@ -7,7 +7,7 @@ const { throttle } = require("../../utils/util.js")
 const { locToLngLat } = require("../../utils/loc.js")
 const config = require("../../config.js")
 
-// 预定义旅行路线（M4 静态数据，M5 可改由 AI 生成）
+// 预定义旅行路线（静态展示数据）
 const TRAVEL_ROUTES = [
   {
     id: "libai_yangtze",

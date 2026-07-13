@@ -1,5 +1,6 @@
 /**
- * 诗词详情页 — 交互增强（Spotify抽屉 + 共享元素 + Linear弹簧）
+ * 诗词详情页 — 注释/译文/赏析（数据集原文）+ 收藏 + 朗诵
+ * 合规：个人主体不提供生成式 AI / 深度合成能力。
  */
 const { getDB } = require('../../../utils/cloudbase.js')
 const { splitPoemLines } = require('../../../utils/util.js')
@@ -10,9 +11,7 @@ Page({
     places: [],
     loading: true,
     isFavorited: false,
-    AI: { show: false, loading: false, content: '', structured: null, dragging: false, sheetHeight: 30 },
-    poemMode: 'v', // v=竖排卷轴, h=横排（沉浸主题默认竖排）
-    // 朗诵
+    poemMode: 'v', // v=竖排卷轴, h=横排
     recitations: [],
     recitationCount: 0,
     showMiniPlayer: false,
@@ -22,7 +21,6 @@ Page({
   },
 
   onLoad(options) {
-    this.setData({ systemInfo: wx.getSystemInfoSync() })
     if (options.id) {
       this.poemId = options.id
       this.loadPoemById(options.id)
@@ -81,7 +79,7 @@ Page({
   renderPoem(poem) {
     const places = (poem.place_names || []).map((name) => ({ name }))
     const lines = splitPoemLines(poem.content)
-    // 合成一个"注释与赏析"字段（拼接三段，用空行分隔；全空则留空让模板引导 AI）
+    // 合成「注释与赏析」：仅拼接数据集字段，不调用任何生成模型
     const parts = [poem.annotation, poem.translation, poem.appreciation].filter(Boolean)
     this.setData({
       poem: {
@@ -149,86 +147,6 @@ Page({
       wx.showToast({ title: '操作失败', icon: 'none' })
     }
   },
-
-  // ===== #1 Spotify 底部抽屉吸附点 =====
-  onAskAI() {
-    if (this.data.AI.loading) return
-    this.setData({ AI: { loading: true, content: '', structured: null, show: true, dragging: false, sheetHeight: 30 } })
-    wx.showLoading({ title: '解读中…' })
-    wx.cloud
-      .callFunction({
-        name: 'analyzePoem',
-        data: {
-          title: this.data.poem.title,
-          author: this.data.poem.author,
-          dynasty: this.data.poem.dynasty,
-          content: this.data.poem.content,
-        },
-      })
-      .then((res) => {
-        wx.hideLoading()
-        const result = res.result || {}
-        if (result.ok) {
-          this.setData({ AI: { loading: false, content: result.text || '', structured: result.structured || null, show: true, dragging: false, sheetHeight: 65 } })
-        } else {
-          this.setData({ AI: { loading: false, content: '', show: false } })
-          wx.showToast({ title: result.error || 'AI 解析失败', icon: 'none' })
-        }
-      })
-      .catch(() => {
-        wx.hideLoading()
-        this.setData({ AI: { loading: false, content: '', show: false } })
-        wx.showToast({ title: 'AI 调用异常', icon: 'none' })
-      })
-  },
-
-  // 卡片触摸 #2 - 共享元素过渡
-  onCardTouch(e) { this.setData({ cardPressed: true }) },
-  onCardTouchEnd() { this.setData({ cardPressed: false }) },
-
-  // 抽屉把手点击
-  onHandleTap() {
-    const h = this.data.AI.sheetHeight
-    const next = h < 40 ? 65 : 85
-    this.setData({ 'AI.sheetHeight': next, 'AI.dragging': false })
-  },
-
-  onMaskTouchMove() {},
-
-  // 抽屉拖拽
-  onSheetTouchStart(e) {
-    this._touchY0 = e.touches[0].clientY
-    this._height0 = this.data.AI.sheetHeight
-    this._touchT0 = Date.now()
-    this.setData({ 'AI.dragging': true })
-  },
-  onSheetTouchMove(e) {
-    if (!this.data.AI.dragging) return
-    const deltaY = this._touchY0 - e.touches[0].clientY          // 上滑+
-    const screenH = this.data.systemInfo && this.data.systemInfo.windowHeight || 600
-    const deltaPct = (deltaY / screenH) * 100
-    let newH = this._height0 + deltaPct
-    newH = Math.max(20, Math.min(95, newH))
-    this.setData({ 'AI.sheetHeight': newH })
-  },
-  onSheetTouchEnd(e) {
-    if (!this.data.AI.dragging) return
-    this.setData({ 'AI.dragging': false })
-    const dy = this._touchY0 - (e.changedTouches[0] ? e.changedTouches[0].clientY : this._touchY0)
-    const dt = Math.max(1, Date.now() - this._touchT0)
-    const velocity = dy / dt                         // px/ms, 上滑正
-    let h = this.data.AI.sheetHeight
-    if (velocity > 0.4) h = 85                   // 快速上滑 → 全屏
-    else if (velocity < -0.4) h = 30             // 快速下滑 → peek
-    else if (h < 45) h = 30
-    else if (h < 75) h = 65
-    else h = 85
-    this.setData({ 'AI.sheetHeight': h })
-  },
-
-  onHideAI() { this.setData({ 'AI.show': false }) },
-
-  noop() {},
 
   // 诗词→地点跳转（通过 name 精确查 _id）
   onTapPlace(e) {

@@ -131,21 +131,7 @@
 .recitation-voice { font-size: 26rpx; color: var(--paper-text); font-weight: 600; letter-spacing: 0.06em; }
 .recitation-dur { font-size: 22rpx; color: var(--paper-text-2); margin-top: 2rpx; }
 
-/* AI 主入口（hero 卡与解读区之间）*/
-.ai-main-btn {
-  margin: 0 24rpx 24rpx; padding: 28rpx 32rpx; border-radius: 20rpx;
-  background: linear-gradient(135deg, rgba(61,107,134,0.1), rgba(158,43,35,0.08));
-  border: 1rpx solid var(--ink-line);
-  display: flex; flex-direction: column; align-items: center; gap: 4rpx;
-  transition: transform 0.12s;
-}
-.ai-main-btn:active { transform: scale(0.97); }
-.ai-main-ico { font-size: 40rpx; }
-.ai-main-txt { font-size: 30rpx; color: var(--paper-text); font-weight: 600; letter-spacing: 0.1em; }
-.ai-main-sub { font-size: 22rpx; color: var(--paper-text-2); }
-
 .interpret-empty { color: var(--paper-text-2); }
-.ai-link { color: var(--cinnabar); text-decoration: underline; }
 
 .place-card { margin-top: 24rpx; padding: 32rpx; }
 .section-title { font-size: 30rpx; font-weight: 600; margin-bottom: 20rpx; }
@@ -154,59 +140,6 @@
   padding: 10rpx 24rpx; background: var(--ink-surface-2); color: var(--gold);
   border-radius: 30rpx; font-size: 24rpx; border: 1rpx solid var(--ink-line);
 }
-
-/* ===== AI 底部抽屉 ===== */
-.ai-mask {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(58, 54, 50, 0.45); z-index: 100; backdrop-filter: blur(8rpx);
-}
-.ai-sheet {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: var(--ink-surface); border-radius: 28rpx 28rpx 0 0;
-  border-top: 1rpx solid var(--ink-line);
-  display: flex; flex-direction: column;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.ai-sheet-transition { transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
-
-.ai-sheet-handle { display: flex; justify-content: center; padding: 20rpx 0 8rpx; }
-.ai-sheet-bar { width: 72rpx; height: 6rpx; background: var(--ink-line); border-radius: 3rpx; }
-
-.ai-sheet-body { flex: 1; padding: 0 32rpx 32rpx; overflow-y: auto; }
-
-.ai-skeleton-title {
-  width: 30%; height: 28rpx; border-radius: 8rpx; margin-bottom: 24rpx;
-  background: linear-gradient(90deg, var(--ink-surface-2) 25%, var(--ink-line) 50%, var(--ink-surface-2) 75%);
-  background-size: 200% 100%; animation: shimmer 1.5s infinite;
-}
-.ai-skeleton-line {
-  width: 100%; height: 24rpx; border-radius: 6rpx; margin-bottom: 16rpx;
-  background: linear-gradient(90deg, var(--ink-surface-2) 25%, var(--ink-line) 50%, var(--ink-surface-2) 75%);
-  background-size: 200% 100%; animation: shimmer 1.5s infinite;
-}
-.ai-skeleton-line.short { width: 60%; }
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.ai-section { margin-bottom: 32rpx; }
-.ai-section-title {
-  font-size: 26rpx; font-weight: 600; color: var(--gold);
-  margin-bottom: 12rpx; padding-left: 16rpx; border-left: 6rpx solid var(--cinnabar);
-}
-.ai-section-text { font-size: 28rpx; line-height: 1.9; color: var(--paper-text-2); white-space: pre-wrap; }
-
-.ai-allusion { margin-bottom: 20rpx; padding: 16rpx; background: var(--ink-surface-2); border-radius: 12rpx; }
-.ai-allusion-phrase { font-size: 28rpx; font-weight: 600; color: var(--teal); }
-.ai-allusion-source { font-size: 22rpx; color: var(--paper-text-2); margin-top: 4rpx; }
-.ai-allusion-meaning { font-size: 26rpx; color: var(--paper-text-2); margin-top: 8rpx; }
-
-.ai-tags { display: flex; flex-wrap: wrap; gap: 12rpx; }
-.ai-tag { padding: 6rpx 20rpx; background: var(--ink-surface-2); color: var(--gold); border-radius: 20rpx; font-size: 24rpx; border: 1rpx solid var(--ink-line); }
-
-.ai-raw { font-size: 28rpx; line-height: 1.9; color: var(--paper-text-2); white-space: pre-wrap; }
-.ai-empty { display: flex; align-items: center; justify-content: center; height: 200rpx; color: var(--paper-text-2); font-size: 26rpx; }
 
 .spring-card { transition: transform 0.12s ease; }
 .spring-card:active { transform: scale(0.985); }

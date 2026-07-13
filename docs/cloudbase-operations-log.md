@@ -355,8 +355,8 @@ errCode: -502003 database permission denied
 
 | 函数 | 仓库 | 状态 |
 |---|---|---|
-| login / updateUser / aggregateMap / searchPoems / analyzePoem / initData / routes / recitations | ✅ | Active |
-| quiz / community | ❌ 已删 | Active（遗留，可清理） |
+| login / updateUser / aggregateMap / searchPoems / initData / routes / recitations | ✅ | Active |
+| quiz / community / analyzePoem | ❌ 已删 | 已删除（analyzePoem 于 2026-07-13 因个人主体审核下线） |
 
 **集合（16 个，含 3 系统集合）：**
 

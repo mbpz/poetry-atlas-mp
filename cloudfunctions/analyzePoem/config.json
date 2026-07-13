@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "openapi": []
-  },
-  "runtimeOptions": {
-    "timeout": 120
-  }
-}

@@ -182,7 +182,7 @@ Page({
       content:
         "在地图上阅读中国，在诗词中穿越历史。\n\n版本 v" +
         config.VERSION +
-        "\n数据：中国古诗词开源数据集\n地图 + AI 由 CloudBase 驱动",
+        "\n数据：中国古诗词开源数据集\n地图与云端能力由 CloudBase 驱动",
       showCancel: false,
     })
   },

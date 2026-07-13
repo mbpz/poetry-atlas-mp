@@ -18,8 +18,9 @@
 | 地图 | 原生 `<map>` 组件 + markers + 折线 |
 | 数据库 | CloudBase NoSQL 文档数据库（`wx.cloud.database()`） |
 | 后端逻辑 | Cloud Functions（Node.js，`wx-server-sdk`） |
-| AI | CloudBase 内置大模型（混元 hy3 / DeepSeek） |
 | 资源管理 | CloudBase MCP（`config/mcporter.json`） |
+
+> **合规说明（个人主体）**：本小程序**不含**生成式 AI / 深度合成能力（无 AI 问答、绘画、换脸等）。诗词注释、译文、赏析均来自开源数据集的预设文本。
 
 ## AppID / EnvId
 
@@ -64,7 +65,6 @@ poetry-atlas-mp/
 │   ├── updateUser/                  # 用户档案更新（昵称/头像/stats，支持 upsert）
 │   ├── aggregateMap/                # 地图聚合（省份 / 邻近 geoNear / 地点列表）
 │   ├── searchPoems/                 # 多字段正则搜索（标题/作者/正文/地点）
-│   ├── analyzePoem/                 # AI 深度解析（结构化 JSON，混元 hy3）
 │   ├── routes/                      # 私有旅行路线 CRUD
 │   ├── recitations/                 # 朗诵列表 + 播放计数
 │   └── initData/                    # 数据迁移（一次性，运维用）
@@ -127,7 +127,7 @@ npx mcporter call cloudbase.manageFunctions \
   --output json --timeout 300000
 ```
 
-需部署的 8 个函数：`login` / `updateUser` / `aggregateMap` / `searchPoems` / `analyzePoem` / `routes` / `recitations` / `initData`。
+需部署的 7 个函数：`login` / `updateUser` / `aggregateMap` / `searchPoems` / `routes` / `recitations` / `initData`。
 
 **方式 B：微信开发者工具**
 
@@ -154,11 +154,9 @@ node scripts/set-favorites-permission.cjs
 ```
 或直接调用已部署的 `initData`。
 
-### 5. AI 能力配置
-`analyzePoem` 使用 CloudBase 内置 AI（混元 hy3）。需在 [云开发控制台 → AI](https://tcb.cloud.tencent.com/dev?envId=your-env#/ai)：
-- 确认 `cloudbase` 模型组已启用 (`DescribeAIModels` 返回 Status=1)
-- 若需更多模型（DeepSeek 等），通过 `UpdateAIModel` 添加
-- **计费**：AI 消耗 Token Credits 资源包。**体验版环境可能不含额度**，长期使用请购买 [Token Credits](https://buy.cloud.tencent.com/envId=1&resourceType=token)
+### 5. （已移除）生成式 AI
+
+个人主体类目下不提供 AI 问答 / 深度合成。原 `analyzePoem` 云函数已下线；诗词页仅展示数据集自带的注释、译文与赏析。
 
 ## 功能地图（类目：教育信息展示 + 备忘录）
 
@@ -167,7 +165,7 @@ node scripts/set-favorites-permission.cjs
 | 地图浏览 + 诗词地点标记 + 朝代筛选 | 首页 | ✅ | 教育信息展示 |
 | 朝代时间轴 / 热力模式 / 预设旅行路线 | 首页 | ✅ | 教育信息展示 |
 | 地点详情 + 诗词分页 | 地点页 | ✅ | 教育信息展示 |
-| 诗词详情 + 注释/译文/赏析 + AI 解读 | 诗词页 | ✅ | 教育信息展示 |
+| 诗词详情 + 注释/译文/赏析（数据集原文） | 诗词页 | ✅ | 教育信息展示 |
 | 多字段搜索 + 作者百科 | 搜索/作者页 | ✅ | 教育信息展示 |
 | 朝代时间轴浏览 | 朝代页 | ✅ | 教育信息展示 |
 | **我的旅行路线**（私有） | 我的页 | ✅ | 备忘录 |
@@ -186,8 +184,10 @@ node scripts/set-favorites-permission.cjs
 | M2 | 地图核心(聚合云函数) + 地点/诗词/朝代页 | ✅ |
 | M3 | 搜索(正则) + 作者 + 收藏 | ✅ |
 | M4 | 时间轴 + 热力 + 旅行路线 | ✅ |
-| M5 | AI 诗词解析(结构化 JSON) | ✅ |
+| M5 | 打磨诗词详情（数据集注释/译文/赏析） | ✅ |
 | **M6** | 打磨收尾 + 全部页面连通 | **✅ 完成** |
+
+> 原「AI 诗词解析」因个人主体审核限制已移除，不再作为产品能力。
 
 ## 产品定位
 
