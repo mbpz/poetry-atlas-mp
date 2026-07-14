@@ -181,9 +181,9 @@ Page({
     this._lastTtsAt = now
 
     this.setData({ ttsLoading: true, ttsVoice: voice })
-    try {
-      // ① 优先用纯本地 JS TTS（微信内置、零依赖、零网络）
-      if (wx.textToSpeech) {
+    // ① 纯本地 JS TTS（微信内置、零依赖、零网络）—— Android/iOS 真机秒播
+    if (wx.textToSpeech) {
+      try {
         const src = await this._localTTS(poem.content, voice)
         this.setData({
           showMiniPlayer: true,
@@ -193,67 +193,36 @@ Page({
           playerAutoplay: true,
         })
         return
+      } catch (err) {
+        console.warn('[poem] local tts failed:', err)
+        this.setData({ ttsLoading: false, ttsVoice: '' })
+        wx.showToast({ title: '朗读暂不可用', icon: 'none', duration: 1800 })
+        return
       }
-    } catch (err) {
-      console.warn('[poem] local tts unavail, fallback cloud:', err)
     }
-    // ② 回落云函数 TTS（加超时防"合成中"永远卡住）
-    try {
-      const src = await Promise.race([
-        this._cloudTTS(poem, voice),
-        new Promise((_, r) => setTimeout(() => r(new Error('timeout')), 22000)),
-      ])
-      this.setData({
-        showMiniPlayer: true,
-        playerSrc: src.audio_url || src.fileID,
-        playerDuration: src.duration || 0,
-        playerRecitationId: '',
-        playerAutoplay: true,
-      })
-    } catch (err) {
-      console.warn('[poem] tts failed:', err)
-      const msg = (err && err.message && err.message.length <= 20) ? err.message : '朗读暂不可用'
-      wx.showToast({ title: msg, icon: 'none', duration: 2500 })
-    } finally {
-      this.setData({ ttsLoading: false, ttsVoice: '' })
-    }
+    // ② 模拟器 / 旧基础库：提示用真机预览（wx.textToSpeech 仅真机可用）
+    this.setData({ ttsLoading: false, ttsVoice: '' })
+    wx.showModal({
+      title: '朗读功能',
+      content: '朗读需要真机支持。请点右上角「预览」，在手机微信打开体验。',
+      showCancel: false,
+      confirmText: '知道了',
+    })
   },
 
   // 纯本地 TTS（微信内置 wx.textToSpeech，零依赖）
   _localTTS(content, voice) {
-    const speakText = content || ''
     return new Promise((resolve, reject) => {
       wx.textToSpeech({
         lang: 'zh_CN',
         ttsVoice: voice === 'male' ? 1 : 0,
-        content: speakText,
+        content: String(content || ''),
         success: (res) => {
           if (res.errCode === 0 && res.tempFilePath) resolve(res.tempFilePath)
           else reject(new Error(res.errMsg || 'local tts failed'))
         },
         fail: (e) => reject(new Error((e && e.errMsg) || 'local tts unavailable')),
       })
-    })
-  },
-
-  // 云函数 TTS（腾讯云外网/Google 兜底）
-  _cloudTTS(poem, voice) {
-    return wx.cloud.callFunction({
-      name: 'ttsPoem',
-      data: {
-        poem_id: this.poemId || '',
-        voice,
-        text: this.poemId ? undefined : poem.content,
-        title: poem.title,
-        author: poem.author,
-        dynasty: poem.dynasty,
-      },
-    }).then((res) => {
-      const r = res.result || {}
-      if (!r.ok) throw new Error(r.error || 'cloud tts failed')
-      const src = r.audio_url || r.fileID
-      if (!src) throw new Error('cloud tts empty')
-      return { audio_url: src, duration: r.duration || 0 }
     })
   },
 
