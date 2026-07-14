@@ -200,11 +200,15 @@ Page({
         return
       }
     }
-    // ② 模拟器 / 旧基础库：提示用真机预览（wx.textToSpeech 仅真机可用）
+    // ② wx.textToSpeech 不可用（旧微信 / 模拟器）→ 提示升级微信
     this.setData({ ttsLoading: false, ttsVoice: '' })
+    const info = wx.getSystemInfoSync() || {}
     wx.showModal({
       title: '朗读功能',
-      content: '朗读需要真机支持。请点右上角「预览」，在手机微信打开体验。',
+      content:
+        '朗读需要较新的微信版本（≥ 8.0.30 / 基础库 ≥ 2.21.0）。\n' +
+        '当前基础库：' + (info.SDKVersion || '未知') + '\n' +
+        '请升级微信后，点右上角「预览」在手机微信体验。',
       showCancel: false,
       confirmText: '知道了',
     })
