@@ -131,7 +131,7 @@ npx mcporter call cloudbase.manageFunctions \
 
 需部署的函数：`login` / `updateUser` / `aggregateMap` / `searchPoems` / `routes` / `recitations` / `ttsPoem` / `initData`。
 
-`ttsPoem` 额外步骤（可选）：在云函数环境变量写入 `TTS_SECRET_ID`、`TTS_SECRET_KEY`（腾讯云控制台 → 访问管理 → API 密钥；并开通语音合成 TTS）。**未配置亦可工作** — 云函数会自动回落免费的 `edge-tts`（无需密钥）。
+`ttsPoem` 额外步骤（可选）：在云函数环境变量写入 `TTS_SECRET_ID`、`TTS_SECRET_KEY`（腾讯云控制台 → 访问管理 → API 密钥；并开通语音合成 TTS）。**未配置亦可工作** — 云函数会自动回落 `Google Translate TTS`（免费、零依赖、免 API Key）。无需额外 `npm install`。
 
 **方式 B：微信开发者工具**
 

@@ -181,7 +181,6 @@ Page({
     this._lastTtsAt = now
 
     this.setData({ ttsLoading: true, ttsVoice: voice })
-    wx.showLoading({ title: '朗读准备中…', mask: true })
     try {
       const res = await wx.cloud.callFunction({
         name: 'ttsPoem',
@@ -216,7 +215,6 @@ Page({
         duration: 2500,
       })
     } finally {
-      wx.hideLoading()
       this.setData({ ttsLoading: false, ttsVoice: '' })
     }
   },
