@@ -182,41 +182,79 @@ Page({
 
     this.setData({ ttsLoading: true, ttsVoice: voice })
     try {
-      const res = await wx.cloud.callFunction({
-        name: 'ttsPoem',
-        data: {
-          poem_id: this.poemId || '',
-          voice,
-          text: this.poemId ? undefined : poem.content,
-          title: poem.title,
-          author: poem.author,
-          dynasty: poem.dynasty,
-        },
-      })
-      const result = res.result || {}
-      if (!result.ok) {
-        throw new Error(result.error || '朗读失败')
+      // ① 优先用纯本地 JS TTS（微信内置、零依赖、零网络）
+      if (wx.textToSpeech) {
+        const src = await this._localTTS(poem.content, voice)
+        this.setData({
+          showMiniPlayer: true,
+          playerSrc: src,
+          playerDuration: 0,
+          playerRecitationId: '',
+          playerAutoplay: true,
+        })
+        return
       }
-      const src = result.audio_url || result.fileID
-      if (!src) throw new Error('未返回音频')
+    } catch (err) {
+      console.warn('[poem] local tts unavail, fallback cloud:', err)
+    }
+    // ② 回落云函数 TTS（加超时防"合成中"永远卡住）
+    try {
+      const src = await Promise.race([
+        this._cloudTTS(poem, voice),
+        new Promise((_, r) => setTimeout(() => r(new Error('timeout')), 22000)),
+      ])
       this.setData({
         showMiniPlayer: true,
-        playerSrc: src,
-        playerDuration: result.duration || 0,
+        playerSrc: src.audio_url || src.fileID,
+        playerDuration: src.duration || 0,
         playerRecitationId: '',
         playerAutoplay: true,
       })
     } catch (err) {
       console.warn('[poem] tts failed:', err)
-      const msg = (err && err.message) || '朗读失败'
-      wx.showToast({
-        title: msg.length > 20 ? '朗读暂不可用' : msg,
-        icon: 'none',
-        duration: 2500,
-      })
+      const msg = (err && err.message && err.message.length <= 20) ? err.message : '朗读暂不可用'
+      wx.showToast({ title: msg, icon: 'none', duration: 2500 })
     } finally {
       this.setData({ ttsLoading: false, ttsVoice: '' })
     }
+  },
+
+  // 纯本地 TTS（微信内置 wx.textToSpeech，零依赖）
+  _localTTS(content, voice) {
+    const speakText = content || ''
+    return new Promise((resolve, reject) => {
+      wx.textToSpeech({
+        lang: 'zh_CN',
+        ttsVoice: voice === 'male' ? 1 : 0,
+        content: speakText,
+        success: (res) => {
+          if (res.errCode === 0 && res.tempFilePath) resolve(res.tempFilePath)
+          else reject(new Error(res.errMsg || 'local tts failed'))
+        },
+        fail: (e) => reject(new Error((e && e.errMsg) || 'local tts unavailable')),
+      })
+    })
+  },
+
+  // 云函数 TTS（腾讯云外网/Google 兜底）
+  _cloudTTS(poem, voice) {
+    return wx.cloud.callFunction({
+      name: 'ttsPoem',
+      data: {
+        poem_id: this.poemId || '',
+        voice,
+        text: this.poemId ? undefined : poem.content,
+        title: poem.title,
+        author: poem.author,
+        dynasty: poem.dynasty,
+      },
+    }).then((res) => {
+      const r = res.result || {}
+      if (!r.ok) throw new Error(r.error || 'cloud tts failed')
+      const src = r.audio_url || r.fileID
+      if (!src) throw new Error('cloud tts empty')
+      return { audio_url: src, duration: r.duration || 0 }
+    })
   },
 
   onPlayRecitation(e) {
