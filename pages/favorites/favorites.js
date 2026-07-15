@@ -5,6 +5,7 @@
  */
 const { getDB } = require("../../utils/cloudbase.js")
 const { splitPoemLines } = require("../../utils/util.js")
+const { syncTabBar } = require("../../utils/tab-bar.js")
 
 const PAGE_SIZE = 20
 const MAX_IN = 100 // CloudBase _.in() 数组上限
@@ -18,10 +19,7 @@ Page({
   },
 
   onShow() {
-    // 同步 TabBar 激活态到收藏
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ active: 'fav' })
-    }
+    syncTabBar(this, 'fav')
     // 每次进入刷新（收藏可能在诗词页变更）
     this.resetAndLoad()
   },

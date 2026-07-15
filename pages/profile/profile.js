@@ -4,6 +4,7 @@
  */
 const config = require("../../config.js")
 const { getDB } = require("../../utils/cloudbase.js")
+const { syncTabBar } = require("../../utils/tab-bar.js")
 
 Page({
   data: {
@@ -17,9 +18,7 @@ Page({
   },
 
   onShow() {
-    if (typeof this.getTabBar === "function" && this.getTabBar()) {
-      this.getTabBar().setData({ active: "me" })
-    }
+    syncTabBar(this, "me")
     this.syncFromGlobal()
     this.loadStats()
   },

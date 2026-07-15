@@ -42,13 +42,13 @@
   <view class="card hub-card">
     <view class="hub-title">探索更多</view>
     <view class="hub-grid">
-      <view class="hub-item" bindtap="onTapRoute">
-        <view class="hub-ico">🗺️</view>
+      <view class="hub-item" bindtap="onTapRoute" aria-role="button" aria-label="我的路线，仅自己可见">
+        <image class="hub-ico" src="/tab-bar-icons/map.svg" mode="aspectFit" />
         <view class="hub-txt">我的路线</view>
         <view class="hub-sub">仅自己可见</view>
       </view>
-      <view class="hub-item" bindtap="onTapRecitation">
-        <view class="hub-ico">🎧</view>
+      <view class="hub-item" bindtap="onTapRecitation" aria-role="button" aria-label="诗词朗诵">
+        <image class="hub-ico" src="/tab-bar-icons/audio.svg" mode="aspectFit" />
         <view class="hub-txt">诗词朗诵</view>
       </view>
     </view>

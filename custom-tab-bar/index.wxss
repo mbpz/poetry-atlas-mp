@@ -5,8 +5,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 112rpx;
+  height: calc(112rpx + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
   z-index: 9999;
   background-color: #f6f1e4;
   border-top: 1rpx solid #e2d9c6;
@@ -50,26 +51,4 @@
   height: 8rpx;
   border-radius: 50%;
   background-color: #9e2b23;
-}
-
-.search-fab {
-  position: fixed;
-  right: 32rpx;
-  bottom: calc(140rpx + env(safe-area-inset-bottom));
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 50%;
-  background-color: #9e2b23;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-}
-
-.fab-text {
-  color: #fffef9;
-  font-size: 28rpx;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  line-height: 1;
 }

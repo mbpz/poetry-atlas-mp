@@ -8,13 +8,12 @@
       class="tab-item {{active === item.key ? 'active' : ''}}"
       data-key="{{item.key}}"
       bindtap="switchTab"
+      aria-role="button"
+      aria-label="{{item.label}}"
+      aria-disabled="{{navigating}}"
     >
       <cover-view class="tab-label {{active === item.key ? 'active' : ''}}">{{item.label}}</cover-view>
       <cover-view wx:if="{{active === item.key}}" class="tab-dot"></cover-view>
     </cover-view>
   </cover-view>
-</cover-view>
-
-<cover-view class="search-fab" bindtap="enterSearch">
-  <cover-view class="fab-text">搜</cover-view>
 </cover-view>

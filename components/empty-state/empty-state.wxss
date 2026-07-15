@@ -7,6 +7,13 @@
   margin-bottom: 24rpx;
   opacity: 0.5;
 }
+.empty-icon-img {
+  display: block;
+  width: 88rpx;
+  height: 88rpx;
+  margin: 0 auto 24rpx;
+  opacity: 0.5;
+}
 .empty-title {
   font-size: 30rpx;
   color: var(--paper-text-2);

@@ -1,6 +1,6 @@
 <!-- 我的路线列表页（私有 · 仅自己可见）-->
 <view class="page">
-  <view class="page-private-hint">🔒 以下内容仅自己可见</view>
+  <view class="page-private-hint">私密内容 · 仅自己可见</view>
   <view wx:if="{{routes.length}}" class="route-list">
     <view
       wx:for="{{routes}}"
@@ -24,7 +24,7 @@
 
   <view wx:if="{{!loading && !routes.length}}" class="empty-wrap">
     <empty-state
-      icon="🗺️"
+      iconSrc="/tab-bar-icons/map.svg"
       title="还没有自建路线"
       tip="创建一条属于你的诗词之旅"
       showBtn

@@ -6,30 +6,30 @@
  * 每个 tab 页各有一份实例；active 需由各页 onShow → getTabBar().setData 同步。
  */
 const { TAB_DEFS } = require('./tabs.js')
+const { switchTabSafely } = require('../utils/tab-bar.js')
 
 Component({
   data: {
     active: 'map',
+    navigating: false,
     tabs: TAB_DEFS,
   },
   methods: {
+    syncActive(key) {
+      if (!TAB_DEFS.some((tab) => tab.key === key)) return
+      this.setData({ active: key, navigating: false })
+    },
+
     switchTab(e) {
       const key = e.currentTarget.dataset.key
-      const tab = TAB_DEFS.find((t) => t.key === key)
-      if (!tab) return
-      if (key === this.data.active) return
-      this.setData({ active: key })
-      wx.switchTab({
-        url: tab.url,
-        fail: (err) => console.warn('[tabbar] switchTab fail', tab.url, err && err.errMsg),
-      })
-    },
-    enterSearch() {
-      if (this.data.active === 'find') return
-      this.setData({ active: 'find' })
-      wx.switchTab({
-        url: '/pages/search/search',
-        fail: (err) => console.warn('[tabbar] enterSearch fail', err && err.errMsg),
+      switchTabSafely({
+        wxApi: wx,
+        tabs: TAB_DEFS,
+        currentKey: this.data.active,
+        targetKey: key,
+        navigating: this.data.navigating,
+        setState: (patch) => this.setData(patch),
+        onError: (err, tab) => console.warn('[tabbar] switchTab fail', tab.url, err && err.errMsg),
       })
     },
   },

@@ -5,6 +5,7 @@
 const { getDB, wrapPromise } = require("../../utils/cloudbase.js")
 const { throttle } = require("../../utils/util.js")
 const { locToLngLat } = require("../../utils/loc.js")
+const { syncTabBar } = require("../../utils/tab-bar.js")
 const {
   readLocationSettings,
   classifyLocationPrerequisite,
@@ -132,10 +133,7 @@ Page({
   },
 
   onShow() {
-    // 同步 TabBar 激活态到地图
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ active: 'map' })
-    }
+    syncTabBar(this, 'map')
     if (this.mapCtx) this.loadMarkers()
   },
 

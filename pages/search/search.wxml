@@ -3,13 +3,14 @@
   <!-- 搜索框 -->
   <view class="search-bar">
     <view class="search-input-wrap">
-      <text class="search-icon">🔍</text>
+      <image class="search-icon" src="/tab-bar-icons/search.svg" mode="aspectFit" aria-label="搜索" />
       <input
         class="search-input"
         placeholder="搜索诗词、作者、地点"
         value="{{keyword}}"
         bindinput="onInput"
         confirm-type="search"
+        aria-label="搜索诗词、作者或地点"
         focus
       />
       <view wx:if="{{keyword}}" class="clear-btn" bindtap="onClear">×</view>
@@ -105,7 +106,7 @@
     <!-- 空状态 -->
     <empty-state
       wx:else
-      icon="🔍"
+      iconSrc="/tab-bar-icons/search.svg"
       title="未找到「{{keyword}}」"
       tip="换个词试试，或浏览地图发现更多"
     />

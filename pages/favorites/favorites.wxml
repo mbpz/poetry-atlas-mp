@@ -40,9 +40,9 @@
 
     <empty-state
       wx:if="{{!loading && !favorites.length}}"
-      icon="♡"
+      iconSrc="/tab-bar-icons/fav.svg"
       title="还没有收藏"
-      tip="在诗词详情页点击 ♥ 即可收藏"
+      tip="在诗词详情页点击收藏按钮即可保存"
       showBtn
       btnText="去发现"
       bind:tap="onExplore"

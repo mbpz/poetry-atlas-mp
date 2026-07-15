@@ -87,7 +87,7 @@
   border: 1rpx solid var(--ink-line);
 }
 .hub-item:active { transform: scale(0.95); background: rgba(158, 43, 35, 0.06); }
-.hub-ico { font-size: 40rpx; }
+.hub-ico { width: 48rpx; height: 48rpx; opacity: 0.72; }
 .hub-txt { font-size: 22rpx; color: var(--paper-text); letter-spacing: 0.05em; }
 .hub-sub { font-size: 20rpx; color: var(--paper-text-2); }
 

@@ -12,7 +12,7 @@
   border: 1rpx solid var(--ink-line);
   padding: 0 24rpx; height: 76rpx;
 }
-.search-icon { font-size: 28rpx; margin-right: 12rpx; }
+.search-icon { width: 30rpx; height: 30rpx; margin-right: 14rpx; opacity: 0.58; }
 .search-input { flex: 1; font-size: 28rpx; color: var(--paper-text); }
 .clear-btn {
   width: 48rpx; height: 48rpx; border-radius: 50%;

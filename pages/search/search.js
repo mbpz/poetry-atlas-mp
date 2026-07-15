@@ -2,13 +2,11 @@
  * 发现/搜索页 — 多字段搜索 + 结果分 Tab 展示
  */
 const { debounce } = require("../../utils/util.js")
+const { syncTabBar } = require("../../utils/tab-bar.js")
 
 Page({
   onShow() {
-    // 同步 TabBar 激活态到发现
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ active: 'find' })
-    }
+    syncTabBar(this, 'find')
   },
 
   data: {
