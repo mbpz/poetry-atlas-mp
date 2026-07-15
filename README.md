@@ -88,7 +88,7 @@ poetry-atlas-mp/
 | 集合 | 说明 | 关键字段 | 安全规则 |
 |---|---|---|---|
 | `places` | 地点（地图核心） | `name`, `location`(GeoPoint), `dynasty_stats`, `hot_poems`, `poem_count` | 公开读 |
-| `poems` | 诗词 | `title`, `content`, `author`, `dynasty`, `places[]`, `tags[]`, `popularity` | 公开读 |
+| `poems` | 诗词 | `canonical_id`, `title`, `content`, `content_kind`, `content_hash`, `data_version`, `review_status`, `source_*`, `places[]` | 公开读 |
 | `authors` | 作者 | `name`, `dynasty`, `biography`, `route[]`, `poem_count`, `birth_year/death_year` | 公开读 |
 | `dynasties` | 朝代 | `name`, `start_year`, `end_year`, `sort_order`, `poem_count` | 公开读 |
 | `favorites` | 收藏（私有） | `openid`, `poem_id`, `poem_title`, `poem_author`, `created_at` | 仅本人读写 |

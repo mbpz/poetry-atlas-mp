@@ -230,7 +230,7 @@ Page({
     const hotPoems = top.hot_poems || []
     if (!hotPoems.length) return
     const poem = hotPoems[Math.floor(Math.random() * hotPoems.length)]
-    const lines = (poem.content || '').split(/[。？！；\n]/).filter(Boolean)
+    const lines = (poem.excerpt || poem.content || '').split(/[。？！；\n]/).filter(Boolean)
     this.setData({
       featuredPoem: { title: poem.title, author: poem.author, dynasty: poem.dynasty, firstLine: lines[0] || '' },
       featuredPlace: top.name,

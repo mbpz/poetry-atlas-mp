@@ -14,6 +14,12 @@
 const fs = require('fs')
 const path = require('path')
 const { spawnSync } = require('child_process')
+const {
+  CorpusConflictError,
+  sourceKey,
+  buildCanonicalPoems,
+} = require('./lib/canonical-poems.cjs')
+const corpusConfig = require('../data/poem-overrides.json')
 
 const DRY_RUN = process.argv.includes('--dry-run')
 const DATA_FILE = path.join(__dirname, '..', 'data', 'places.json')
@@ -42,32 +48,24 @@ const DYNASTY_REF = {
 const raw = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))
 console.log(`[migrate] 读取原始数据: ${raw.length} 个地点`)
 
-// ─── 1. 去重诗词（title+author） ───
-const poemMap = new Map()
-raw.forEach((place) => {
-  ;(place.poems || []).forEach((poem) => {
-    const key = `${poem.title || ''}|${poem.author || ''}`
-    if (!key.trim()) return
-    if (!poemMap.has(key)) {
-      poemMap.set(key, {
-        title: poem.title,
-        author: poem.author,
-        dynasty: poem.dynasty,
-        content: poem.content,
-        places: [place.id],
-        place_names: [place.name],
-        tags: [],
-        popularity: 0,
-      })
-    } else {
-      const existing = poemMap.get(key)
-      if (!existing.places.includes(place.id)) existing.places.push(place.id)
-      if (!existing.place_names.includes(place.name)) existing.place_names.push(place.name)
-    }
+// ─── 1. 构建规范诗词（冲突默认阻止导入） ───
+let poems
+try {
+  poems = buildCanonicalPoems(raw, {
+    dataVersion: process.env.POETRY_DATA_VERSION || corpusConfig.data_version,
+    overrides: corpusConfig.overrides,
   })
-})
-const poems = [...poemMap.values()]
-console.log(`[migrate] 去重诗词: ${poems.length} 首`)
+} catch (err) {
+  if (err instanceof CorpusConflictError) {
+    console.error(`[migrate] 阻止导入：${err.message}`)
+    err.conflicts.forEach((item) => console.error(`  - ${item.key}: ${item.type}`))
+    console.error('[migrate] 请在 data/poem-overrides.json 中完成有来源的人工裁决')
+    process.exit(1)
+  }
+  throw err
+}
+const canonicalByKey = new Map(poems.map((poem) => [sourceKey(poem), poem]))
+console.log(`[migrate] 规范诗词: ${poems.length} 首`)
 
 // ─── 2. 聚合作者 ───
 const authorMap = new Map()
@@ -97,12 +95,16 @@ const places = raw.map((place) => {
   ;(place.poems || []).forEach((poem) => {
     stats[poem.dynasty] = (stats[poem.dynasty] || 0) + 1
     dynastyStats[poem.dynasty] = (dynastyStats[poem.dynasty] || 0) + 1
-    if (hotPoems.length < 5) {
+    const canonical = canonicalByKey.get(sourceKey(poem))
+    if (hotPoems.length < 5 && canonical) {
       hotPoems.push({
-        title: poem.title,
-        author: poem.author,
-        dynasty: poem.dynasty,
-        content: poem.content,
+        canonical_id: canonical.canonical_id,
+        title: canonical.title,
+        author: canonical.author,
+        dynasty: canonical.dynasty,
+        excerpt: canonical.content.slice(0, 120),
+        content_kind: canonical.content_kind,
+        data_version: canonical.data_version,
       })
     }
   })

@@ -108,7 +108,7 @@ function auditPoems(input, options) {
     })
     if (variants.length > 1) {
       const sorted = variants.slice().sort((a, b) => a.length - b.length)
-      const prefixConflict = sorted.slice(0, -1).some((variant) => sorted[sorted.length - 1].text.startsWith(variant.text))
+      const prefixConflict = sorted.slice(0, -1).every((variant) => sorted[sorted.length - 1].text.startsWith(variant.text))
       conflicts.push({ key, type: prefixConflict ? 'excerpt-vs-full' : 'divergent', variants: sorted })
     }
 

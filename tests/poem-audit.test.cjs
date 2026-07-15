@@ -70,6 +70,15 @@ test('keeps 登岳阳楼 excerpt versus full as a regression case', () => {
   assert.strictEqual(report.issues.conflicts[0].type, 'excerpt-vs-full')
 })
 
+test('classifies mixed excerpts and unrelated passages as divergent', () => {
+  const report = auditPoems([
+    { name: '岳阳', poems: [{ title: '岳阳楼记', author: '范仲淹', dynasty: '宋', content: '先天下之忧而忧，后天下之乐而乐。' }] },
+    { name: '岳阳楼', poems: [{ title: '岳阳楼记', author: '范仲淹', dynasty: '宋', content: '先天下之忧而忧，后天下之乐而乐。不以物喜，不以己悲。' }] },
+    { name: '洞庭湖', poems: [{ title: '岳阳楼记', author: '范仲淹', dynasty: '宋', content: '衔远山，吞长江，浩浩汤汤，横无际涯。' }] },
+  ])
+  assert.strictEqual(report.issues.conflicts[0].type, 'divergent')
+})
+
 test('reports missing required fields and invalid characters', () => {
   const report = auditPoems([{ title: '', author: '佚名', dynasty: '', content: '正文\uFFFD' }])
   assert.strictEqual(report.summary.missingFields, 1)
