@@ -11,6 +11,11 @@ const {
   classifyLocationFailure,
   buildLocationDiagnostic,
 } = require("../../utils/location.js")
+const {
+  CITY_CENTERS,
+  readStoredMapView,
+  writeStoredMapView,
+} = require("../../utils/map-view.js")
 const config = require("../../config.js")
 
 // 预定义旅行路线（静态展示数据）
@@ -56,6 +61,10 @@ Page({
     showDynastyBar: false,
     hasLocation: false,
     locating: false,
+    showLocationFallback: false,
+    showCityPicker: false,
+    locationFailure: null,
+    manualCities: CITY_CENTERS,
     timelineDynasties: [],
     showTimeline: false,
     heatMode: false,
@@ -74,6 +83,11 @@ Page({
     this._markerMap = {}
     // 推荐卡"关闭"仅在本次生命周期内保持，避免 loadMarkers 重复触发又把卡弹出来
     this._featuredClosedThisSession = false
+    const savedView = readStoredMapView(wx, {
+      minScale: config.MAP.MIN_SCALE,
+      maxScale: config.MAP.MAX_SCALE,
+    })
+    if (savedView) this.setData(savedView)
     // 首次进入显示冷启动引导
     const guided = wx.getStorageSync("poetry_guided")
     if (!guided) {
@@ -333,7 +347,10 @@ Page({
     if (e.type === "end" && (e.causedBy === "scale" || e.causedBy === "drag")) {
       // 每次 drag/scale 都更新中心（轻量 setData），但 loadMarkers 走节流版
       this.mapCtx.getCenterLocation({
-        success: (res) => { this.setData({ longitude: res.longitude, latitude: res.latitude }) },
+        success: (res) => {
+          this.setData({ longitude: res.longitude, latitude: res.latitude })
+          this._rememberMapView(res.longitude, res.latitude, this.data.scale)
+        },
       })
       this.mapCtx.getScale({
         success: (res) => {
@@ -396,8 +413,17 @@ Page({
   },
 
   moveToLocation(lng, lat, scale) {
-    this.setData({ longitude: lng, latitude: lat, scale: scale || this.data.scale })
+    const nextScale = scale || this.data.scale
+    this.setData({ longitude: lng, latitude: lat, scale: nextScale })
+    this._rememberMapView(lng, lat, nextScale)
     this.loadMarkers()
+  },
+
+  _rememberMapView(longitude, latitude, scale) {
+    writeStoredMapView(wx, { longitude, latitude, scale }, {
+      minScale: config.MAP.MIN_SCALE,
+      maxScale: config.MAP.MAX_SCALE,
+    })
   },
 
   onSelectDynasty(e) {
@@ -429,8 +455,16 @@ Page({
     wx.getLocation({
       type: "gcj02",
       success: (res) => {
-        this.moveToLocation(res.longitude, res.latitude, 8)
-        this.setData({ hasLocation: true, locating: false })
+        // 精确设备坐标只进入当前页面状态，不写入本地视野缓存。
+        this.setData({ longitude: res.longitude, latitude: res.latitude, scale: 8 })
+        this.loadMarkers()
+        this.setData({
+          hasLocation: true,
+          locating: false,
+          showLocationFallback: false,
+          showCityPicker: false,
+          locationFailure: null,
+        })
       },
       fail: (err) => {
         const latest = readLocationSettings(wx, {})
@@ -443,23 +477,70 @@ Page({
   },
 
   _handleLocationFailure(result) {
-    this.setData({ locating: false })
-    wx.showModal({
-      title: result.title,
-      content: result.message,
-      confirmText: result.confirmText,
-      cancelText: '暂不定位',
-      success: (modal) => {
-        if (!modal.confirm) return
-        if (result.action === 'open-mini-setting') {
-          this._openMiniProgramLocationSetting()
-        } else if (result.action === 'open-app-setting') {
-          this._openAppLocationSetting()
-        } else {
-          this._retryLocationOnce()
-        }
-      },
+    this.setData({
+      locating: false,
+      showLocationFallback: true,
+      showCityPicker: false,
+      locationFailure: result,
     })
+  },
+
+  onLocationPrimary() {
+    const result = this.data.locationFailure || {}
+    this.setData({ showLocationFallback: false, showCityPicker: false })
+    if (result.action === 'open-mini-setting') {
+      this._openMiniProgramLocationSetting()
+    } else if (result.action === 'open-app-setting') {
+      this._openAppLocationSetting()
+    } else {
+      this.onLocationRetry()
+    }
+  },
+
+  onLocationRetry() {
+    this.setData({ showLocationFallback: false, showCityPicker: false })
+    this._locationRetryCount = 0
+    this._startLocate()
+  },
+
+  onOpenCityPicker() {
+    this.setData({ showCityPicker: true })
+  },
+
+  onCityPickerBack() {
+    this.setData({ showCityPicker: false })
+  },
+
+  onSelectManualCity(e) {
+    const cityId = e.currentTarget.dataset.id
+    const city = CITY_CENTERS.find((item) => item.id === cityId)
+    if (!city) return
+    this.setData({
+      hasLocation: false,
+      showLocationFallback: false,
+      showCityPicker: false,
+      locationFailure: null,
+    })
+    this.moveToLocation(city.longitude, city.latitude, city.scale)
+    wx.showToast({ title: '已切换到' + city.name, icon: 'none' })
+  },
+
+  onBrowseNationwide() {
+    this.setData({
+      hasLocation: false,
+      showLocationFallback: false,
+      showCityPicker: false,
+      locationFailure: null,
+    })
+    this.moveToLocation(
+      config.MAP.INITIAL_LONGITUDE,
+      config.MAP.INITIAL_LATITUDE,
+      config.MAP.INITIAL_SCALE
+    )
+  },
+
+  onLocationFallbackClose() {
+    this.setData({ showLocationFallback: false, showCityPicker: false })
   },
 
   _openMiniProgramLocationSetting() {

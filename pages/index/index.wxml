@@ -106,6 +106,45 @@
     <text>载入诗意…</text>
   </view>
 
+  <!-- 定位失败后的非阻断降级面板 -->
+  <view wx:if="{{showLocationFallback}}" class="location-fallback-mask" catchtouchmove="noop">
+    <view class="location-fallback card" catchtap="noop">
+      <view class="fallback-head">
+        <view class="fallback-title">{{showCityPicker ? '选择浏览城市' : locationFailure.title}}</view>
+        <view class="fallback-close spring-btn" bindtap="onLocationFallbackClose">×</view>
+      </view>
+
+      <block wx:if="{{showCityPicker}}">
+        <view class="fallback-desc">选择城市后仍可浏览地点与诗词，不需要定位授权。</view>
+        <scroll-view scroll-y class="city-list" enhanced show-scrollbar="{{false}}">
+          <view
+            wx:for="{{manualCities}}"
+            wx:key="id"
+            class="city-item spring-btn"
+            data-id="{{item.id}}"
+            bindtap="onSelectManualCity"
+          >
+            <text>{{item.name}}</text>
+            <text class="city-enter">进入</text>
+          </view>
+        </scroll-view>
+        <view class="fallback-action secondary" bindtap="onCityPickerBack">返回定位选项</view>
+      </block>
+
+      <block wx:else>
+        <view class="fallback-desc">{{locationFailure.message}}</view>
+        <view
+          wx:if="{{locationFailure.action === 'open-mini-setting' || locationFailure.action === 'open-app-setting'}}"
+          class="fallback-action primary"
+          bindtap="onLocationPrimary"
+        >{{locationFailure.confirmText}}</view>
+        <view class="fallback-action primary" bindtap="onLocationRetry">重试定位</view>
+        <view class="fallback-action secondary" bindtap="onOpenCityPicker">手动选择城市</view>
+        <view class="fallback-action ghost" bindtap="onBrowseNationwide">浏览全国地图</view>
+      </block>
+    </view>
+  </view>
+
   <!-- 冷启动引导 -->
   <view wx:if="{{showGuide}}" class="guide-mask">
     <view class="guide-card" catchtap="noop">

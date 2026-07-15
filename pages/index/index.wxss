@@ -111,6 +111,43 @@
   padding: 16rpx 40rpx; border-radius: 30rpx; font-size: 26rpx; z-index: 30;
 }
 
+/* ===== 定位失败降级面板 ===== */
+.location-fallback-mask {
+  position: absolute; top: 0; left: 0; right: 0;
+  bottom: calc(112rpx + env(safe-area-inset-bottom));
+  z-index: 80; background: rgba(58, 54, 50, 0.28);
+  display: flex; align-items: flex-end;
+}
+.location-fallback {
+  width: 100%; padding: 32rpx 32rpx 28rpx;
+  border-radius: 28rpx 28rpx 0 0;
+  box-shadow: 0 -8rpx 32rpx rgba(58, 54, 50, 0.12);
+}
+.fallback-head { display: flex; align-items: center; justify-content: space-between; gap: 24rpx; }
+.fallback-title { font-size: 34rpx; font-weight: 700; color: var(--paper-text); letter-spacing: 0.06em; }
+.fallback-close {
+  width: 52rpx; height: 52rpx; border-radius: 50%;
+  background: var(--ink-surface-2); color: var(--paper-text-2);
+  text-align: center; line-height: 48rpx; font-size: 36rpx; flex-shrink: 0;
+}
+.fallback-desc { margin: 18rpx 0 24rpx; color: var(--paper-text-2); font-size: 25rpx; line-height: 1.7; }
+.fallback-action {
+  min-height: 76rpx; margin-top: 14rpx; border-radius: 40rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 27rpx; letter-spacing: 0.06em;
+}
+.fallback-action.primary { background: var(--cinnabar); color: #fff; }
+.fallback-action.secondary { background: var(--ink-surface-2); color: var(--paper-text); border: 1rpx solid var(--ink-line); }
+.fallback-action.ghost { color: var(--paper-text-2); }
+.city-list { max-height: 46vh; border-top: 1rpx solid var(--ink-line); border-bottom: 1rpx solid var(--ink-line); }
+.city-item {
+  min-height: 84rpx; padding: 0 8rpx;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1rpx solid var(--ink-line); color: var(--paper-text); font-size: 28rpx;
+}
+.city-item:last-child { border-bottom: none; }
+.city-enter { color: var(--cinnabar); font-size: 23rpx; }
+
 /* ===== 冷启动引导 ===== */
 .guide-mask {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;

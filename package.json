@@ -23,7 +23,8 @@
     "audit:poems": "node scripts/audit-poems.cjs",
     "audit:poems:strict": "node scripts/audit-poems.cjs --strict",
     "test:poem-audit": "node tests/poem-audit.test.cjs",
-    "test:ui-shell": "node tests/ui-shell.test.cjs"
+    "test:ui-shell": "node tests/ui-shell.test.cjs",
+    "test:map-view": "node tests/map-view.test.cjs"
   },
   "dependencies": {
     "wx-server-sdk": "~2.6.3"
