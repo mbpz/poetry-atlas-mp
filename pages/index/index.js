@@ -5,6 +5,12 @@
 const { getDB, wrapPromise } = require("../../utils/cloudbase.js")
 const { throttle } = require("../../utils/util.js")
 const { locToLngLat } = require("../../utils/loc.js")
+const {
+  readLocationSettings,
+  classifyLocationPrerequisite,
+  classifyLocationFailure,
+  buildLocationDiagnostic,
+} = require("../../utils/location.js")
 const config = require("../../config.js")
 
 // 预定义旅行路线（静态展示数据）
@@ -49,6 +55,7 @@ Page({
     loading: true,
     showDynastyBar: false,
     hasLocation: false,
+    locating: false,
     timelineDynasties: [],
     showTimeline: false,
     heatMode: false,
@@ -400,33 +407,92 @@ Page({
   },
 
   onLocate() {
+    if (this.data.locating) return
+    this._locationRetryCount = 0
+    this._startLocate()
+  },
+
+  _startLocate() {
+    this.setData({ locating: true })
     wx.getSetting({
       success: (res) => {
-        if (res.authSetting['scope.userLocation'] === false) {
-          // 曾被拒绝 → 引导用户手动打开设置
-          wx.openSetting({
-            success: (s) => {
-              if (s.authSetting['scope.userLocation']) this._doLocate()
-              else wx.showToast({ title: "未开启定位权限", icon: "none" })
-            },
-          })
-        } else {
-          this._doLocate()
-        }
+        const settings = readLocationSettings(wx, res.authSetting)
+        const prerequisite = classifyLocationPrerequisite(settings)
+        if (prerequisite) this._handleLocationFailure(prerequisite)
+        else this._doLocate(settings)
       },
-      fail: () => this._doLocate(),
+      fail: () => this._doLocate(readLocationSettings(wx, {})),
     })
   },
 
-  _doLocate() {
+  _doLocate(settings) {
     wx.getLocation({
       type: "gcj02",
       success: (res) => {
         this.moveToLocation(res.longitude, res.latitude, 8)
-        this.setData({ hasLocation: true })
+        this.setData({ hasLocation: true, locating: false })
       },
-      fail: () => { wx.showToast({ title: "定位失败，请检查系统权限", icon: "none" }) },
+      fail: (err) => {
+        const latest = readLocationSettings(wx, {})
+        const context = Object.assign({}, settings || {}, latest)
+        const result = classifyLocationFailure(err, context)
+        console.warn('[location]', buildLocationDiagnostic(err, context))
+        this._handleLocationFailure(result)
+      },
     })
+  },
+
+  _handleLocationFailure(result) {
+    this.setData({ locating: false })
+    wx.showModal({
+      title: result.title,
+      content: result.message,
+      confirmText: result.confirmText,
+      cancelText: '暂不定位',
+      success: (modal) => {
+        if (!modal.confirm) return
+        if (result.action === 'open-mini-setting') {
+          this._openMiniProgramLocationSetting()
+        } else if (result.action === 'open-app-setting') {
+          this._openAppLocationSetting()
+        } else {
+          this._retryLocationOnce()
+        }
+      },
+    })
+  },
+
+  _openMiniProgramLocationSetting() {
+    wx.openSetting({
+      success: (res) => {
+        if (res.authSetting && res.authSetting['scope.userLocation']) {
+          this._retryLocationOnce()
+        } else {
+          wx.showToast({ title: '未开启定位，可继续浏览地图', icon: 'none' })
+        }
+      },
+      fail: () => wx.showToast({ title: '设置页打开失败，请稍后重试', icon: 'none' }),
+    })
+  },
+
+  _openAppLocationSetting() {
+    if (typeof wx.openAppAuthorizeSetting !== 'function') {
+      wx.showToast({ title: '请在手机系统设置中开启微信定位', icon: 'none' })
+      return
+    }
+    wx.openAppAuthorizeSetting({
+      success: () => this._retryLocationOnce(),
+      fail: () => wx.showToast({ title: '请手动开启微信定位权限', icon: 'none' }),
+    })
+  },
+
+  _retryLocationOnce() {
+    if ((this._locationRetryCount || 0) >= 1) {
+      wx.showToast({ title: '仍无法定位，可先拖动地图浏览', icon: 'none' })
+      return
+    }
+    this._locationRetryCount = (this._locationRetryCount || 0) + 1
+    this._startLocate()
   },
 
   onTapProfile() {

@@ -49,8 +49,8 @@
     <view class="circle-btn spring-btn" bindtap="onToggleRoutePanel">
       <text class="btn-txt">路线</text>
     </view>
-    <view class="circle-btn spring-btn" bindtap="onLocate">
-      <text class="btn-txt">定位</text>
+    <view class="circle-btn spring-btn {{locating ? 'disabled' : ''}}" bindtap="onLocate">
+      <text class="btn-txt">{{locating ? '定位中' : '定位'}}</text>
     </view>
     <view class="circle-btn spring-btn avatar-btn" bindtap="onTapProfile">
       <text class="btn-txt">我的</text>

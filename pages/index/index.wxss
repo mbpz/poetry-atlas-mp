@@ -64,6 +64,7 @@
 }
 .circle-btn.active .btn-txt { color: var(--cinnabar); }
 .circle-btn:active .btn-txt { color: var(--cinnabar-soft); }
+.circle-btn.disabled { opacity: 0.58; }
 .avatar-btn { background: rgba(158, 43, 35, 0.08); border-color: rgba(158,43,35,0.3); }
 .avatar-btn .btn-txt { color: var(--cinnabar); }
 
