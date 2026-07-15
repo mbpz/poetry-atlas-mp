@@ -22,7 +22,7 @@
 .trigger-arrow.open { transform: rotate(180deg); }
 
 .dynasty-chips {
-  position: absolute; top: 120rpx; left: 24rpx; right: 120rpx;
+  position: absolute; top: 120rpx; left: 24rpx; right: 24rpx;
   background: rgba(255, 253, 249, 0.95); backdrop-filter: blur(16rpx);
   -webkit-backdrop-filter: blur(16rpx);
   border-radius: 24rpx; padding: 16rpx;

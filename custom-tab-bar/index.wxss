@@ -15,12 +15,14 @@
 .tab-nav {
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 750rpx;
   height: 112rpx;
 }
 
 .tab-item {
-  flex: 1;
+  width: 150rpx;
+  flex-grow: 0;
+  flex-shrink: 0;
   height: 112rpx;
   display: flex;
   flex-direction: column;

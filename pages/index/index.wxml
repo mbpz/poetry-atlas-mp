@@ -42,7 +42,7 @@
   </view>
 
   <!-- 顶部右侧工具按钮（双字标签，功能一目了然）-->
-  <view class="top-right">
+  <view wx:if="{{!showDynastyBar}}" class="top-right">
     <view class="circle-btn spring-btn {{heatMode ? 'active' : ''}}" bindtap="onToggleHeat">
       <text class="btn-txt">热力</text>
     </view>
