@@ -14,6 +14,7 @@
 const fs = require('fs')
 const path = require('path')
 const { spawnSync } = require('child_process')
+const config = require('../config.js')
 const {
   CorpusConflictError,
   sourceKey,
@@ -170,6 +171,23 @@ function mcporterCall(toolName, params) {
   return res
 }
 
+function bindCloudBaseEnvironment() {
+  const res = mcporterCall('cloudbase.auth', {
+    action: 'set_env',
+    envId: config.ENV_ID,
+  })
+  let outcome = {}
+  try {
+    outcome = JSON.parse(res.stdout)
+  } catch (e) {
+    throw new Error(`CloudBase 环境绑定响应无法解析: ${res.stdout.slice(0, 200)}`)
+  }
+  if (res.status !== 0 || outcome.success === false || outcome.error) {
+    throw new Error(`CloudBase 环境绑定失败: ${outcome.error || outcome.message || res.stderr || 'unknown error'}`)
+  }
+  console.log(`[migrate] 已显式绑定 CloudBase 环境: ${config.ENV_ID}`)
+}
+
 function writeCollection(collectionName, documents) {
   if (!documents.length) {
     console.log(`[migrate] ${collectionName}: 无数据，跳过`)
@@ -199,6 +217,7 @@ function writeCollection(collectionName, documents) {
 }
 
 console.log('\n[migrate] === 开始写入 CloudBase ===')
+bindCloudBaseEnvironment()
 writeCollection('places', places)
 writeCollection('poems', poems)
 writeCollection('authors', authors)
