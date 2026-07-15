@@ -31,6 +31,14 @@ test('flags a one-line fragment', () => {
   assert.strictEqual(truncationReason('登临送目。'), 'too-short')
 })
 
+test('supports configurable truncation thresholds', () => {
+  assert.strictEqual(truncationReason('登临送目。', { minFragmentChinese: 4 }), 'single-fragment')
+  assert.strictEqual(
+    truncationReason('登临送目。', { minFragmentChinese: 4, singleFragmentMaxChinese: 4 }),
+    ''
+  )
+})
+
 test('detects excerpt versus full conflicts and missing provenance', () => {
   const report = auditPoems([
     { name: '杭州', poems: [{ title: '钱塘湖春行', author: '白居易', dynasty: '唐', content: excerpt }] },
@@ -52,6 +60,14 @@ test('identical references merge without a content conflict', () => {
   ])
   assert.strictEqual(report.summary.conflicts, 0)
   assert.strictEqual(report.summary.missingProvenance, 0)
+})
+
+test('keeps 登岳阳楼 excerpt versus full as a regression case', () => {
+  const report = auditPoems([
+    { name: '岳阳', poems: [{ title: '登岳阳楼', author: '杜甫', dynasty: '唐', content: '昔闻洞庭水，今上岳阳楼。吴楚东南坼，乾坤日夜浮。' }] },
+    { name: '洞庭湖', poems: [{ title: '登岳阳楼', author: '杜甫', dynasty: '唐', content: '昔闻洞庭水，今上岳阳楼。吴楚东南坼，乾坤日夜浮。亲朋无一字，老病有孤舟。戎马关山北，凭轩涕泗流。' }] },
+  ])
+  assert.strictEqual(report.issues.conflicts[0].type, 'excerpt-vs-full')
 })
 
 test('reports missing required fields and invalid characters', () => {

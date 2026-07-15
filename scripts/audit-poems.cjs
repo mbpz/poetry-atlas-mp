@@ -12,6 +12,8 @@ function parseArgs(argv) {
     else if (arg === '--format' && argv[i + 1]) args.format = argv[++i]
     else if (arg === '--input' && argv[i + 1]) args.input = argv[++i]
     else if (arg === '--seed' && argv[i + 1]) args.seed = argv[++i]
+    else if (arg === '--min-fragment-chars' && argv[i + 1]) args.minFragmentChinese = Number(argv[++i])
+    else if (arg === '--single-fragment-max' && argv[i + 1]) args.singleFragmentMaxChinese = Number(argv[++i])
   }
   return args
 }
@@ -25,12 +27,31 @@ function run(argv) {
   if (args.format !== 'json' && args.format !== 'markdown') {
     throw new Error('--format 仅支持 json 或 markdown')
   }
+  if (args.minFragmentChinese !== undefined && (!Number.isInteger(args.minFragmentChinese) || args.minFragmentChinese < 1)) {
+    throw new Error('--min-fragment-chars 必须是正整数')
+  }
+  if (args.singleFragmentMaxChinese !== undefined && (!Number.isInteger(args.singleFragmentMaxChinese) || args.singleFragmentMaxChinese < 1)) {
+    throw new Error('--single-fragment-max 必须是正整数')
+  }
   const root = path.join(__dirname, '..')
   const inputPath = path.resolve(root, args.input || 'data/places.json')
   const seedPath = path.resolve(root, args.seed || 'cloudfunctions/initData/seed.json')
-  const reports = [auditPoems(readJson(inputPath), { name: path.relative(root, inputPath) })]
+  const truncationRules = {
+    minFragmentChinese: args.minFragmentChinese,
+    singleFragmentMaxChinese: args.singleFragmentMaxChinese,
+  }
+  Object.keys(truncationRules).forEach((key) => {
+    if (truncationRules[key] === undefined) delete truncationRules[key]
+  })
+  const reports = [auditPoems(readJson(inputPath), {
+    name: path.relative(root, inputPath),
+    truncationRules,
+  })]
   if (args.includeSeed) {
-    reports.push(auditPoems(readJson(seedPath), { name: path.relative(root, seedPath) }))
+    reports.push(auditPoems(readJson(seedPath), {
+      name: path.relative(root, seedPath),
+      truncationRules,
+    }))
   }
 
   const output = args.format === 'json'

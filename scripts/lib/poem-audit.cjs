@@ -1,5 +1,9 @@
 const REQUIRED_FIELDS = ['title', 'author', 'dynasty', 'content']
 const INVALID_CHAR_RE = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFD]/
+const DEFAULT_TRUNCATION_RULES = {
+  minFragmentChinese: 12,
+  singleFragmentMaxChinese: 40,
+}
 
 function normalizeText(value) {
   return String(value || '').replace(/\s+/g, '').trim()
@@ -41,15 +45,16 @@ function isLikelyCompleteShortVerse(text) {
   return (first === 5 || first === 7) && lengths.every((length) => length === first)
 }
 
-function truncationReason(text) {
+function truncationReason(text, rules) {
+  const config = Object.assign({}, DEFAULT_TRUNCATION_RULES, rules || {})
   const raw = String(text || '').trim()
   const normalized = normalizeText(raw)
   if (!normalized) return 'empty'
   if (isLikelyCompleteShortVerse(raw)) return ''
   const segments = textSegments(raw)
   const chineseCount = (normalized.match(/[\u3400-\u9FFF]/g) || []).length
-  if (chineseCount < 12) return 'too-short'
-  if (segments.length <= 1 && chineseCount < 40) return 'single-fragment'
+  if (chineseCount < config.minFragmentChinese) return 'too-short'
+  if (segments.length <= 1 && chineseCount < config.singleFragmentMaxChinese) return 'single-fragment'
   if (/[，；、：:]$/.test(raw)) return 'incomplete-ending'
   return ''
 }
@@ -110,7 +115,7 @@ function auditPoems(input, options) {
     const representative = group[0].poem
     const normalized = normalizeText(representative.content)
     if (normalized.length < 40) under40Count += 1
-    const reason = truncationReason(representative.content)
+    const reason = truncationReason(representative.content, opts.truncationRules)
     if (reason) {
       suspiciousTruncations.push({
         key,
@@ -182,6 +187,7 @@ function formatMarkdown(reports) {
 
 module.exports = {
   normalizeText,
+  DEFAULT_TRUNCATION_RULES,
   poemKey,
   collectEntries,
   isLikelyCompleteShortVerse,
