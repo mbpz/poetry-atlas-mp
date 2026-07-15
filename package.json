@@ -19,7 +19,10 @@
     "mcporter:auth": "npx mcporter call cloudbase.auth action=status --output json",
     "cloudbase:info": "npx mcporter call cloudbase.envQuery action=info envId=online-d2gyjoohe58cc4936 --output json",
     "lint:js": "find pages cloudfunctions utils custom-tab-bar -name '*.js' -exec node --check {} +",
-    "test:location": "node tests/location.test.cjs"
+    "test:location": "node tests/location.test.cjs",
+    "audit:poems": "node scripts/audit-poems.cjs",
+    "audit:poems:strict": "node scripts/audit-poems.cjs --strict",
+    "test:poem-audit": "node tests/poem-audit.test.cjs"
   },
   "dependencies": {
     "wx-server-sdk": "~2.6.3"
