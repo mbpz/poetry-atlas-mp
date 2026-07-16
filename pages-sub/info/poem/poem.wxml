@@ -4,6 +4,13 @@
   <skeleton rows="4" />
   <skeleton rows="2" />
 </view>
+<view wx:elif="{{loadError}}" class="page page-state-wrap">
+  <view class="card page-state">
+    <view class="page-state-title">诗词暂时无法打开</view>
+    <view class="page-state-desc">{{loadError}}</view>
+    <view class="page-state-action spring-btn" bindtap="onRetryPoem">重新加载</view>
+  </view>
+</view>
 <view class="page" wx:elif="{{poem}}">
 
   <view class="poem-hero card spring-card">
@@ -11,11 +18,20 @@
 
     <view class="poem-title-row">
       <text class="poem-title gold-title">{{poem.title}}</text>
-      <view class="fav-btn {{isFavorited ? 'on' : 'off'}}" bindtap="onToggleFavorite">{{isFavorited ? '♥' : '♡'}}</view>
+      <view
+        class="fav-btn {{isFavorited ? 'on' : 'off'}} {{favoriteBusy || favoriteChecking ? 'busy' : ''}}"
+        bindtap="onToggleFavorite"
+        aria-label="{{isFavorited ? '取消收藏' : '收藏诗词'}}"
+      >{{favoriteBusy || favoriteChecking ? '…' : (isFavorited ? '♥' : '♡')}}</view>
     </view>
     <view class="poem-subtitle">
       <text class="dynasty-tag">{{poem.dynasty}}</text>
-      <text class="poem-author-txt">{{poem.author}}</text>
+      <text class="poem-author-txt spring-btn" bindtap="onTapAuthor">{{poem.author}} ›</text>
+    </view>
+
+    <view wx:if="{{favoriteError}}" class="favorite-error">
+      <text>{{favoriteError}}</text>
+      <text class="favorite-retry spring-btn" bindtap="onRetryFavorite">重试同步</text>
     </view>
 
     <view class="poem-content">
@@ -23,6 +39,31 @@
     </view>
 
     <view class="poem-seal">{{poem.dynasty}}</view>
+  </view>
+
+  <view class="card source-card">
+    <view class="section-title gold-title">文本信息</view>
+    <view class="source-row">
+      <text class="source-label">收录状态</text>
+      <text class="source-value status-value">{{poem.content_kind === 'full' ? '全文' : (poem.content_kind === 'excerpt' ? '节选' : '待核验')}}</text>
+    </view>
+    <view class="source-row">
+      <text class="source-label">文本来源</text>
+      <text class="source-value">{{poem.source_name || '来源待补录'}}</text>
+    </view>
+    <view wx:if="{{poem.source_license}}" class="source-row">
+      <text class="source-label">使用说明</text>
+      <text class="source-value">{{poem.source_license}}</text>
+    </view>
+    <view wx:if="{{poem.source_checked_at}}" class="source-row">
+      <text class="source-label">核验日期</text>
+      <text class="source-value">{{poem.source_checked_at}}</text>
+    </view>
+    <view wx:if="{{poem.data_version}}" class="source-row">
+      <text class="source-label">数据版本</text>
+      <text class="source-value">{{poem.data_version}}</text>
+    </view>
+    <view wx:if="{{poem.source_url}}" class="source-action spring-btn" bindtap="onCopySource">复制来源链接</view>
   </view>
 
   <view class="card recitation-card" wx:if="{{!loading}}">
@@ -68,6 +109,10 @@
         class="place-tag spring-btn"
         data-place="{{item}}" bindtap="onTapPlace"
       >{{item.name}}</view>
+    </view>
+    <view wx:if="{{placeError}}" class="place-error">
+      <text>{{placeError}}</text>
+      <text class="place-retry spring-btn" bindtap="onRetryPlaceNavigation">重试</text>
     </view>
   </view>
 </view>

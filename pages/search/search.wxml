@@ -37,8 +37,17 @@
     <skeleton rows="3" avatar />
   </view>
 
+  <view wx:if="{{searched && !loading && searchError}}" class="card search-state error-state">
+    <view class="search-state-title">搜索暂时不可用</view>
+    <view class="search-state-desc">{{searchError}}</view>
+    <view class="search-state-actions">
+      <view class="state-action primary spring-btn" bindtap="onRetrySearch">重新搜索</view>
+      <view class="state-action spring-btn" bindtap="onClear">清空关键词</view>
+    </view>
+  </view>
+
   <!-- 结果 -->
-  <view wx:if="{{searched && !loading}}">
+  <view wx:if="{{searched && !loading && !searchError}}">
     <view wx:if="{{poems.length || authors.length || places.length}}">
       <!-- 结果 Tab（可横滑）-->
       <scroll-view scroll-x class="result-tabs" enhanced show-scrollbar="{{false}}">
@@ -110,5 +119,6 @@
       title="未找到「{{keyword}}」"
       tip="换个词试试，或浏览地图发现更多"
     />
+    <view wx:if="{{!poems.length && !authors.length && !places.length}}" class="empty-action spring-btn" bindtap="onBrowseMap">去地图发现</view>
   </view>
 </view>

@@ -21,6 +21,12 @@ Page({
     playerDuration: 0,
     playerRecitationId: '',
     playerAutoplay: false,
+    loadError: '',
+    favoriteBusy: false,
+    favoriteChecking: false,
+    favoriteError: '',
+    placeBusy: false,
+    placeError: '',
   },
 
   onLoad(options) {
@@ -44,6 +50,10 @@ Page({
     if (this._backTimer) clearTimeout(this._backTimer)
   },
 
+  onShow() {
+    if (this.poemId && this.data.poem && !this.data.favoriteBusy) this.checkFavorite()
+  },
+
   async loadRecitations() {
     if (!this.poemId) return
     try {
@@ -65,18 +75,27 @@ Page({
   },
 
   async loadPoemById(id) {
+    if (this._loadingPoem) return
+    this._loadingPoem = true
+    this.setData({ loading: true, loadError: '' })
     const { db } = getDB()
     try {
       const res = await db.collection('poems').doc(id).get()
       if (!res.data) {
-        wx.showToast({ title: '诗词不存在', icon: 'none' })
+        this.setData({ loading: false, loadError: '诗词不存在或已下线。' })
         return
       }
       this.renderPoem(res.data)
     } catch (err) {
       console.error('[poem] error:', err)
-      this.setData({ loading: false })
+      this.setData({ loading: false, loadError: '诗词加载失败，请检查网络后重试。' })
+    } finally {
+      this._loadingPoem = false
     }
+  },
+
+  onRetryPoem() {
+    if (this.poemId) this.loadPoemById(this.poemId)
   },
 
   renderPoem(poem) {
@@ -84,14 +103,25 @@ Page({
     const lines = splitPoemLines(poem.content)
     this.setData({
       poem: {
+        _id: poem._id || poem.canonical_id || '',
+        canonical_id: poem.canonical_id || poem._id || '',
         title: poem.title,
         author: poem.author,
         dynasty: poem.dynasty,
         content: poem.content,
         lines,
+        content_kind: poem.content_kind || '',
+        data_version: poem.data_version || '',
+        review_status: poem.review_status || '',
+        source_name: poem.source_name || '',
+        source_url: poem.source_url || '',
+        source_license: poem.source_license || '',
+        source_checked_at: poem.source_checked_at || '',
+        review_note: poem.review_note || '',
       },
       places,
       loading: false,
+      loadError: '',
     })
     if (!this.poemId && poem._id) this.poemId = poem._id
     if (this.poemId) {
@@ -101,60 +131,112 @@ Page({
   },
 
   async checkFavorite() {
+    if (!this.poemId) return
+    this.setData({ favoriteChecking: true })
     const { db } = getDB()
     try {
-      const res = await db.collection('favorites').where({ poem_id: this.poemId }).count()
-      this.setData({ isFavorited: res.total > 0 })
-    } catch (e) {}
+      const openid = await this._requireOpenId()
+      const res = await db.collection('favorites').where({ _openid: openid, poem_id: this.poemId }).count()
+      this.setData({ isFavorited: res.total > 0, favoriteError: '' })
+    } catch (err) {
+      console.warn('[poem] checkFavorite failed:', err)
+      this.setData({ favoriteError: '收藏状态同步失败，请重试。' })
+    } finally {
+      this.setData({ favoriteChecking: false })
+    }
+  },
+
+  async _requireOpenId() {
+    const app = getApp()
+    if (app.globalData.openid) return app.globalData.openid
+    const res = await wx.cloud.callFunction({ name: 'login' })
+    const result = res.result || {}
+    if (!result.openid) throw new Error('无法获取当前用户身份')
+    app.globalData.openid = result.openid
+    if (result.user) app.globalData.user = result.user
+    return result.openid
+  },
+
+  onRetryFavorite() {
+    if (this.data.favoriteBusy) return
+    this.checkFavorite()
   },
 
   async onToggleFavorite() {
+    if (this.data.favoriteBusy || this.data.favoriteChecking) return
     if (!this.poemId) {
-      wx.showToast({ title: '暂不支持收藏', icon: 'none' })
+      this.setData({ favoriteError: '当前诗词缺少唯一标识，暂不支持收藏。' })
       return
     }
     const { db } = getDB()
     const app = getApp()
-    const openid = app.globalData.openid || ''
     const wasFav = this.data.isFavorited
-    this.setData({ isFavorited: !wasFav })
+    this.setData({ isFavorited: !wasFav, favoriteBusy: true, favoriteError: '' })
     try {
+      const openid = await this._requireOpenId()
+      const condition = { _openid: openid, poem_id: this.poemId }
       if (wasFav) {
-        const res = await db.collection('favorites').where({ poem_id: this.poemId }).get()
-        if (res.data[0]) await db.collection('favorites').doc(res.data[0]._id).remove()
+        const res = await db.collection('favorites').where(condition).limit(20).get()
+        for (const favorite of (res.data || [])) {
+          const removed = await db.collection('favorites').doc(favorite._id).remove()
+          if (!removed.stats || removed.stats.removed !== 1) throw new Error('收藏删除未生效')
+        }
         wx.showToast({ title: '已取消', icon: 'success' })
       } else {
-        await db.collection('favorites').add({
-          data: {
-            _openid: openid,
-            poem_id: this.poemId,
-            poem_title: this.data.poem.title,
-            poem_author: this.data.poem.author,
-            created_at: Date.now(),
-          },
-        })
+        const existing = await db.collection('favorites').where(condition).limit(1).get()
+        if (!existing.data || !existing.data.length) {
+          const added = await db.collection('favorites').add({
+            data: {
+              poem_id: this.poemId,
+              poem_title: this.data.poem.title,
+              poem_author: this.data.poem.author,
+              created_at: Date.now(),
+            },
+          })
+          if (!added._id) throw new Error('收藏写入未返回文档 ID')
+        }
         wx.showToast({ title: '收藏成功', icon: 'success' })
       }
+      app.globalData.favoriteRevision = Date.now()
     } catch (err) {
+      console.error('[poem] toggle favorite failed:', err)
       this.setData({ isFavorited: wasFav })
-      wx.showToast({ title: '操作失败', icon: 'none' })
+      this.setData({ favoriteError: '收藏操作失败，已恢复原状态。请检查网络后重试。' })
+    } finally {
+      this.setData({ favoriteBusy: false })
     }
   },
 
-  onTapPlace(e) {
-    const place = e.currentTarget.dataset.place
-    if (!place) return
+  onTapAuthor() {
+    const author = this.data.poem && this.data.poem.author
+    if (!author) return
+    wx.navigateTo({ url: '/pages-sub/info/author/author?name=' + encodeURIComponent(author) })
+  },
+
+  onCopySource() {
+    const url = this.data.poem && this.data.poem.source_url
+    if (!url) return
+    wx.setClipboardData({ data: url })
+  },
+
+  async onTapPlace(e) {
+    const place = (e && e.currentTarget && e.currentTarget.dataset.place) || this._lastPlace
+    if (!place || this.data.placeBusy) return
+    this._lastPlace = place
+    this.setData({ placeBusy: true, placeError: '' })
     if (!getApp()._placeNameCache) getApp()._placeNameCache = {}
     const cache = getApp()._placeNameCache
     if (cache[place.name]) {
+      this.setData({ placeBusy: false })
       wx.navigateTo({ url: '/pages-sub/info/place/place?id=' + cache[place.name] })
       return
     }
     wx.showLoading({ title: '定位…' })
-    wx.cloud.callFunction({
-      name: 'listPlaces',
-      data: { keyword: place.name, limit: 5 },
-    }).then((res) => {
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'listPlaces',
+        data: { keyword: place.name, limit: 5 },
+      })
       wx.hideLoading()
       const list = (res.result && res.result.data) || []
       const matched = list.find((p) => p.name === place.name) || list[0]
@@ -162,12 +244,19 @@ Page({
         cache[place.name] = matched._id
         wx.navigateTo({ url: '/pages-sub/info/place/place?id=' + matched._id })
       } else {
-        wx.showToast({ title: '地点详情暂不可用', icon: 'none' })
+        this.setData({ placeError: '没有找到这个地点的详情。' })
       }
-    }).catch(() => {
+    } catch (err) {
       wx.hideLoading()
-      wx.showToast({ title: '地点详情暂不可用', icon: 'none' })
-    })
+      console.warn('[poem] resolve place failed:', err)
+      this.setData({ placeError: '地点详情加载失败，请检查网络后重试。' })
+    } finally {
+      this.setData({ placeBusy: false })
+    }
+  },
+
+  onRetryPlaceNavigation() {
+    this.onTapPlace()
   },
 
   async onTapTts(e) {
