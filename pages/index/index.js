@@ -17,6 +17,10 @@ const {
   readStoredMapView,
   writeStoredMapView,
 } = require("../../utils/map-view.js")
+const {
+  readStoredMapFilter,
+  writeStoredMapFilter,
+} = require("../../utils/discovery-context.js")
 const config = require("../../config.js")
 
 // 预定义旅行路线（静态展示数据）
@@ -77,6 +81,7 @@ Page({
     featuredPlace: "",
     featuredHidden: false,
     heatRange: { min: 0, max: 0 },
+    markerError: "",
   },
 
   onLoad() {
@@ -89,6 +94,8 @@ Page({
       maxScale: config.MAP.MAX_SCALE,
     })
     if (savedView) this.setData(savedView)
+    const savedFilter = readStoredMapFilter(wx)
+    if (savedFilter) this.setData(savedFilter)
     // 首次进入显示冷启动引导
     const guided = wx.getStorageSync("poetry_guided")
     if (!guided) {
@@ -160,7 +167,9 @@ Page({
     // 防并发：上一次请求未结束则跳过（下一次 region change 会刷新到最新视野）
     if (this._loadingMarkers) return
     this._loadingMarkers = true
-    this.setData({ loading: true })
+    this.setData({ loading: true, markerError: "" })
+    const previousMarkerMap = this._markerMap
+    const previousMarkerIdCounter = this._markerIdCounter
     this._markerIdCounter = 0
     this._markerMap = {}
     let placesData = []
@@ -195,14 +204,20 @@ Page({
       }
 
       this._loadingMarkers = false
-      this.setData({ markers, loading: false })
+      this.setData({ markers, loading: false, markerError: "" })
       this.updatePolyline()
       // 传当前地图中心 → 推荐离用户视野中心最近的地点
       this.loadFeatured(placesData, { longitude: this.data.longitude, latitude: this.data.latitude })
     } catch (err) {
       this._loadingMarkers = false
+      // 请求失败时保留旧 marker 的点击映射，避免画面仍在但无法交互。
+      this._markerMap = previousMarkerMap
+      this._markerIdCounter = previousMarkerIdCounter
       console.error("[index] loadMarkers error:", err)
-      this.setData({ loading: false })
+      this.setData({
+        loading: false,
+        markerError: "地点加载失败，请检查网络后重试",
+      })
     }
   },
 
@@ -239,48 +254,46 @@ Page({
 
   /** 省份聚合 */
   async loadProvinceClusters() {
-    try {
-      const res = await wx.cloud.callFunction({
-        name: "aggregateMap",
-        data: { type: "province", dynasty: this.data.selectedDynasty || "" },
-      })
-      const provinces = (res.result && res.result.data) || []
-      return provinces.map((p) => {
-        const cnt = p.poem_count || 0
-        return {
-          id: this._nextMarkerId({ name: p.name, cluster: true, placeId: p.provinceId || p.name }),
-          longitude: p.longitude,
-          latitude: p.latitude,
-          width: 48,
-          height: 48,
-          // anchor 把 marker 坐标对到圆心，label 才能居中于气泡
-          anchor: { x: 0.5, y: 0.5 },
-          iconPath: "/images/marker-cluster.png",
-          title: p.name + " (" + cnt + "首)",
-          // label 在气泡中心显示真实聚合数量（按位数动态锚点，精确居中）
-          ...(cnt
-            ? (() => {
-                const text = String(cnt)
-                const w = text.length * 7 + 2 // fontSize 14 下≈每字 7px
-                const h = 16
-                return {
-                  label: {
-                    content: text,
-                    color: "#9e2b23",
-                    fontSize: 14,
-                    textAlign: "center",
-                    anchorX: w / 2,
-                    anchorY: h / 2,
-                  },
-                }
-              })()
-            : {}),
-        }
-      })
-    } catch (err) {
-      console.error("[index] loadProvinceClusters error:", err)
-      return []
+    const res = await wx.cloud.callFunction({
+      name: "aggregateMap",
+      data: { type: "province", dynasty: this.data.selectedDynasty || "" },
+    })
+    if (!res.result || res.result.ok === false) {
+      throw new Error((res.result && res.result.error) || '省份聚合加载失败')
     }
+    const provinces = res.result.data || []
+    return provinces.map((p) => {
+      const cnt = p.poem_count || 0
+      return {
+        id: this._nextMarkerId({ name: p.name, cluster: true, placeId: p.provinceId || p.name }),
+        longitude: p.longitude,
+        latitude: p.latitude,
+        width: 48,
+        height: 48,
+        // anchor 把 marker 坐标对到圆心，label 才能居中于气泡
+        anchor: { x: 0.5, y: 0.5 },
+        iconPath: "/images/marker-cluster.png",
+        title: p.name + " (" + cnt + "首)",
+        // label 在气泡中心显示真实聚合数量（按位数动态锚点，精确居中）
+        ...(cnt
+          ? (() => {
+              const text = String(cnt)
+              const w = text.length * 7 + 2 // fontSize 14 下≈每字 7px
+              const h = 16
+              return {
+                label: {
+                  content: text,
+                  color: "#9e2b23",
+                  fontSize: 14,
+                  textAlign: "center",
+                  anchorX: w / 2,
+                  anchorY: h / 2,
+                },
+              }
+            })()
+          : {}),
+      }
+    })
   },
 
   /** 地点文档 → marker（heat=true 时按 poem_count 调整为大圆形热力标记）*/
@@ -375,7 +388,8 @@ Page({
     if (place.cluster) {
       this.moveToLocation(lng, lat, this.data.scale + 3)
     } else if (place.placeId) {
-      wx.navigateTo({ url: "/pages-sub/info/place/place?id=" + place.placeId })
+      this._rememberDiscoveryState()
+      wx.navigateTo({ url: "/pages-sub/info/place/place?id=" + place.placeId + "&from=map" })
     }
   },
 
@@ -424,9 +438,26 @@ Page({
     })
   },
 
+  _rememberDiscoveryState() {
+    this._rememberMapView(this.data.longitude, this.data.latitude, this.data.scale)
+    writeStoredMapFilter(wx, { selectedDynasty: this.data.selectedDynasty })
+  },
+
   onSelectDynasty(e) {
     const d = e.currentTarget.dataset.dynasty || ""
-    this.setData({ selectedDynasty: this.data.selectedDynasty === d ? "" : d })
+    const selectedDynasty = this.data.selectedDynasty === d ? "" : d
+    this.setData({ selectedDynasty })
+    writeStoredMapFilter(wx, { selectedDynasty })
+    this.loadMarkers()
+  },
+
+  onRetryMarkers() {
+    this.loadMarkers()
+  },
+
+  onClearMapFilter() {
+    this.setData({ selectedDynasty: "", showDynastyBar: false })
+    writeStoredMapFilter(wx, { selectedDynasty: "" })
     this.loadMarkers()
   },
 
@@ -589,7 +620,9 @@ Page({
 
   onTimelineSelect(e) {
     const d = e.currentTarget.dataset.dynasty || ""
-    this.setData({ selectedDynasty: this.data.selectedDynasty === d ? "" : d, showTimeline: false })
+    const selectedDynasty = this.data.selectedDynasty === d ? "" : d
+    this.setData({ selectedDynasty, showTimeline: false })
+    writeStoredMapFilter(wx, { selectedDynasty })
     this.loadMarkers()
   },
 

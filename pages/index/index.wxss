@@ -111,6 +111,24 @@
   padding: 16rpx 40rpx; border-radius: 30rpx; font-size: 26rpx; z-index: 30;
 }
 
+.map-state {
+  position: absolute;
+  left: 28rpx; right: 28rpx;
+  bottom: calc(112rpx + env(safe-area-inset-bottom) + 28rpx);
+  padding: 28rpx 30rpx;
+  z-index: 28;
+}
+.map-state-title { font-size: 30rpx; font-weight: 700; color: var(--paper-text); }
+.map-state-desc { margin-top: 10rpx; font-size: 24rpx; line-height: 1.6; color: var(--paper-text-2); }
+.map-state-actions { display: flex; gap: 14rpx; margin-top: 20rpx; }
+.map-state-action {
+  min-height: 68rpx; padding: 0 28rpx; border-radius: 34rpx;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--ink-surface-2); border: 1rpx solid var(--ink-line);
+  color: var(--paper-text); font-size: 25rpx;
+}
+.map-state-action.primary { color: #fff; background: var(--cinnabar); border-color: var(--cinnabar); }
+
 /* ===== 定位失败降级面板 ===== */
 .location-fallback-mask {
   position: absolute; top: 0; left: 0; right: 0;

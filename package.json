@@ -25,6 +25,7 @@
     "test:poem-audit": "node tests/poem-audit.test.cjs",
     "test:ui-shell": "node tests/ui-shell.test.cjs",
     "test:map-view": "node tests/map-view.test.cjs",
+    "test:discovery-journey": "node tests/discovery-journey.test.cjs",
     "test:canonical-poems": "node tests/canonical-poems.test.cjs",
     "test:poem-release": "node tests/poem-release.test.cjs",
     "test:tab-bar-navigation": "node tests/tab-bar-navigation.test.cjs"

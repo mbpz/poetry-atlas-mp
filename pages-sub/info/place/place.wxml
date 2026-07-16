@@ -4,6 +4,13 @@
   <skeleton rows="3" />
   <skeleton rows="2" />
 </view>
+<view wx:elif="{{placeError}}" class="page page-state-wrap">
+  <view class="card page-state">
+    <view class="page-state-title">地点暂时无法打开</view>
+    <view class="page-state-desc">{{placeError}}</view>
+    <view class="page-state-action spring-btn" bindtap="onRetryPlace">重新加载</view>
+  </view>
+</view>
 <view class="page" wx:elif="{{place}}">
 
   <!-- 顶部小地图 -->
@@ -53,6 +60,16 @@
       <view class="poem-lines">
         <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="poem-line">{{line}}</view>
       </view>
+      <view wx:if="{{item.isPreview}}" class="preview-note">正在载入完整诗文…</view>
+    </view>
+    <view wx:if="{{loadingPoems}}" class="list-state">正在加载相关诗词…</view>
+    <view wx:if="{{!loadingPoems && poemsError}}" class="card list-state error-state">
+      <view>{{poemsError}}</view>
+      <view class="inline-action spring-btn" bindtap="onRetryPoems">重试</view>
+    </view>
+    <view wx:if="{{!loadingPoems && !poemsError && !poems.length}}" class="card list-state empty-state">
+      <view>暂未收录相关诗词</view>
+      <view wx:if="{{selectedDynasty}}" class="inline-action spring-btn" bindtap="onSelectDynasty" data-dynasty="">查看全部朝代</view>
     </view>
     <view wx:if="{{!hasMore && poems.length}}" class="empty">— 到底了 —</view>
   </view>

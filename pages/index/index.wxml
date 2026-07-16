@@ -106,6 +106,24 @@
     <text>载入诗意…</text>
   </view>
 
+  <view wx:if="{{!loading && markerError}}" class="map-state card">
+    <view class="map-state-title">地点暂时没有加载出来</view>
+    <view class="map-state-desc">{{markerError}}</view>
+    <view class="map-state-actions">
+      <view class="map-state-action primary spring-btn" bindtap="onRetryMarkers">重新加载</view>
+      <view wx:if="{{selectedDynasty}}" class="map-state-action spring-btn" bindtap="onClearMapFilter">清除筛选</view>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && !markerError && markers.length === 0}}" class="map-state card">
+    <view class="map-state-title">这片视野还没有诗词地点</view>
+    <view class="map-state-desc">可以清除朝代筛选，或缩放、拖动地图继续发现。</view>
+    <view class="map-state-actions">
+      <view wx:if="{{selectedDynasty}}" class="map-state-action primary spring-btn" bindtap="onClearMapFilter">查看全部朝代</view>
+      <view class="map-state-action spring-btn" bindtap="onRetryMarkers">重新加载</view>
+    </view>
+  </view>
+
   <!-- 定位失败后的非阻断降级面板 -->
   <view wx:if="{{showLocationFallback}}" class="location-fallback-mask" catchtouchmove="noop">
     <view class="location-fallback card" catchtap="noop">

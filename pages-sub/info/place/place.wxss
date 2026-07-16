@@ -1,5 +1,14 @@
 /* ===== 地点详情 — 沉浸水墨 ===== */
 .page { min-height: 100vh; padding-bottom: calc(140rpx + env(safe-area-inset-bottom)); }
+.page-state-wrap { display: flex; align-items: center; justify-content: center; padding: 48rpx 24rpx; box-sizing: border-box; }
+.page-state { width: 100%; padding: 44rpx 36rpx; text-align: center; }
+.page-state-title { font-size: 34rpx; font-weight: 700; color: var(--paper-text); }
+.page-state-desc { margin-top: 16rpx; font-size: 25rpx; line-height: 1.7; color: var(--paper-text-2); }
+.page-state-action {
+  min-height: 76rpx; margin-top: 28rpx; border-radius: 40rpx;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; background: var(--cinnabar); font-size: 27rpx;
+}
 .place-map { width: 100%; border-radius: 0; }
 
 .place-info { margin: 24rpx; padding: 32rpx 36rpx; }
@@ -62,6 +71,14 @@
 }
 .poem-lines { margin-top: 8rpx; }
 .poem-line { font-size: 28rpx; line-height: 2; color: var(--paper-text-2); letter-spacing: 0.06em; }
+.preview-note { margin-top: 12rpx; font-size: 22rpx; color: var(--gold); }
+.list-state { padding: 28rpx; text-align: center; font-size: 25rpx; color: var(--paper-text-2); }
+.error-state, .empty-state { margin: 16rpx 0; }
+.inline-action {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 64rpx; margin-top: 18rpx; padding: 0 32rpx; border-radius: 32rpx;
+  color: var(--cinnabar); background: var(--ink-surface-2); border: 1rpx solid var(--ink-line);
+}
 
 .spring-card { transition: transform 0.12s ease, box-shadow 0.12s; box-shadow: 0 2rpx 12rpx rgba(120, 100, 70, 0.1); }
 .spring-card:active { transform: scale(0.98); }
