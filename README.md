@@ -91,9 +91,9 @@ poetry-atlas-mp/
 | `poems` | 诗词 | `canonical_id`, `title`, `content`, `content_kind`, `content_hash`, `data_version`, `review_status`, `source_*`, `places[]` | 公开读 |
 | `authors` | 作者 | `name`, `dynasty`, `biography`, `route[]`, `poem_count`, `birth_year/death_year` | 公开读 |
 | `dynasties` | 朝代 | `name`, `start_year`, `end_year`, `sort_order`, `poem_count` | 公开读 |
-| `favorites` | 收藏（私有） | `openid`, `poem_id`, `poem_title`, `poem_author`, `created_at` | 仅本人读写 |
+| `favorites` | 收藏（私有） | `_openid`, `poem_id`, `poem_title`, `poem_author`, `created_at` | 仅本人读写 |
 | `users` | 用户档案 | `_id`(=openid), `_openid`, `nickname`, `avatar_url`, `created_at`, `stats` | 仅本人读写 |
-| `routes` | 自建旅行路线（**私有·仅自己可见**） | `openid`, `name`, `theme`, `description`, `points[]`, `created_at` | 仅本人读写 |
+| `routes` | 自建旅行路线（**私有·仅自己可见**） | `_openid`, `openid`, `request_id`, `name`, `theme`, `description`, `points[]`, `created_at` | 仅本人读写 |
 | `recitations` | 诗词朗诵音频（预设） | `poem_id`, `audio_url`, `duration`, `voice`, `play_count` | 公开读 |
 | `tts_cache` | TTS 音频缓存索引 | `poem_id`, `voice`, `text_hash`, `fileID`, `duration` | 仅云函数 |
 

@@ -1,5 +1,5 @@
 <!-- 旅行路线详情页 -->
-<view class="page" wx:if="{{!loading}}">
+<view class="page" wx:if="{{!loading && route}}">
   <view class="travel-hero card">
     <view class="travel-name-row">
       <view class="travel-name">{{route.name}}</view>
@@ -28,6 +28,14 @@
       </view>
       <view wx:if="{{item.note}}" class="day-note">{{item.note}}</view>
     </view>
+  </view>
+</view>
+
+<view wx:if="{{!loading && loadError}}" class="page route-state-wrap">
+  <view class="card route-state">
+    <view class="route-state-title">路线暂时无法打开</view>
+    <view class="route-state-desc">{{loadError}}</view>
+    <view class="route-state-action spring-btn" bindtap="onRetryRoute">重新加载</view>
   </view>
 </view>
 

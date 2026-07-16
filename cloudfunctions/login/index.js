@@ -10,26 +10,27 @@ const DB_COLLECTION = 'users'
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
-  const { openid, appid, unionid } = wxContext
+  const openid = wxContext.OPENID || wxContext.openid || ''
+  const appid = wxContext.APPID || wxContext.appid || ''
+  const unionid = wxContext.UNIONID || wxContext.unionid || ''
   const db = cloud.database()
 
   let user = null
   if (openid) {
     // upsert users：首次登录写入，后续读出
-    const exists = await db.collection(DB_COLLECTION).doc(openid).get().catch(() => null)
-    if (!exists.data) {
+    const exists = await db.collection(DB_COLLECTION).where({ _id: openid }).limit(1).get()
+    if (!exists.data || !exists.data.length) {
       const initUser = {
-        _id: openid,
         _openid: openid,
         nickname: '',
         avatar_url: '',
         created_at: Date.now(),
         stats: { routes_count: 0, recitation_count: 0 },
       }
-      await db.collection(DB_COLLECTION).doc(openid).set({ data: initUser }).catch(() => null)
-      user = initUser
+      await db.collection(DB_COLLECTION).doc(openid).set({ data: initUser })
+      user = Object.assign({ _id: openid }, initUser)
     } else {
-      user = exists.data
+      user = exists.data[0]
     }
   }
 

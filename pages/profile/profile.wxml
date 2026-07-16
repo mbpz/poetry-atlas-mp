@@ -16,7 +16,11 @@
     />
 
     <view class="profile-sub">
-      {{hasProfile ? '已使用微信资料' : '点击头像与昵称，授权使用微信信息'}}
+      {{savingAvatar || savingNickname ? '正在保存资料…' : (hasProfile ? '已使用微信资料' : '点击头像与昵称，授权使用微信信息')}}
+    </view>
+    <view wx:if="{{profileError}}" class="profile-error">
+      <text>{{profileError}}</text>
+      <text class="profile-error-close" bindtap="onDismissProfileError">知道了</text>
     </view>
   </view>
 
@@ -35,6 +39,11 @@
         <view class="stat-num">{{stats.recitation_count}}</view>
         <view class="stat-label">朗诵</view>
       </view>
+    </view>
+    <view wx:if="{{statsLoading}}" class="stats-status">同步统计中…</view>
+    <view wx:if="{{statsError}}" class="stats-error">
+      <text>{{statsError}}</text>
+      <text class="stats-retry" bindtap="onRetryStats">重试</text>
     </view>
   </view>
 

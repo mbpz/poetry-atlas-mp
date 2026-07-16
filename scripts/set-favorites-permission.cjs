@@ -20,8 +20,8 @@ function mcporterCall(toolName, params) {
 }
 
 const securityRule = JSON.stringify({
-  read: "auth.loginType != 'ANONYMOUS'",
-  create: "auth.loginType != 'ANONYMOUS'",
+  read: 'doc._openid == auth.openid',
+  create: 'doc._openid == auth.openid',
   update: 'doc._openid == auth.openid',
   delete: 'doc._openid == auth.openid',
 })

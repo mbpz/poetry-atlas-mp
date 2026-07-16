@@ -46,7 +46,9 @@
     </view>
   </view>
 
+  <view wx:if="{{saveError}}" class="card save-error">{{saveError}}</view>
+
   <view class="save-row">
-    <view class="btn-primary save-btn {{saving ? 'disabled' : ''}}" bindtap="onSave">保存路线</view>
+    <view class="btn-primary save-btn {{saving ? 'disabled' : ''}}" bindtap="onSave">{{saving ? '保存中…' : '保存路线'}}</view>
   </view>
 </view>

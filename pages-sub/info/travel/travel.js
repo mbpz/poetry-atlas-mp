@@ -3,7 +3,7 @@
  * 入参: route (路线 id), from=db 表示查自建路线；否则保留静态示例路线
  *
  * 加载策略:
- *   - from=db → 首选云函数 routes.detail，失败回退 ROUTE_DETAILS[route]
+ *   - from=db → 云函数 routes.detail；失败显示可重试错误，不混入公开示例
  *   - 否则 → 直接读 ROUTE_DETAILS（静态示例）
  */
 const { splitPoemLines } = require("../../../utils/util.js")
@@ -76,6 +76,7 @@ Page({
     route: null,
     loading: true,
     isDynamic: false,
+    loadError: '',
   },
 
   onLoad(options) {
@@ -90,6 +91,9 @@ Page({
 
   // 优先查 DB，失败回退静态
   async loadFromDb() {
+    if (this._loadingRoute) return
+    this._loadingRoute = true
+    this.setData({ loading: true, loadError: '' })
     try {
       const res = await wx.cloud.callFunction({
         name: 'routes',
@@ -100,13 +104,18 @@ Page({
         this.renderDynamic(result.data)
         return
       }
-      // 回退静态
-      console.warn('[travel] db detail failed, fallback static:', result.error)
-      this.loadStatic()
+      throw new Error(result.error || '路线加载失败')
     } catch (err) {
       console.error('[travel] loadFromDb error:', err)
-      this.loadStatic()
+      this.setData({ loading: false, loadError: '私有路线加载失败，请检查网络后重试。' })
+    } finally {
+      this._loadingRoute = false
     }
+  },
+
+  onRetryRoute() {
+    if (this.fromDb) this.loadFromDb()
+    else this.loadStatic()
   },
 
   loadStatic() {
@@ -122,10 +131,10 @@ Page({
         },
         loading: false,
         isDynamic: false,
+        loadError: '',
       })
     } else {
-      wx.showToast({ title: "路线不存在", icon: "none" })
-      this.setData({ loading: false })
+      this.setData({ loading: false, loadError: '路线不存在或已下线。' })
     }
   },
 
@@ -150,6 +159,7 @@ Page({
       },
       loading: false,
       isDynamic: true,
+      loadError: '',
     })
   },
 

@@ -9,6 +9,7 @@
  *      reLaunch 清空栈跳到独立协议页，语义最干净，且协议页 navigateBack 回主页合理。
  */
 const { initCloudBase } = require('./utils/cloudbase.js')
+const { ensureOpenId } = require('./utils/user-session.js')
 const config = require('./config.js')
 
 App({
@@ -57,12 +58,9 @@ App({
   },
 
   login() {
-    wx.cloud.callFunction({ name: 'login' })
-      .then((res) => {
-        const r = res.result || {}
-        this.globalData.openid = r.openid || ''
-        this.globalData.user = r.user || null
-        console.log('[app] login ok, openid =', this.globalData.openid ? this.globalData.openid.slice(0, 6) + '…' : '(empty)')
+    return ensureOpenId()
+      .then((openid) => {
+        console.log('[app] login ok, openid =', openid ? openid.slice(0, 6) + '…' : '(empty)')
       })
       .catch((err) => {
         console.warn('[app] login failed:', err && err.errMsg || err)

@@ -5,6 +5,7 @@
  */
 const { getDB } = require('../../../utils/cloudbase.js')
 const { splitPoemLines } = require('../../../utils/util.js')
+const { ensureOpenId } = require('../../../utils/user-session.js')
 
 Page({
   data: {
@@ -135,7 +136,7 @@ Page({
     this.setData({ favoriteChecking: true })
     const { db } = getDB()
     try {
-      const openid = await this._requireOpenId()
+      const openid = await ensureOpenId()
       const res = await db.collection('favorites').where({ _openid: openid, poem_id: this.poemId }).count()
       this.setData({ isFavorited: res.total > 0, favoriteError: '' })
     } catch (err) {
@@ -144,17 +145,6 @@ Page({
     } finally {
       this.setData({ favoriteChecking: false })
     }
-  },
-
-  async _requireOpenId() {
-    const app = getApp()
-    if (app.globalData.openid) return app.globalData.openid
-    const res = await wx.cloud.callFunction({ name: 'login' })
-    const result = res.result || {}
-    if (!result.openid) throw new Error('无法获取当前用户身份')
-    app.globalData.openid = result.openid
-    if (result.user) app.globalData.user = result.user
-    return result.openid
   },
 
   onRetryFavorite() {
@@ -173,7 +163,7 @@ Page({
     const wasFav = this.data.isFavorited
     this.setData({ isFavorited: !wasFav, favoriteBusy: true, favoriteError: '' })
     try {
-      const openid = await this._requireOpenId()
+      const openid = await ensureOpenId()
       const condition = { _openid: openid, poem_id: this.poemId }
       if (wasFav) {
         const res = await db.collection('favorites').where(condition).limit(20).get()

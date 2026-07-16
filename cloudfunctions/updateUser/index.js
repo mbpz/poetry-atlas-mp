@@ -1,7 +1,7 @@
 'use strict'
 /**
  * 云函数：updateUser
- * 更新当前用户档案（nickname / avatar_url / stats 等可增量）
+ * 更新当前用户档案（仅 nickname / avatar_url / gender / bio）
  * 文档不存在时自动创建，避免首次保存失败。
  */
 const cloud = require('wx-server-sdk')
@@ -13,50 +13,35 @@ exports.main = async (event, context) => {
   if (!openid) return { ok: false, error: 'no openid' }
 
   const db = cloud.database()
-  const _ = db.command
   const col = db.collection('users')
 
   const ALLOW = ['nickname', 'avatar_url', 'gender', 'bio']
+  const LIMITS = { nickname: 12, avatar_url: 1024, gender: 20, bio: 200 }
   const fields = {}
   for (const k of ALLOW) {
-    if (event[k] !== undefined) fields[k] = event[k]
+    if (event[k] !== undefined) fields[k] = String(event[k] || '').trim().slice(0, LIMITS[k])
   }
 
-  const statsPatch = {}
-  if (event.stats && typeof event.stats === 'object') {
-    for (const k in event.stats) {
-      statsPatch[k] = event.stats[k]
-    }
-  }
-
-  if (!Object.keys(fields).length && !Object.keys(statsPatch).length) {
+  if (!Object.keys(fields).length) {
     return { ok: false, error: 'nothing to update' }
   }
 
   try {
-    const existing = await col.doc(openid).get().catch(() => null)
-    const hasDoc = !!(existing && existing.data)
+    const existing = await col.where({ _id: openid }).limit(1).get()
+    const hasDoc = !!(existing.data && existing.data.length)
 
     if (hasDoc) {
-      const update = Object.assign({}, fields)
-      for (const k in statsPatch) {
-        if (typeof statsPatch[k] === 'number') {
-          update['stats.' + k] = _.inc(statsPatch[k])
-        } else {
-          update['stats.' + k] = statsPatch[k]
-        }
+      const updated = await col.doc(openid).update({ data: fields })
+      if (!updated.stats || updated.stats.updated !== 1) {
+        return { ok: false, error: 'profile update failed' }
       }
-      await col.doc(openid).update({ data: update })
     } else {
       const base = {
         _openid: openid,
         nickname: '',
         avatar_url: '',
         created_at: Date.now(),
-        stats: Object.assign(
-          { routes_count: 0, recitation_count: 0 },
-          statsPatch
-        ),
+        stats: { routes_count: 0, recitation_count: 0 },
       }
       Object.assign(base, fields)
       await col.doc(openid).set({ data: base })

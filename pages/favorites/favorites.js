@@ -6,6 +6,7 @@
 const { getDB } = require("../../utils/cloudbase.js")
 const { splitPoemLines } = require("../../utils/util.js")
 const { syncTabBar } = require("../../utils/tab-bar.js")
+const { ensureOpenId } = require("../../utils/user-session.js")
 
 const PAGE_SIZE = 20
 const MAX_IN = 100 // CloudBase _.in() 数组上限
@@ -16,6 +17,8 @@ Page({
     loading: true,
     hasMore: true,
     openid: "",
+    listError: "",
+    removingId: "",
   },
 
   onShow() {
@@ -25,23 +28,21 @@ Page({
   },
 
   resetAndLoad() {
+    if (this._loadingFavorites) return
     this._favOffset = 0
-    this.setData({ favorites: [], hasMore: true }, () => {
+    this.setData({ favorites: [], hasMore: true, listError: "" }, () => {
       this.loadFavorites(true)
     })
   },
 
   async loadFavorites(refresh) {
+    if (this._loadingFavorites) return
+    this._loadingFavorites = true
     const { db } = getDB()
-    const app = getApp()
-    const openid = app.globalData.openid || ''
-    // 客户端锁定 owner：无 openid 时不查，避免全表或脏数据
-    if (!openid) {
-      this.setData({ hasMore: false, loading: false })
-      return
-    }
-    this.setData({ loading: true })
+    this.setData({ loading: true, listError: "" })
     try {
+      const openid = await ensureOpenId()
+      this.setData({ openid })
       // 分页查收藏记录（按时间倒序，skip+limit 避免全表）
       const favRes = await db.collection("favorites")
         .where({ _openid: openid })
@@ -49,7 +50,7 @@ Page({
         .skip(this._favOffset || 0)
         .limit(PAGE_SIZE)
         .get()
-      const favs = favRes.data
+      const favs = favRes.data || []
 
       if (!favs.length) {
         this.setData({ hasMore: false, loading: false })
@@ -85,12 +86,19 @@ Page({
         favorites: all,
         hasMore: favs.length === PAGE_SIZE,
         loading: false,
+        listError: "",
       })
     } catch (err) {
       console.error("[favorites] error:", err)
-      this.setData({ loading: false })
-      wx.showToast({ title: "加载失败", icon: "none" })
+      this.setData({ loading: false, listError: "收藏加载失败，请检查网络后重试。" })
+    } finally {
+      this._loadingFavorites = false
     }
+  },
+
+  onRetryLoad() {
+    if (this.data.favorites.length) this.loadFavorites(false)
+    else this.resetAndLoad()
   },
 
   onTapPoem(e) {
@@ -111,14 +119,20 @@ Page({
 
   async onRemove(e) {
     const item = e.currentTarget.dataset.item
-    if (!item) return
+    if (!item || this.data.removingId) return
     const { db } = getDB()
+    this.setData({ removingId: item.favId, listError: "" })
     try {
-      await db.collection("favorites").doc(item.favId).remove()
+      const result = await db.collection("favorites").doc(item.favId).remove()
+      if (!result.stats || result.stats.removed !== 1) throw new Error('收藏删除未生效')
       this.setData({ favorites: this.data.favorites.filter((f) => f.favId !== item.favId) })
+      getApp().globalData.favoriteRevision = Date.now()
       wx.showToast({ title: "已取消收藏", icon: "success" })
     } catch (err) {
-      wx.showToast({ title: "操作失败", icon: "none" })
+      console.error('[favorites] remove failed:', err)
+      this.setData({ listError: "取消收藏失败，列表没有发生变化。请重试。" })
+    } finally {
+      this.setData({ removingId: "" })
     }
   },
 })

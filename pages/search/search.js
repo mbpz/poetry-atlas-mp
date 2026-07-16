@@ -11,6 +11,14 @@ const {
 Page({
   onShow() {
     syncTabBar(this, 'find')
+    const pending = getApp().globalData.pendingSearch
+    if (pending && pending.keyword) {
+      getApp().globalData.pendingSearch = null
+      this._restoreScrollTop = 0
+      this._didRestoreScroll = true
+      this.setData({ keyword: pending.keyword, activeTab: pending.activeTab || 'all' })
+      this.search(pending.keyword)
+    }
   },
 
   data: {
@@ -41,7 +49,7 @@ Page({
       const activeTab = (saved && saved.activeTab) || 'all'
       this._restoreScrollTop = (saved && saved.scrollTop) || 0
       this.setData({ keyword, activeTab })
-      if (keyword) this.search(keyword)
+      if (keyword && !getApp().globalData.pendingSearch) this.search(keyword)
     }
   },
 

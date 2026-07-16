@@ -53,7 +53,7 @@ const PUBLIC_READ_RULE = JSON.stringify({
 
 const OWNER_ONLY_RULE = JSON.stringify({
   read: 'doc._openid == auth.openid',
-  create: 'auth.openid != null',
+  create: 'doc._openid == auth.openid',
   update: 'doc._openid == auth.openid',
   delete: 'doc._openid == auth.openid',
 })

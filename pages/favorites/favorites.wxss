@@ -23,3 +23,10 @@
 .fav-del:active { transform: scale(0.85); background: rgba(158, 43, 35, 0.12); }
 .fav-del-ico { font-size: 36rpx; color: var(--paper-text-2); }
 .fav-del:active .fav-del-ico { color: var(--cinnabar); }
+.fav-del.busy { opacity: 0.55; }
+.list-error {
+  margin: 20rpx 0; padding: 24rpx 28rpx;
+  display: flex; align-items: center; justify-content: space-between; gap: 18rpx;
+  color: var(--cinnabar); font-size: 24rpx; line-height: 1.6;
+}
+.list-retry { flex-shrink: 0; text-decoration: underline; }

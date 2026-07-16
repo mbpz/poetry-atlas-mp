@@ -17,12 +17,22 @@
       </view>
       <view class="route-row-meta">
         <view class="route-pts">{{item.points.length}} 站</view>
+        <view
+          class="route-delete spring-btn {{deletingId === item._id ? 'busy' : ''}}"
+          data-id="{{item._id}}"
+          catchtap="onDeleteTap"
+        >{{deletingId === item._id ? '删除中…' : '删除'}}</view>
         <text class="route-arrow">›</text>
       </view>
     </view>
   </view>
 
-  <view wx:if="{{!loading && !routes.length}}" class="empty-wrap">
+  <view wx:if="{{!loading && listError}}" class="card route-error">
+    <text>{{listError}}</text>
+    <text class="route-retry spring-btn" bindtap="onRetryRoutes">重试</text>
+  </view>
+
+  <view wx:if="{{!loading && !listError && !routes.length}}" class="empty-wrap">
     <empty-state
       iconSrc="/tab-bar-icons/map.svg"
       title="还没有自建路线"

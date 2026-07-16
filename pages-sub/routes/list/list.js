@@ -7,6 +7,8 @@ Page({
   data: {
     routes: [],
     loading: true,
+    listError: '',
+    deletingId: '',
   },
 
   onShow() {
@@ -18,13 +20,9 @@ Page({
   },
 
   refreshRoutes() {
-    this.setData({ loading: true })
-    const app = getApp()
-    const openid = app.globalData.openid || ''
-    if (!openid) {
-      this.setData({ loading: false, routes: [] })
-      return Promise.resolve()
-    }
+    if (this._loadingRoutes) return Promise.resolve()
+    this._loadingRoutes = true
+    this.setData({ loading: true, listError: '' })
     return wx.cloud.callFunction({
       name: 'routes',
       // 注意：不再传 openid；routes 云函数 list 使用服务端 wxContext.openid，
@@ -32,11 +30,24 @@ Page({
       data: { action: 'list', page: 1, pageSize: 50 },
     }).then((res) => {
       const result = (res && res.result) || {}
-      this.setData({ routes: result.data || [], loading: false })
+      if (!result.ok) throw new Error(result.error || '路线加载失败')
+      this.setData({ routes: result.data || [], loading: false, listError: '' })
+      const app = getApp()
+      if (app.globalData.user) {
+        app.globalData.user.stats = Object.assign({}, app.globalData.user.stats || {}, {
+          routes_count: result.total || 0,
+        })
+      }
     }).catch((err) => {
       console.error('[routes:list] error:', err)
-      this.setData({ loading: false, routes: [] })
+      this.setData({ loading: false, listError: '路线加载失败，请检查网络后重试。' })
+    }).finally(() => {
+      this._loadingRoutes = false
     })
+  },
+
+  onRetryRoutes() {
+    this.refreshRoutes()
   },
 
   onTapRoute(e) {
@@ -47,31 +58,46 @@ Page({
 
   onLongPressRoute(e) {
     const id = e.currentTarget.dataset.id
-    if (!id) return
+    this._confirmDelete(id)
+  },
+
+  onDeleteTap(e) {
+    this._confirmDelete(e.currentTarget.dataset.id)
+  },
+
+  _confirmDelete(id) {
+    if (!id || this.data.deletingId) return
     wx.showModal({
       title: '删除路线',
       content: '确认删除这条自建路线？此操作不可撤销。',
       confirmColor: '#9e2b23',
-      success: (r) => {
+      success: async (r) => {
         if (!r.confirm) return
-        wx.showLoading({ title: '删除…', mask: true })
-        wx.cloud.callFunction({
-          name: 'routes',
-          data: { action: 'delete', routeId: id },
-        }).then((res) => {
-          wx.hideLoading()
+        this.setData({ deletingId: id, listError: '' })
+        try {
+          const res = await wx.cloud.callFunction({
+            name: 'routes',
+            data: { action: 'delete', routeId: id },
+          })
           const result = (res && res.result) || {}
           if (result.ok) {
+            this.setData({ routes: this.data.routes.filter((route) => route._id !== id) })
+            const app = getApp()
+            if (app.globalData.user) {
+              app.globalData.user.stats = Object.assign({}, app.globalData.user.stats || {}, {
+                routes_count: result.routes_count || 0,
+              })
+            }
             wx.showToast({ title: '已删除', icon: 'success' })
-            this.refreshRoutes()
           } else {
-            wx.showToast({ title: result.error || '删除失败', icon: 'none' })
+            throw new Error(result.error || '删除失败')
           }
-        }).catch((err) => {
-          wx.hideLoading()
+        } catch (err) {
           console.error('[routes:delete] error:', err)
-          wx.showToast({ title: '删除失败', icon: 'none' })
-        })
+          this.setData({ listError: '路线删除失败，列表没有发生变化。请重试。' })
+        } finally {
+          this.setData({ deletingId: '' })
+        }
       },
     })
   },

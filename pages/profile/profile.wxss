@@ -64,6 +64,12 @@
   font-size: 24rpx;
   color: var(--paper-text-2);
 }
+.profile-error, .stats-error {
+  margin-top: 18rpx; padding: 14rpx 18rpx; border-radius: 12rpx;
+  display: flex; align-items: center; justify-content: space-between; gap: 16rpx;
+  background: rgba(158,43,35,0.06); color: var(--cinnabar); font-size: 22rpx;
+}
+.profile-error-close, .stats-retry { flex-shrink: 0; text-decoration: underline; }
 
 .stats-card { padding: 32rpx; margin-top: 16rpx; }
 .stat-grid { display: flex; flex-direction: row; }
@@ -71,6 +77,7 @@
 .stat-item:active { background: rgba(158, 43, 35, 0.04); border-radius: 8rpx; }
 .stat-num { font-size: 40rpx; font-weight: 700; color: var(--cinnabar); }
 .stat-label { font-size: 22rpx; color: var(--paper-text-2); margin-top: 4rpx; letter-spacing: 0.08em; }
+.stats-status { margin-top: 18rpx; text-align: center; color: var(--paper-text-2); font-size: 22rpx; }
 
 .hub-card { margin-top: 16rpx; padding: 28rpx 24rpx; }
 .hub-title { font-size: 26rpx; color: var(--paper-text-2); margin-bottom: 20rpx; letter-spacing: 0.08em; }

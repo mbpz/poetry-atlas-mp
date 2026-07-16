@@ -99,3 +99,7 @@
   letter-spacing: 0.1em;
 }
 .save-btn.disabled { opacity: 0.5; }
+.save-error {
+  padding: 22rpx 26rpx; color: var(--cinnabar); font-size: 24rpx;
+  line-height: 1.6; background: rgba(158,43,35,0.06);
+}

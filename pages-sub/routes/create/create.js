@@ -12,13 +12,22 @@ Page({
       { _id: 1, name: '', lng: '', lat: '', poem_title: '', poem_author: '', poem_content: '', note: '' },
     ],
     saving: false,
+    saveError: '',
     _pointCounter: 1,
   },
 
+  onLoad() {
+    this._requestId = `route_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+  },
+
+  onUnload() {
+    if (this._backTimer) clearTimeout(this._backTimer)
+  },
+
   // ---- 路线基本信息 ----
-  onNameInput(e) { this.setData({ name: e.detail.value }) },
-  onThemeInput(e) { this.setData({ theme: e.detail.value }) },
-  onDescInput(e) { this.setData({ description: e.detail.value }) },
+  onNameInput(e) { this.setData({ name: e.detail.value, saveError: '' }) },
+  onThemeInput(e) { this.setData({ theme: e.detail.value, saveError: '' }) },
+  onDescInput(e) { this.setData({ description: e.detail.value, saveError: '' }) },
 
   // ---- 站点列表操作 ----
   onPointField(e) {
@@ -26,7 +35,7 @@ Page({
     const field = e.currentTarget.dataset.field
     const value = e.detail.value
     const key = 'points[' + idx + '].' + field
-    this.setData({ [key]: value })
+    this.setData({ [key]: value, saveError: '' })
   },
   addPoint() {
     const counter = this.data._pointCounter + 1
@@ -60,23 +69,43 @@ Page({
     if (this.data.saving) return
     const name = (this.data.name || '').trim()
     if (!name) {
+      this.setData({ saveError: '请填写路线名。' })
       wx.showToast({ title: '请填写路线名', icon: 'none' })
       return
     }
-    const points = this.data.points
-      .map((p) => ({ ...p, lng: parseFloat(p.lng), lat: parseFloat(p.lat) }))
-      .filter((p) => p.name && p.name.trim())
+    const namedPoints = this.data.points.filter((p) => p.name && p.name.trim())
+    const points = []
+    for (const point of namedPoints) {
+      const lngText = String(point.lng || '').trim()
+      const latText = String(point.lat || '').trim()
+      if (!!lngText !== !!latText) {
+        this.setData({ saveError: `“${point.name.trim()}”的经纬度需要同时填写。` })
+        return
+      }
+      const lng = lngText ? Number(lngText) : 0
+      const lat = latText ? Number(latText) : 0
+      if (
+        (lngText && (!Number.isFinite(lng) || lng < -180 || lng > 180)) ||
+        (latText && (!Number.isFinite(lat) || lat < -90 || lat > 90))
+      ) {
+        this.setData({ saveError: `“${point.name.trim()}”的经纬度超出有效范围。` })
+        return
+      }
+      points.push(Object.assign({}, point, { name: point.name.trim(), lng, lat }))
+    }
     if (!points.length) {
+      this.setData({ saveError: '至少填写 1 个站点名称。' })
       wx.showToast({ title: '至少 1 站填写名称', icon: 'none' })
       return
     }
-    this.setData({ saving: true })
+    this.setData({ saving: true, saveError: '' })
     wx.showLoading({ title: '保存路线…', mask: true })
     try {
       const res = await wx.cloud.callFunction({
         name: 'routes',
         data: {
           action: 'create',
+          request_id: this._requestId,
           name,
           theme: (this.data.theme || '').trim(),
           description: (this.data.description || '').trim(),
@@ -86,9 +115,14 @@ Page({
       wx.hideLoading()
       const result = (res && res.result) || {}
       if (!result.ok) {
-        wx.showToast({ title: result.error || '保存失败', icon: 'none' })
-        this.setData({ saving: false })
+        this.setData({ saving: false, saveError: result.error || '保存失败，请检查输入后重试。' })
         return
+      }
+      const app = getApp()
+      if (app.globalData.user) {
+        app.globalData.user.stats = Object.assign({}, app.globalData.user.stats || {}, {
+          routes_count: result.routes_count || 0,
+        })
       }
       wx.showToast({ title: '已保存', icon: 'success' })
       // 通知上一页刷新
@@ -97,12 +131,11 @@ Page({
       if (prev && typeof prev.refreshRoutes === 'function') {
         prev.refreshRoutes()
       }
-      setTimeout(() => wx.navigateBack(), 600)
+      this._backTimer = setTimeout(() => wx.navigateBack(), 600)
     } catch (err) {
       wx.hideLoading()
       console.error('[routes:create] error:', err)
-      wx.showToast({ title: '保存失败', icon: 'none' })
-      this.setData({ saving: false })
+      this.setData({ saving: false, saveError: '保存失败，输入内容已保留。请检查网络后重试。' })
     }
   },
 })

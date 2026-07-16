@@ -30,16 +30,21 @@
             <view wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="fav-line">{{line}}</view>
           </view>
         </view>
-        <view class="fav-del" data-item="{{item}}" catchtap="onRemove">
-          <text class="fav-del-ico">×</text>
+        <view class="fav-del {{removingId === item.favId ? 'busy' : ''}}" data-item="{{item}}" catchtap="onRemove">
+          <text class="fav-del-ico">{{removingId === item.favId ? '…' : '×'}}</text>
         </view>
       </view>
       <view wx:if="{{loading && favorites.length}}" class="list-loading">载入更多…</view>
       <view wx:if="{{!hasMore && favorites.length}}" class="list-end">— 到底了 —</view>
     </view>
 
+    <view wx:if="{{!loading && listError}}" class="card list-error">
+      <text>{{listError}}</text>
+      <text class="list-retry" bindtap="onRetryLoad">重试</text>
+    </view>
+
     <empty-state
-      wx:if="{{!loading && !favorites.length}}"
+      wx:if="{{!loading && !listError && !favorites.length}}"
       iconSrc="/tab-bar-icons/fav.svg"
       title="还没有收藏"
       tip="在诗词详情页点击收藏按钮即可保存"

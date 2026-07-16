@@ -88,10 +88,10 @@ const openid = cloud.getWXContext().OPENID  // 仅微信客户端调用链有值
 | 函数 | 用途 | 入参（event） | 返回 | 关联集合 | 小程序调用 |
 |---|---|---|---|---|---|
 | `login` | 静默登录，取 OPENID 并 upsert 用户档案 | 无 | `{ openid, appid, unionid, user }` | `users` | `app.js` |
-| `updateUser` | 更新昵称/头像/stats；文档不存在则创建 | `nickname?`, `avatar_url?`, `gender?`, `bio?`, `stats?` | `{ ok, user? \| error? }` | `users` | `pages/profile/profile.js` |
+| `updateUser` | 更新本人昵称/头像等公开档案字段；文档不存在则创建 | `nickname?`, `avatar_url?`, `gender?`, `bio?` | `{ ok, user? \| error? }` | `users` | `pages/profile/profile.js` |
 | `searchPoems` | 多集合正则搜索 | `keyword`, `type?`, `limit?` | `{ ok, data: { poems, authors, places }, total }` | `poems`, `authors`, `places` | `pages/search/search.js` |
 | `aggregateMap` | 地图聚合 / 邻近 / 地点列表 | `type`, `dynasty?`, `lng?`, `lat?`, `radius_km?`, `keyword?`, `limit?` | `{ ok, data[], total }` | `places` | `pages/index/index.js`（`type=province`） |
-| `routes` | 私有旅行路线 CRUD | `action`: `create\|update\|delete\|list\|detail` + 对应字段 | `{ ok, data? \| _id? \| error? }` | `routes` | 路线相关页面 |
+| `routes` | 私有旅行路线 CRUD；所有动作使用服务端 OPENID 鉴权 | `action`: `create\|update\|delete\|list\|detail` + 对应字段；创建可带 `request_id` 防重 | `{ ok, data? \| _id? \| total? \| routes_count? \| error? }` | `routes` | 路线相关页面 |
 | `recitations` | 朗诵列表 / 播放计数 | `action`: `list\|recordPlay` | `{ ok, data? \| error? }` | `recitations`, `poems` | `pages-sub/info/poem/poem.js` |
 | `ttsPoem` | 即时朗读（腾讯云基础 TTS） | `poem_id` 或 `text`, `voice?` | `{ ok, audio_url, fileID, duration, cached }` | `poems`, `tts_cache` + 云存储 | `pages-sub/info/poem/poem.js` |
 | `initData` | 一次性种子迁移 | 无 | `{ ok, results }` | `places`, `poems`, `authors`, `dynasties` | 仅运维 invoke |
@@ -247,7 +247,9 @@ npx mcporter call cloudbase.queryFunctions \
 
 ```json
 {
+  "_openid": "<openid>",
   "openid": "<openid>",
+  "request_id": "route_<client request id>",
   "name": "江南春行",
   "theme": "",
   "description": "",
@@ -277,7 +279,7 @@ npx mcporter call cloudbase.queryFunctions \
 |---|---|---|---|---|
 | `places` / `poems` / `authors` / `dynasties` | `true`（默认） | 默认 | 默认 | 默认 |
 | `recitations` | `true` | `auth.openid != null` | `doc._openid == auth.openid` | `doc._openid == auth.openid` |
-| `users` / `routes` / `favorites` | `doc._openid == auth.openid` | `auth.openid != null` | `doc._openid == auth.openid` | `doc._openid == auth.openid` |
+| `users` / `routes` / `favorites` | `doc._openid == auth.openid` | `doc._openid == auth.openid` | `doc._openid == auth.openid` | `doc._openid == auth.openid` |
 
 下发脚本：
 

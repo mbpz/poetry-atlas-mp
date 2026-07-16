@@ -22,6 +22,18 @@
 .route-row-meta { display: flex; align-items: center; gap: 12rpx; flex-shrink: 0; }
 .route-pts { font-size: 24rpx; color: var(--cinnabar); background: rgba(158,43,35,0.06); padding: 6rpx 16rpx; border-radius: 20rpx; }
 .route-arrow { font-size: 40rpx; color: var(--gold); }
+.route-delete {
+  min-height: 56rpx; padding: 0 18rpx; border-radius: 28rpx;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cinnabar); background: rgba(158,43,35,0.06); font-size: 22rpx;
+}
+.route-delete.busy { opacity: 0.55; }
+.route-error {
+  margin-top: 20rpx; padding: 24rpx 28rpx;
+  display: flex; align-items: center; justify-content: space-between; gap: 18rpx;
+  color: var(--cinnabar); font-size: 24rpx; line-height: 1.6;
+}
+.route-retry { flex-shrink: 0; text-decoration: underline; }
 
 .empty-wrap { padding-top: 120rpx; }
 
