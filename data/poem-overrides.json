@@ -1,4 +1,116 @@
 {
-  "data_version": "2026-q3-draft",
-  "overrides": {}
+  "data_version": "2026-q3-batch-1",
+  "release": {
+    "released_at": "2026-07-16",
+    "previous_version": "2026-q3-draft",
+    "rollback": "将本文件恢复到 previous_version 对应提交后重新执行迁移；生产环境发布前必须保留上一版本导出。",
+    "review_batch": [
+      "岳阳楼记|范仲淹",
+      "钱塘湖春行|白居易",
+      "过华清宫绝句|杜牧",
+      "临江仙|杨慎",
+      "滕王阁诗|王勃",
+      "登岳阳楼|杜甫",
+      "从军行|王昌龄",
+      "大观楼|孙髯翁"
+    ]
+  },
+  "overrides": {
+    "岳阳楼记|范仲淹": {
+      "title": "岳阳楼记",
+      "author": "范仲淹",
+      "dynasty": "宋",
+      "content": "庆历四年春，滕子京谪守巴陵郡。越明年，政通人和，百废具兴，乃重修岳阳楼，增其旧制，刻唐贤今人诗赋于其上；属予作文以记之。\n予观夫巴陵胜状，在洞庭一湖。衔远山，吞长江，浩浩汤汤，横无际涯；朝晖夕阴，气象万千；此岳阳楼之大观也，前人之述备矣。然则北通巫峡，南极潇湘，迁客骚人，多会于此，览物之情，得无异乎？\n若夫淫雨霏霏，连月不开；阴风怒号，浊浪排空；日星隐曜，山岳潜形；商旅不行，樯倾楫摧；薄暮冥冥，虎啸猿啼。登斯楼也，则有去国怀乡，忧谗畏讥，满目萧然，感极而悲者矣。\n至若春和景明，波澜不惊，上下天光，一碧万顷；沙鸥翔集，锦鳞游泳，岸芷汀兰，郁郁青青。而或长烟一空，皓月千里，浮光跃金，静影沉璧，渔歌互答，此乐何极。登斯楼也，则有心旷神怡，宠辱皆忘，把酒临风，其喜洋洋者矣。\n嗟夫！予尝求古仁人之心，或异二者之为，何哉？不以物喜，不以己悲。居庙堂之高，则忧其民；处江湖之远，则忧其君。是进亦忧，退亦忧；然则何时而乐耶？其必曰“先天下之忧而忧，后天下之乐而乐”乎！噫！微斯人，吾谁与归？\n时六年九月十五日。",
+      "content_kind": "full",
+      "source_name": "维基文库《岳阳楼记》",
+      "source_url": "https://zh.wikisource.org/wiki/岳陽樓記",
+      "source_license": "原作公有领域；维基文库页面文字 CC BY-SA 4.0",
+      "source_checked_at": "2026-07-16",
+      "review_note": "按维基文库正文转为简体；采用页面列出的“淫”“耀”“乎”通行异文中的“淫”“曜”“乎”。"
+    },
+    "钱塘湖春行|白居易": {
+      "title": "钱塘湖春行",
+      "author": "白居易",
+      "dynasty": "唐",
+      "content": "孤山寺北贾亭西，水面初平云脚低。\n几处早莺争暖树，谁家新燕啄春泥。\n乱花渐欲迷人眼，浅草才能没马蹄。\n最爱湖东行不足，绿杨阴里白沙堤。",
+      "content_kind": "full",
+      "source_name": "维基文库《钱塘湖春行》",
+      "source_url": "https://zh.wikisource.org/wiki/錢塘湖春行",
+      "source_license": "原作公有领域；维基文库页面文字 CC BY-SA 4.0",
+      "source_checked_at": "2026-07-16",
+      "review_note": "按维基文库正文转为简体，保留全诗八句。"
+    },
+    "过华清宫绝句|杜牧": {
+      "title": "过华清宫绝句",
+      "author": "杜牧",
+      "dynasty": "唐",
+      "content": "长安回望绣成堆，山顶千门次第开。\n一骑红尘妃子笑，无人知是荔枝来。",
+      "content_kind": "full",
+      "source_name": "维基文库《全唐诗·卷521》",
+      "source_url": "https://zh.wikisource.org/wiki/全唐詩/卷521",
+      "source_license": "原作公有领域；维基文库页面文字 CC BY-SA 4.0",
+      "source_checked_at": "2026-07-16",
+      "review_note": "对应《过华清宫绝句三首》第一首，按维基文库正文转为简体。"
+    },
+    "临江仙|杨慎": {
+      "title": "临江仙",
+      "author": "杨慎",
+      "dynasty": "明",
+      "content": "滚滚长江东逝水，浪花淘尽英雄。\n是非成败转头空。\n青山依旧在，几度夕阳红。\n白发渔樵江渚上，惯看秋月春风。\n一壶浊酒喜相逢。\n古今多少事，都付笑谈中。",
+      "content_kind": "full",
+      "source_name": "维基文库《临江仙（杨慎）》",
+      "source_url": "https://zh.wikisource.org/wiki/臨江仙_(楊慎)",
+      "source_license": "原作公有领域；维基文库页面文字 CC BY-SA 4.0",
+      "source_checked_at": "2026-07-16",
+      "review_note": "按维基文库正文转为简体，并按词意分行。"
+    },
+    "滕王阁诗|王勃": {
+      "title": "滕王阁诗",
+      "author": "王勃",
+      "dynasty": "唐",
+      "content": "滕王高阁临江渚，佩玉鸣鸾罢歌舞。\n画栋朝飞南浦云，珠帘暮卷西山雨。\n闲云潭影日悠悠，物换星移几度秋。\n阁中帝子今何在？槛外长江空自流。",
+      "content_kind": "full",
+      "source_name": "维基文库《滕王阁诗》",
+      "source_url": "https://zh.wikisource.org/wiki/滕王閣詩",
+      "source_license": "原作公有领域；维基文库页面文字 CC BY-SA 4.0",
+      "source_checked_at": "2026-07-16",
+      "review_note": "按维基文库正文转为简体，标题沿用现有语料标识。"
+    },
+    "登岳阳楼|杜甫": {
+      "title": "登岳阳楼",
+      "author": "杜甫",
+      "dynasty": "唐",
+      "content": "昔闻洞庭水，今上岳阳楼。\n吴楚东南坼，乾坤日夜浮。\n亲朋无一字，老病有孤舟。\n戎马关山北，凭轩涕泗流。",
+      "content_kind": "full",
+      "source_name": "维基文库《千家诗·卷二》",
+      "source_url": "https://zh.wikisource.org/wiki/千家詩/卷二",
+      "source_license": "原作公有领域；维基文库页面文字 CC BY-SA 4.0",
+      "source_checked_at": "2026-07-16",
+      "review_note": "按维基文库正文转为简体，采用“戎马关山北，凭轩涕泗流”版本。"
+    },
+    "从军行|王昌龄": {
+      "title": "从军行",
+      "author": "王昌龄",
+      "dynasty": "唐",
+      "content": "青海长云暗雪山，孤城遥望玉门关。\n黄沙百战穿金甲，不破楼兰终不还。",
+      "content_kind": "full",
+      "source_name": "维基文库《从军行（青海长云暗雪山）》",
+      "source_url": "https://zh.wikisource.org/wiki/從軍行_(青海長雲暗雪山)",
+      "source_license": "原作公有领域；维基文库页面文字 CC BY-SA 4.0",
+      "source_checked_at": "2026-07-16",
+      "review_note": "对应《从军行七首》第四首；采用页面正文“玉门关”“终不还”，未采用脚注异文。"
+    },
+    "大观楼|孙髯翁": {
+      "title": "大观楼",
+      "author": "孙髯翁",
+      "dynasty": "清",
+      "content": "五百里滇池奔来眼底，披襟岸帻，喜茫茫空阔无边。看东骧神骏，西翥灵仪，北走蜿蜒，南翔缟素，高人韵士，何妨选胜登临。趁蟹屿螺洲，梳裹就风鬟雾鬓；更苹天苇地，点缀些翠羽丹霞。莫辜负：四围香稻，万顷晴沙，九夏芙蓉，三春杨柳。\n数千年往事注到心头，把酒凌虚，叹滚滚英雄谁在？想汉习楼船，唐标铁柱，宋挥玉斧，元跨革囊，伟烈丰功，费尽移山心力。尽珠帘画栋，卷不及暮雨朝云；便断碣残碑，都付与苍烟落照。只赢得：几杵疏钟，半江渔火，两行秋雁，一枕清霜。",
+      "content_kind": "full",
+      "source_name": "维基文库《大观楼长联》",
+      "source_url": "https://zh.wikisource.org/wiki/大觀樓長聯",
+      "source_license": "原作公有领域；维基文库页面文字 CC BY-SA 4.0",
+      "source_checked_at": "2026-07-16",
+      "review_note": "现有条目标题和作者别名保持不变；正文按维基文库转为简体，保留上下联分段。"
+    }
+  }
 }

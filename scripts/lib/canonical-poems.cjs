@@ -83,6 +83,8 @@ function provenanceOf(poem) {
     source_name: item.source_name || nested.name || '',
     source_url: item.source_url || nested.url || '',
     source_license: item.source_license || nested.license || '',
+    source_checked_at: item.source_checked_at || nested.checked_at || '',
+    review_note: item.review_note || nested.review_note || '',
   }
 }
 
@@ -144,7 +146,12 @@ function buildCanonicalPoems(places, options) {
     const placesForPoem = [...new Set(references.map((item) => item.placeId).filter(Boolean))].sort()
     const placeNames = [...new Set(references.map((item) => item.placeName).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh-CN'))
     const provenance = provenanceOf(chosen)
-    const hasSource = !!(provenance.source_name || provenance.source_url)
+    const hasSource = !!(
+      provenance.source_name &&
+      provenance.source_url &&
+      provenance.source_license &&
+      provenance.source_checked_at
+    )
     const reviewStatus = override && hasSource
       ? 'verified'
       : (conflictType ? 'needs-review' : (hasSource ? 'verified' : 'needs-source'))

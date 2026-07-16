@@ -86,6 +86,7 @@ test('resolves divergence only through a sourced manual override', () => {
       [key]: {
         title: '岳阳楼记', author: '范仲淹', dynasty: '宋', content,
         source_name: '可信来源', source_url: 'https://example.test/source', source_license: 'reviewed',
+        source_checked_at: '2026-07-16',
       },
     },
   })
