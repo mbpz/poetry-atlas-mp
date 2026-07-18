@@ -27,6 +27,21 @@ test('openid readiness coalesces concurrent login cloud calls', async () => {
   assert.strictEqual(calls, 1)
 })
 
+test('startup login accepts the current App instance before getApp is ready', async () => {
+  const app = { globalData: {} }
+  global.getApp = () => undefined
+  global.wx = {
+    cloud: {
+      callFunction: async () => ({ result: { openid: 'startup-openid', user: { nickname: '启动用户' } } }),
+    },
+  }
+
+  const openid = await ensureOpenId(app)
+  assert.strictEqual(openid, 'startup-openid')
+  assert.strictEqual(app.globalData.openid, 'startup-openid')
+  assert.strictEqual(app.globalData.user.nickname, '启动用户')
+})
+
 test('private route cloud function authenticates every action and strips owner fields', () => {
   const root = path.join(__dirname, '..')
   const routes = fs.readFileSync(path.join(root, 'cloudfunctions/routes/index.js'), 'utf8')

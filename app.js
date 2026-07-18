@@ -58,7 +58,8 @@ App({
   },
 
   login() {
-    return ensureOpenId()
+    // onLaunch 阶段 getApp() 可能尚未返回实例，显式传入当前 App。
+    return ensureOpenId(this)
       .then((openid) => {
         console.log('[app] login ok, openid =', openid ? openid.slice(0, 6) + '…' : '(empty)')
       })
